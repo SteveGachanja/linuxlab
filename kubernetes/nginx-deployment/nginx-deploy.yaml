@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deploy
+spec:
+  selector:
+    matchLabels:
+      app: nginx-deploy
+  replicas: 1
+  revisionHistoryLimit: 2
+  template:
+    metadata:
+      labels:
+        app: nginx-deploy
+    spec:
+      imagePullSecrets:
+        - name: regcred
+      containers:
+        - name: nginx-container
+          image: SVSACCODOCKER.CO-OPBANK.CO.KE:5000/omniadmin/nginxproxy:build_by_sngachanja_v1.301
+          resources:
+            requests:
+              cpu: 100m
+              memory: 300Mi
+          imagePullPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+spec:
+  ports:
+    - port: 8080
+      targetPort: 443
+  externalIPs:
+    - 172.16.20.39
+  selector:
+    app: nginx-deploy
