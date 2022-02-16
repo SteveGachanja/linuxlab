@@ -21,7 +21,7 @@ spec:
           resources:
             requests:
               cpu: 100m
-              memory: 300Mi
+              memory: 300Mi # -- cpu resources 1000m is # 1 cores of total cpu
           imagePullPolicy: Always
           volumeMounts:
             - name: storage
