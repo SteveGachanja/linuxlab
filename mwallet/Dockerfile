@@ -34,6 +34,7 @@ RUN mvn -DskipTests  package
 RUN mkdir -p mwalletapi/target/dependency && (cd mwalletapi/target/dependency; jar -xf ../*.jar)
 
 FROM openjdk:8-jdk-alpine
+RUN echo "Africa/Nairobi" > /etc/timezone
 
 ARG DEPENDENCY=/workspace/app/mwalletapi/target/dependency
 COPY --from=builder ${DEPENDENCY}/BOOT-INF/lib /app/lib
