@@ -1,0 +1,49 @@
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+                      http://maven.apache.org/xsd/settings-1.0.0.xsd">
+    <localRepository/>
+    <interactiveMode/>
+    <usePluginRegistry/>
+    <offline/>
+    <pluginGroups/>
+    <mirrors/>
+    <proxies>
+        <proxy>
+            <id>myproxy</id>
+            <active>true</active>
+            <protocol>http</protocol>
+            <host>192.168.4.11</host>
+            <port>8080</port>
+            <username>co-opbank\gkipkemoi</username>
+            <password></password>
+            <nonProxyHosts>172.*;192.*;10.1.*;41.206.49.13;svdc*;ecollect*;webmail.co-opbank.co.ke;rms.co-opbank.co.ke;elearning.co-opbank.co.ke;srmprd.co-opbank.co.ke</nonProxyHosts>
+        </proxy>
+    </proxies>
+    <servers>
+        <server>
+            <id>maven.oracle.com </id>
+            <username>gideonm98@gmail.com</username>
+            <password>{vVSJYXprwfwHCbnpUg+EKaFcWBDOiq613nejd9u0iCA=}</password>
+            <configuration>
+                <basicAuthScope>
+                    <host>ANY </host>
+                    <port>ANY </port>
+                    <realm>OAM 11g </realm>
+                </basicAuthScope>
+                <httpConfiguration>
+                    <all>
+                        <params>
+                            <property>
+                                <name>http.protocol.allow-circular-redirects </name>
+                                <value>%b,true </value>
+                            </property>
+                        </params>
+                    </all>
+                </httpConfiguration>
+            </configuration>
+        </server>
+    </servers>
+    <profiles/>
+    <activeProfiles/>
+</settings>

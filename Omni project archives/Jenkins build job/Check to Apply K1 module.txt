@@ -1,0 +1,76 @@
+set +x
+echo "=============================================================================="
+echo "CHECK TO APPLY K1_CHANGE_APPROVALS ...  status:$K1_CHANGE_APPROVALS"
+echo "------------------------------------------------------------------------------"
+echo "SET VARIABLES"
+echo "------------------------------------------------------------------------------"
+
+echo "K1_CHANGE_APPROVALS"::$K1_CHANGE_APPROVALS
+echo "BUILD_USER_ID"::$BUILD_USER_ID
+FUNCTION=K1_CHANGE_APPROVALS
+CAPABILITIES=`cat $CAPABILITIES_FILE | grep $FUNCTION` || echo "WARNING :: FUNCTION $FUNCTION not available for $BUILD_USER_ID"
+echo "BUILD_USER CAPABILITIES"::$CAPABILITIES
+
+K1_EAR_PATH=../../K1_EAR/OmniBuilds
+sed -i 's#K1_EAR/OmniBuilds/K1_OUTPUT#K1_EAR/OmniBuilds/SIT#g' bank.properties
+cat bank.properties | grep K1_LOCATION
+
+echo "------------------------------------------------------------------------------"
+
+if [[ $K1_CHANGE_APPROVALS = "true" ]] && [[ "$CAPABILITIES" = "$FUNCTION" ]];
+then
+
+echo "=================================================================================="
+echo "Conditions are true:: $BUILD_USER_ID APPLYING K1_CHANGES in SIT ..."
+echo "----------------------------------------------------------------------------------"
+
+rsync -avzh $K1_EAR_PATH/DEV/digitalFaceApplication_IBMB_18.2.0.0.ear $K1_EAR_PATH/SIT/
+
+cp -p $K1_EAR_PATH/SIT/digitalFaceApplication_IBMB_18.2.0.0.ear $K1_EAR_PATH/SIT/Omni.K1.SIT_Backup.BUILD.0$BUILD_ID.$BUILD_TIMESTAMP
+
+echo "-----------------------------------------------------------------------------------"
+echo "SUCCESSFULL BUILD OF SIT K1 EAR FILE based on release changes :: $BUILD_TIMESTAMP"
+echo "==================================================================================="
+
+ls -rt $K1_EAR_PATH/SIT | cut -d "." -f 6-7 | sort | uniq -d > $K1_EAR_PATH/SIT/unique.SIT.K1_log.output
+
+for filename in `cat $K1_EAR_PATH/SIT/unique.SIT.K1_log.output`
+do
+ls -rt $K1_EAR_PATH/SIT/ | grep "$filename" | head -n -1 | while read files ; do rm -rf $K1_EAR_PATH/SIT/"$files" ; done
+done
+
+ls $K1_EAR_PATH/SIT/Omni.K1.SIT_Backup.BUILD* | head -n -5 | while read files ; do rm -rf $files; done
+
+rm -rf $K1_EAR_PATH/SIT/unique.SIT.K1_log.output || echo "skip if file does not exist"
+
+ls -lrt $K1_EAR_PATH/SIT/
+
+else
+echo "------------------------------------------------------------------------"
+echo "No K1_CHANGE APPROVED, Continue build as normal ..."
+ls -lrt $K1_EAR_PATH/SIT/
+echo "------------------------------------------------------------------------"
+fi
+
+
+
+echo "----------------------------------------------------------------------------------"
+echo "ROLLBACK_SIT_K1 status is :: $ROLLBACK_SIT_K1"
+echo "----------------------------------------------------------------------------------"
+
+if [[ $ROLLBACK_K1_CHANGES = "true" ]] && [[ "$CAPABILITIES" = "$FUNCTION" ]];
+then
+
+echo "=================================================================================="
+echo "Conditions are true :: Initiating Omni.K1.SIT Rollback to $SIT_K1_BACKUP_VERSION  "
+echo "=================================================================================="
+
+cd ../../K1_EAR/OmniBuilds/SIT/
+ls -lrt $SIT_K1_BACKUP_VERSION | grep -v "digitalFaceApplication_IBMB_18.2.0.0.ear"
+rsync -avzh $SIT_K1_BACKUP_VERSION digitalFaceApplication_IBMB_18.2.0.0.ear
+
+else
+echo "----------------------------------------------------------------------------------"
+echo "Continue as normal :: ROLLBACK_SIT_K1 status is :: $ROLLBACK_SIT_K1"
+echo "----------------------------------------------------------------------------------"
+fi

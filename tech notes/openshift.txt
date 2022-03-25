@@ -1,0 +1,32 @@
+ 
+{username} stevegachanja
+{token} sha256~W7l1Efzz2ckg4QeDjoNs0oKgqBnRkfRBj9mOvku9lnA
+
+oc login --token=sha256~W7l1Efzz2ckg4QeDjoNs0oKgqBnRkfRBj9mOvku9lnA --server=https://api.sandbox.x8i5.p1.openshiftapps.com:6443
+
+Use this token directly against the API
+curl -H "Authorization: Bearer sha256~W7l1Efzz2ckg4QeDjoNs0oKgqBnRkfRBj9mOvku9lnA" "https://api.sandbox.x8i5.p1.openshiftapps.com:6443/apis/user.openshift.io/v1/users/~"
+
+
+Username, which is represented by {username} in the following commands
+Authorization token {token}
+
+Name of the cluster {cluster_name} - api-sandbox-x8i5-p1-openshiftapps-com:6443
+https://console-openshift-console.apps.sandbox.x8i5.p1.openshiftapps.com/k8s/ns/stevegachanja-dev/deployments
+
+
+Context assigned to us {context}
+{username}-dev/{cluster_name}/{username}.
+stevegachanja-dev/api-sandbox-x8i5-p1-openshiftapps-com:6443/stevegachanja
+
+
+URL of the cluster API server {api_server_url}
+https://api.sandbox.x8i5.p1.openshiftapps.com:6443
+
+
+
+kubectl config set-credentials {username}/{cluster_name} --token={token}
+
+
+
+http://quotes-stevegachanja-dev.apps.sandbox.x8i5.p1.openshiftapps.com/quotes/random

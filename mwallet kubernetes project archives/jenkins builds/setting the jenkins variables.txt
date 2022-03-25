@@ -1,0 +1,58 @@
+set +x
+echo "================================================================="
+echo "SET Develop VARIABLES ..."
+echo "================================================================="
+
+git pull origin $DEV_GIT_BRANCH
+git checkout -b $DEV_GIT_BRANCH
+git branch
+
+#---------------------------------------------------------------------------------------------
+#SET VARIABLES
+
+echo "==============================================================================================="
+echo "RECORDED VARIABLES OF BUILD :: $BUILD_TAG"
+git log -1
+DEV_AUTHOR=`git log -1 | grep Author | awk -F "<" '{print $02}' | cut -d "@" -f 1`
+PULL_REQUEST_ID=`git log -1 --merges | grep PR | head -n 1`
+BRANCH_COMMIT_ID=`git log -1 |grep Merge:|awk -v N=3 '{print $3}'`
+echo "" && echo "Feature branch commit ID: $BRANCH_COMMIT_ID"
+echo "==============================================================================================="
+git log -20 --oneline
+echo "==============================================================================================="
+echo "DEV_AUTHOR::$DEV_AUTHOR"
+echo "BUILD_TIMESTAMP::$BUILD_TIMESTAMP"
+echo "BUILD_ID::$BUILD_ID"
+echo "BUILD_TAG::$BUILD_TAG"
+echo ""
+echo "BUILD_USER::$BUILD_USER"
+echo "BUILD_USER_ID::$BUILD_USER_ID"
+echo "==============================================================================================="
+echo ":: CHANGES MADE ON THIS COMMIT ::"
+echo "-----------------------------------------------------------------------------------------------"
+git diff --diff-filter=ACMR --name-only HEAD~1 HEAD~0
+echo "==============================================================================================="
+echo ":: DOCKER TAG THIS BUILD ::"
+echo "-----------------------------------------------------------------------------------------------"
+
+#DOCKER_BUILDTAG=coopdockerhub/mwalletbackend:devbuild_by_${BUILD_USER_ID}_v1.${BUILD_ID}
+#DOCKER_BUILDTAG=SVSACCODOCKER.CO-OPBANK.CO.KE:5000/omniadmin/mwalletbackend:devbuild_by_${BUILD_USER_ID}_v1.${BUILD_ID}
+
+DOCKER_BUILDTAG=SVSACCODOCKER.CO-OPBANK.CO.KE:5000/omniadmin/mwalletbackend:devbuild_by_${DEV_AUTHOR}_v1.${BUILD_ID}
+echo $DOCKER_BUILDTAG | tr -d "[:blank:]" > ./kubernetes/DOCKER_BUILDTAG_DEV
+ sed -i 's#coopdockerhub/mwalletbackend:dev_v1#'$DOCKER_BUILDTAG'#g' ./kubernetes/mwalletdeploy-backend.yaml
+
+echo "===================================================="
+
+ls -lrt
+docker_workspace=/app/appadmin/jenkins/workspace/M-Wallet-Project
+
+#rsync -avhzq * appadmin@172.16.20.39:$docker_workspace/Deploy-Mwallet-Dev
+
+#rsync -avhzq * appadmin@172.16.20.52:$docker_workspace/Deploy-Mwallet-UAT
+
+sshpass -f ../.password/DEV-password rsync -avhzq * appadmin@172.16.20.39:$docker_workspace/Deploy-Mwallet-Dev
+
+sshpass -f ../.password/UAT-password rsync -avhzq * appadmin@172.16.20.52:$docker_workspace/Deploy-Mwallet-UAT
+
+echo "===================================================="

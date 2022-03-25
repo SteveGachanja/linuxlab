@@ -1,0 +1,62 @@
+set +x
+echo "-------------------------------------------------------------------"
+pwd
+start=$(date +'%s')
+timer_path=/var/lib/jenkins/workspace/OmniBuilds/Hello-World/timer.property
+echo "start=$start" > $timer_path
+ls -lrt $timer_path && cat $timer_path
+set -x
+
+
+set +x
+echo "===================================================================="
+
+echo "BUILD_USER :: $BUILD_USER"
+echo "BUILD_USER_ID :: $BUILD_USER_ID"
+echo "WORKSPACE :: $WORKSPACE"
+echo "BUILD_TIMESTAMP"::$BUILD_TIMESTAMP
+echo "DEV_GIT_BRANCH"::$DEV_GIT_BRANCH
+
+#---------------------------------------------------------------------------------------------
+
+export TARGET=Omni.Dev
+MATRIXPATH=/var/lib/jenkins/workspace/ROLE_PERMISSIONS_MATRIX
+$MATRIXPATH/ROLE_PERMISSIONS_MATRIX.sh
+CAPABILITIES_FILE=$MATRIXPATH/$TARGET/$BUILD_USER_ID.CAPABILITIES
+
+FUNCTION=ENV_AUTHORIZATION_DEV
+cat $CAPABILITIES_FILE || echo "ERROR :: CAPABILITIES file not available"
+CAPABILITIES=`cat $CAPABILITIES_FILE | grep $FUNCTION` || echo "WARNING :: FUNCTION $FUNCTION not available for $BUILD_USER_ID"
+echo "BUILD_USER CAPABILITIES"::$CAPABILITIES
+
+PROPERTY_FILE=DEV_MODULE_01_variables.property
+echo "CAPABILITIES_FILE=$CAPABILITIES_FILE" >> $PROPERTY_FILE
+
+#---------------------------------------------------------------------------------------------
+
+if [ "$BUILD_USER_ID" = "scmChange" ] || [ "$CAPABILITIES" = "$FUNCTION" ] ;
+then
+
+echo " "
+echo "====================================================================="
+echo "Build user $BUILD_USER Authorized to Promote to DEV "
+echo "====================================================================="
+echo " "
+exit 0
+
+else
+echo " "
+echo "====================================================================="
+echo "ERROR :: Build user $BUILD_USER not Authorized to Promote to DEV "
+echo "====================================================================="
+echo " "
+exit 1
+
+fi
+
+#---------------------------------------------------------------------------------------------
+
+seconds=$(($(date +'%s') - $start))
+minutes=$(echo `expr $seconds / 60`)
+echo "It took approx. $minutes minute(s)/ exactly ($seconds seconds) to fetch $BUILD_TAG"
+echo "===================================================================="

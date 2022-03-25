@@ -1,0 +1,151 @@
+set +x
+echo "================================================================="
+echo "SET SIT VARIABLES ..."
+echo "================================================================="
+echo ""
+
+git pull origin $SIT_GIT_BRANCH
+git checkout -b $SIT_GIT_BRANCH
+git tag -l | xargs git tag -d 2>&1 >/dev/null
+git branch
+
+#-----------------------------------------------------------------------------------------------
+
+git log -1 --merges
+SIT_AUTHOR=`git log -1 --merges | grep Author | awk -F "<" '{print $02}' | cut -d "@" -f 1`
+PULL_REQUEST_ID=`git log -1 --merges | grep PR | head -n 1`
+BRANCH_COMMIT_ID=`git log -1 --merges| grep Merge: | awk '{print $3}'`
+echo "Feature branch commit ID: $BRANCH_COMMIT_ID"
+echo "================================================================="
+git log --oneline -20
+echo "================================================================="
+
+UNFORMATTED_MERGED_FEATURE=`git name-rev --name-only $BRANCH_COMMIT_ID`
+MERGED_FEATURE=`echo $UNFORMATTED_MERGED_FEATURE |  awk -F'remotes/origin/' '{ print $2 }' |  awk -F'~' '{ print $1 }'`
+
+#-----------------------------------------------------------------------------------------------
+IS_DIT_MERGED=`git branch -r --merged origin/$DEV_GIT_BRANCH | grep $MERGED_FEATURE 2>/dev/null | wc -l`
+IS_SIT_MERGED=`git branch -r --merged origin/$SIT_GIT_BRANCH | grep $MERGED_FEATURE 2>/dev/null | wc -l`
+IS_UAT_MERGED=`git branch -r --merged origin/$UAT_GIT_BRANCH | grep $MERGED_FEATURE 2>/dev/null | wc -l`
+IS_PREPROD_MERGED=`git branch -r --merged origin/$PREPROD_GIT_BRANCH | grep $MERGED_FEATURE 2>/dev/null | wc -l`
+IS_COMMIT_EMPTY=`git diff --diff-filter=ACMR --name-only HEAD~1 HEAD~0 | wc -l`
+
+#-----------------------------------------------------------------------------------------------
+#FIND OLD REMOTE_COMMIT_ID's
+
+DEV_LOCAL_COMMIT_ID=`cat ../changelog-DEV/DEV_REMOTE_COMMIT_ID.log | grep $BRANCH_COMMIT_ID | tail -n 1 | awk -F "refs/heads/" '{print $01}' | tr -d "[:blank:]"`
+SIT_LOCAL_COMMIT_ID=`cat ../changelog-SIT/SIT_REMOTE_COMMIT_ID.log | grep $BRANCH_COMMIT_ID | tail -n 1 | awk -F "refs/heads/" '{print $01}' | tr -d "[:blank:]"`
+UAT_LOCAL_COMMIT_ID=`cat ../changelog-UAT/UAT_REMOTE_COMMIT_ID.log | grep $BRANCH_COMMIT_ID | tail -n 1 | awk -F "refs/heads/" '{print $01}' | tr -d "[:blank:]"`
+PREPROD_LOCAL_COMMIT_ID=`cat ../changelog-PREPROD/PREPROD_REMOTE_COMMIT_ID.log | grep $BRANCH_COMMIT_ID | tail -n 1 | awk -F "refs/heads/" '{print $01}' | tr -d "[:blank:]"`
+
+#-----------------------------------------------------------------------------------------------
+#COUNT REMOTE_COMMIT_ID's
+count_commit_id_dev=`cat ../changelog-DEV/DEV_REMOTE_COMMIT_ID.log | grep $BRANCH_COMMIT_ID | wc -l`
+count_commit_id_sit=`cat ../changelog-SIT/SIT_REMOTE_COMMIT_ID.log | grep $BRANCH_COMMIT_ID | wc -l`
+count_commit_id_uat=`cat ../changelog-UAT/UAT_REMOTE_COMMIT_ID.log | grep $BRANCH_COMMIT_ID | wc -l`
+count_commit_id_preprod=`cat ../changelog-PREPROD/PREPROD_REMOTE_COMMIT_ID.log | grep $BRANCH_COMMIT_ID | wc -l`
+
+#-----------------------------------------------------------------------------------------------
+for (( ; ; ))
+do
+
+case "$count_commit_id_dev" in
+
+0)
+echo "count_commit_id_dev::$count_commit_id_dev"
+echo "DEV_LOCAL_COMMIT_ID is empty, loop to find in DevBuild"
+cd /var/lib/jenkins/workspace/OmniBuilds/digitalFaceApplication-DevBuild
+DEV_LOCAL_COMMIT_ID=`git log | grep $BRANCH_COMMIT_ID | grep commit | awk -F"commit" '{print $NF}' | tr -d "[:blank:]"`
+cd $WORKSPACE
+
+if [[ $DEV_LOCAL_COMMIT_ID = "" ]];
+then
+echo "--------------------------------------------------------------------------------------"
+echo "*** SERIOUS ALERT :: DEV_LOCAL_COMMIT_ID does not exist in the DevBuild.  ***"
+echo "--------------------------------------------------------------------------------------"
+else
+echo "DEV_LOCAL_COMMIT_ID found in DevBuild <$DEV_LOCAL_COMMIT_ID>"
+{ echo -n `git ls-remote | grep heads | grep $BRANCH_COMMIT_ID`; echo " $BUILD_TIMESTAMP"; } >> ../changelog-DEV/DEV_REMOTE_COMMIT_ID.log || echo "Warning :: BRANCH_COMMIT_ID is empty"
+fi
+
+break
+;;
+
+1)
+echo "count_commit_id_dev::$count_commit_id_dev"
+echo "Found DEV_LOCAL_COMMIT_ID..read from changelog-DEV <$DEV_LOCAL_COMMIT_ID>"
+break
+;;
+
+*)
+echo "count_commit_id_dev::$count_commit_id_dev"
+echo "Review this count_commit_id_dev ...Found an Invalid count_result $count_commit_id_dev input"
+break
+;;
+
+esac
+done
+#-----------------------------------------------------------------------------------------------
+#WRITE NEW SIT_REMOTE_COMMIT_ID
+
+if [ $count_commit_id_sit = 0 ];
+then
+echo "count_commit_id_sit :: $count_commit_id_sit"
+{ echo -n `git ls-remote | grep heads | grep $BRANCH_COMMIT_ID`; echo " $BUILD_TIMESTAMP"; }  >> ../changelog-SIT/SIT_REMOTE_COMMIT_ID.log || echo "Warning :: BRANCH_COMMIT_ID is empty"
+SIT_REMOTE_COMMIT_ID=`cat ../changelog-SIT/SIT_REMOTE_COMMIT_ID.log | grep $BRANCH_COMMIT_ID | tail -n 1 | awk -F "refs/heads/" '{print $01}' | tr -d "[:blank:]"`
+else
+echo "count_commit_id_sit :: $count_commit_id_sit"
+SIT_REMOTE_COMMIT_ID=$SIT_LOCAL_COMMIT_ID
+echo "SIT_LOCAL_COMMIT_ID::$SIT_LOCAL_COMMIT_ID"
+fi
+
+#-----------------------------------------------------------------------------------------------
+
+PROPERTY_FILE=SIT_MODULE_01_variables.property
+
+echo "BUILD_ID=$BUILD_ID" >> $PROPERTY_FILE
+echo "BUILD_TAG=$BUILD_TAG" >> $PROPERTY_FILE
+
+echo "BUILD_USER_ID=$BUILD_USER_ID"  >> $PROPERTY_FILE
+echo "BUILD_USER=$BUILD_USER" >> $PROPERTY_FILE
+echo "BUILD_TIMESTAMP=$BUILD_TIMESTAMP" >> $PROPERTY_FILE
+echo "SIT_GIT_BRANCH=$SIT_GIT_BRANCH" >> $PROPERTY_FILE
+
+echo "K1_CHANGE_APPROVALS=$K1_CHANGE_APPROVALS" >> $PROPERTY_FILE
+echo "ROLLBACK_K1_CHANGES=$ROLLBACK_K1_CHANGES" >> $PROPERTY_FILE
+echo "SIT_K1_BACKUP_VERSION=$SIT_K1_BACKUP_VERSION" >> $PROPERTY_FILE
+
+echo "CSS_CHANGE_APPROVALS=$CSS_CHANGE_APPROVALS" >> $PROPERTY_FILE
+echo "ROLLBACK_CSS_CHANGES=$ROLLBACK_CSS_CHANGES" >> $PROPERTY_FILE
+echo "CHERRYPICK_CSS_BACKUP=$CHERRYPICK_CSS_BACKUP" >> $PROPERTY_FILE
+
+echo "ACCEPT_PRELOGIN_CHANGES=$ACCEPT_PRELOGIN_CHANGES" >> $PROPERTY_FILE
+echo "TAG_SIT_BUILD=$TAG_SIT_BUILD"  >> $PROPERTY_FILE
+
+echo "SIT_AUTHOR=$SIT_AUTHOR" >> $PROPERTY_FILE
+echo "BRANCH_COMMIT_ID=$BRANCH_COMMIT_ID" >> $PROPERTY_FILE
+echo "MERGED_FEATURE=$MERGED_FEATURE" >> $PROPERTY_FILE
+echo "PULL_REQUEST_ID=$PULL_REQUEST_ID" >> $PROPERTY_FILE
+echo "SIT_REMOTE_COMMIT_ID=$SIT_REMOTE_COMMIT_ID" >> $PROPERTY_FILE
+
+echo "IS_DIT_MERGED=$IS_DIT_MERGED" >> $PROPERTY_FILE
+echo "IS_SIT_MERGED=$IS_SIT_MERGED" >> $PROPERTY_FILE
+echo "IS_UAT_MERGED=$IS_UAT_MERGED" >> $PROPERTY_FILE
+echo "IS_PREPROD_MERGED=$IS_PREPROD_MERGED" >> $PROPERTY_FILE
+
+echo "count_commit_id_dev=$count_commit_id_dev" >> $PROPERTY_FILE
+echo "count_commit_id_sit=$count_commit_id_sit" >> $PROPERTY_FILE
+echo "count_commit_id_uat=$count_commit_id_uat" >> $PROPERTY_FILE
+echo "count_commit_id_preprod=$count_commit_id_preprod" >> $PROPERTY_FILE
+
+echo "DEV_LOCAL_COMMIT_ID=$DEV_LOCAL_COMMIT_ID" >> $PROPERTY_FILE
+echo "SIT_LOCAL_COMMIT_ID=$SIT_LOCAL_COMMIT_ID" >> $PROPERTY_FILE
+echo "UAT_LOCAL_COMMIT_ID=$UAT_LOCAL_COMMIT_ID" >> $PROPERTY_FILE
+echo "PREPROD_LOCAL_COMMIT_ID=$PREPROD_LOCAL_COMMIT_ID" >> $PROPERTY_FILE
+
+echo "IS_COMMIT_EMPTY=$IS_COMMIT_EMPTY" >> $PROPERTY_FILE
+echo "EXCEPTION_BUILD=$EXCEPTION_BUILD" >> $PROPERTY_FILE
+echo ""
+
+
+#-----------------------------------------------------------------------------------------------

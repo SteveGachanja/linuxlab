@@ -1,0 +1,30 @@
+
+KUBECTL COMMANDS 
+--------------------------
+-- updating an image
+kubectl set image <deploy/container name> <image name>
+example : kubectl set image deploy/myboot myboot=<image name>
+# updating an image like this also sets up an automatic Rolling update
+
+
+-- check the rollout history
+kubectl rollout history deploy/myboot
+
+-- rolling back to a previous version
+kubectl rollout undo deploy/container --to-revision=1
+
+
+-- show labels on deployments
+kubectl get po --show=labels
+
+-- monitoring
+kubectl describe po <pod_name>
+kubectl log <pod_name> -f  # -f option for following logs
+
+
+-- cpu resources 10000m is # 10 cores of total cpu
+-- cpu resources 1000m is # 1 cores of total cpu
+-- cpu resources 250 is # 1/4 cores of total cpu
+-- mem resources 400Mi is # 400MB of memory
+
+# Livenenss and Readiness Probe

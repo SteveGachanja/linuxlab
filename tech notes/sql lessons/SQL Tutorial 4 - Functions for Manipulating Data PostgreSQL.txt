@@ -1,0 +1,328 @@
+-- Functions for Manipulating Data	
+-- The SAKILA Database
+
+** Common Data Types in PostgreSQL
+    - Char, Varchar and text
+	- int , decimal
+	- date , time , timestamp and interval
+	- Arrays
+	
+** Data and time functions and operators
+** Parsing and manipulating text
+** Full-trext search and PostgreSQL Extensions
+
+==========================================
+-- User of Intervals
+SELECT
+ 	-- Select the rental and return dates
+	rental_date,
+	return_date,
+ 	-- Calculate the expected_return_date
+	rental_date + INTERVAL '3 days' AS expected_return_date
+FROM rental;
+
+==========================================
+** WORKING WITH ARRAYS
+
+WHERE 'other' = ANY (email);
+WHERE email @> ARRAY['other'];
+
+-- Select the title and special features column 
+SELECT 
+  title, 
+  special_features 
+FROM film
+-- Use the array index of the special_features column
+WHERE special_features[1] = 'Trailers';
+
+------------------------------------------
+
+SELECT
+  title, 
+  special_features 
+FROM film 
+-- Modify the query to use the ANY function 
+WHERE 'Trailers' = ANY (special_features);
+
+------------------------------------------
+
+SELECT 
+  title, 
+  special_features 
+FROM film 
+-- Filter where special_features contains 'Deleted Scenes'
+WHERE special_features @> ARRAY['Deleted Scenes'];
+
+
+=======================================================
+** WORKING WITH BASIC DATE and TIME ARITHMETIC OPERATORS
+-------------------------------------------------------
+CURRENT_TIME -- current time without the time zone
+NOW() -- current date and time at microsec precision, with time zone
+NOW()::timestamp -- Same as the CAST() function -- exclusively removes the time zone
+
+CURRENT_TIMESTAMP -- CURRENT_TIMESTAMP(2) you can specify a precision parameter / seconds rounded to the no. of digits specified.
+CAST(NOW() as timestamp) -- same as CURRENT_TIMESTAMP
+
+CURRENT_DATE -- a date value without the time
+CAST( NOW() AS date ) -- same as CURRENT_DATE
+
+AGE()
+EXTRACT()
+DATE_PART()
+DATE_TRUNC()
+
+SELECT timestamp '2019-05-01' + 21 * INTERVAL '1 day';
+SELECT INTERVAL '5 day' + CURRENT_TIMESTAMP AS five_days_from_now;
+
+-------------------------------------------
+
+SELECT f.title, f.rental_duration,
+    -- Calculate the number of days rented
+    r.return_date - r.rental_date AS days_rented
+FROM film AS f
+     INNER JOIN inventory AS i ON f.film_id = i.film_id
+     INNER JOIN rental AS r ON i.inventory_id = r.inventory_id
+ORDER BY f.title;
+
+-------------------------------------------
+
+SELECT f.title, f.rental_duration,
+    -- Calculate the number of days rented
+	AGE(r.return_date, r.rental_date) AS days_rented
+FROM film AS f
+	INNER JOIN inventory AS i ON f.film_id = i.film_id
+	INNER JOIN rental AS r ON i.inventory_id = r.inventory_id
+ORDER BY f.title;
+
+-------------------------------------------
+
+SELECT
+	f.title,
+ 	-- Convert the rental_duration to an interval
+    INTERVAL '1' day * f.rental_duration,
+ 	-- Calculate the days rented as we did previously
+    r.return_date - r.rental_date AS days_rented
+FROM film AS f
+    INNER JOIN inventory AS i ON f.film_id = i.film_id
+    INNER JOIN rental AS r ON i.inventory_id = r.inventory_id
+-- Filter the query to exclude outstanding rentals
+WHERE r.return_date IS NOT NULL
+ORDER BY f.title;
+-------------------------------------------
+
+SELECT
+    f.title,
+	r.rental_date,
+    f.rental_duration,
+    -- Add the rental duration to the rental date
+    INTERVAL '1' day * f.rental_duration + r.rental_date AS expected_return_date,
+    r.return_date
+FROM film AS f
+    INNER JOIN inventory AS i ON f.film_id = i.film_id
+    INNER JOIN rental AS r ON i.inventory_id = r.inventory_id
+ORDER BY f.title;
+
+==================================================
+** Extracting and Transforming date and time data
+
+EXTRACT(field from source) 
+-- SELECT EXTRACT(quarter FROM column) AS quarter;
+-- SELECT EXTRACT(dow FROM rental_date) AS dayofweek 
+
+DATE_PART('field',source)  -- SELECT DATE_PART('quarter' timestamp '2019-05-01') AS quarter;
+DATE_TRUNC() -- SELECT DATE_TRUNC('year', FROM column) AS trunc_by_year;
+
+
+-------------------------------------------------
+-- Extract day of week from rental_date
+SELECT 
+  EXTRACT(dow FROM rental_date) AS dayofweek, 
+  -- Count the number of rentals
+  Count(*) as rentals 
+FROM rental 
+GROUP BY 1;    -- Group by first selected column  
+---------------------------------------------------
+
+SELECT 
+  DATE_TRUNC('day', rental_date) AS rental_day,
+  -- Count total number of rentals 
+  Count(*) AS rentals 
+FROM rental
+GROUP BY 1;
+
+---------------------------------------------------
+
+--Extract the day of the week from the rental_date column using the alias dayofweek.
+--Use an INTERVAL in the WHERE clause to select records for the 90 day period starting on 5/1/2005.
+
+SELECT 
+  -- Extract the day of week date part from the rental_date
+  Extract(dow FROM rental_date) AS dayofweek,
+  AGE(return_date, rental_date) AS rental_days
+FROM rental AS r 
+WHERE 
+  -- Use an INTERVAL for the upper bound of the rental_date 
+  rental_date BETWEEN CAST('2005-05-01' AS DATE)
+   AND CAST('2005-05-01' AS DATE) + INTERVAL '90 day';
+   
+---------------------------------------------------
+
+-- Finally, use a CASE statement and DATE_TRUNC() to create a new column called past_due
+-- which will be TRUE if the rental_days is greater than the rental_duration otherwise, it will be FALSE.
+
+
+SELECT 
+  c.first_name || ' ' || c.last_name AS customer_name,     -- String CONCATENATION 
+  f.title,
+  r.rental_date,
+  -- Extract the day of week date part from the rental_date
+  EXTRACT(dow FROM r.rental_date) AS dayofweek,
+  AGE(r.return_date, r.rental_date) AS rental_days,
+  -- Use DATE_TRUNC to get days from the AGE function
+  CASE WHEN DATE_TRUNC('day', AGE(r.return_date, r.rental_date)) > 
+  -- Calculate number of d
+    f.rental_duration * INTERVAL '1' day 
+  THEN TRUE 
+  ELSE FALSE END AS past_due 
+FROM 
+  film AS f 
+  INNER JOIN inventory AS i 
+  	ON f.film_id = i.film_id 
+  INNER JOIN rental AS r 
+  	ON i.inventory_id = r.inventory_id 
+  INNER JOIN customer AS c 
+  	ON c.customer_id = r.customer_id 
+WHERE 
+  -- Use an INTERVAL for the upper bound of the rental_date 
+  r.rental_date BETWEEN CAST('2005-05-01' AS DATE) 
+  AND CAST('2005-05-01' AS DATE) + INTERVAL '90 day';
+
+
+=======================================================
+** REFORMATTING String and Character data
+------------------------------------------------------
+CONCATENATION with a non-string -- SELECT customer_id || ': ' || c.first_name || ' ' || c.last_name AS full_name_with_id    
+CONCATENATION function 			-- SELECT CONCAT(c.first_name,' ', c.last_name) AS full_name 
+Changing the Case of a string 	-- SELECT UPPER(email)    
+								-- SELECT LOWER(email)
+								-- SELECT INITCAP(title)      
+Replacing characters in a string-- SELECT REPLACE (column, 'a apple', 'an apple') as column
+Reversing string data			-- SELECT REVERSE(title)
+
+------------------------------------------------------					
+** PARSING String and Character data
+** String Length and Character Position
+------------------------------------------------------
+Determining the length of a string 			-- SELECT CHAR_LENGTH(title)
+Finding position of a character in a string	-- SELECT POSITION('@' IN email)
+											-- SELECT STRPOS(email, '@')
+Extract	first N characters of a string 		-- SELECT LEFT(column, 50)										
+Extract	last N characters of a string 		-- SELECT RIGHT(column, 50)
+
+-------------------------------------------------------
+
+SELECT from Source_Data WHERE LEFT(column, 1) IN ('A','E','I','O','U');
+
+-------------------------------------------------------
+
+Extracting a substring with starting and ending position 
+A substring starting from left at 10 ending at 50 characters 				-- SELECT SUBSTRING(column, 10, 50)
+																			-- SELECT SUBSTR(column, 10 , 50)  # SUBSTR does not use FROM and FOR functions
+A substring starting from left at 0 ending at position of character '@' 	-- SELECT SUBSTRING(email FROM 0 FOR POSITION('@' IN email_column))
+A substring starting from left at position of character '@' 				-- SELECT SUBSTRING(email FROM POSITION('@' IN email)+1 FOR CHAR_LENGTH(email))
+
+------------------------------------------------------
+SELECT
+  -- Extract the characters to the left of the '@'
+  LEFT(email, POSITION('@' IN email)-1) AS username,
+  -- Extract the characters to the right of the '@'
+  SUBSTRING(email FROM POSITION('@' IN email)+1 FOR CHAR_LENGTH(email)) AS domain
+FROM customer;
+------------------------------------------------------
+
+** Truncating and Padding string data
+
+Removing whitespace from Strings	-- TRIM( [ leading | trailing | both ] [characters] from string )
+									-- SELECT TRIM (' padded ')
+									-- SELECT LTRIM (' padded ')  # only removes whitespace from the left
+									-- SELECT RTRIM (' padded ')  # only removes whitespace from the right
+									
+Padding strings with an additional character '#' so that the CHAR_LENGTH is equal to 10	-- SELECT LPAD('padded', 10, '#');
+------------------------------------------------------
+
+-- Concatenate the padded first_name and last_name 
+SELECT RPAD(first_name, LENGTH(first_name)+1) || last_name AS full_name FROM customer;
+
+-- Concatenate the first_name and last_name with Padding on email
+SELECT 
+	RPAD(first_name, LENGTH(first_name)+1) 
+    || RPAD(last_name, LENGTH(last_name)+2, ' <') 
+    || RPAD(email, LENGTH(email)+1, '>') AS full_email
+FROM customer; 
+
+------------------------------------------------------
+--- Determine the position of the last whitespace character before reaching 50 characters.
+
+SELECT POSITION(' ' IN REVERSE(LEFT(description, 50)))
+
+FROM 
+  film AS f 
+  INNER JOIN film_category AS fc 
+  	ON f.film_id = fc.film_id 
+  INNER JOIN category AS c 
+  	ON fc.category_id = c.category_id;
+
+===========================================================
+** Full-text Search vs LIKE OPERATOR
+-----------------------------------------------------------
+_wildcard : used to match exactly one character
+% wildcard : user to match zero or more characters
+
+-- The LIKE OPERATOR is case sensitive
+-- Select only records with the word 'GOLD'
+SELECT * FROM film WHERE title LIKE '%GOLD%';
+
+** Full text search , case insensitive  -- WHERE to_tsvector(column) @@ to_tsquery('elf');
+-- Select the film description as a tsvector
+SELECT to_tsvector(description)FROM film;
+
+-- Select the title and description
+SELECT title, description FROM film WHERE to_tsvector(title) @@ to_tsquery('elf');
+-- Convert the title to a tsvector and match it against the tsquery 
+
+
+-----------------------------------------------------------
+** Extending PostgreSQL
+-- User defined data types / ENUM enumerated data types
+-- enumerated data types are used in your database when you have a column where you want to store a fixed list of values that rarely change.
+-- E.g Dayoftheweek , states and provinces in a country, directions in a compass
+
+CREATE TYPE dataofweek AS ENUM ('Monday','Tuesday','Wednesday','Thur','Fri','Sat','Sun');
+
+CREATE TYPE compass_position AS ENUM ('North','South','East','West');
+
+-- User defined functions / equivalent of Stored PROCEDURE in SQL
+CREATE FUNCTION square(i integer) RETURNS integer AS
+$$
+	BEGIN 
+		RETURN i * i;
+	END;
+$$ LANGUAGE plpgsql;
+
+-- SELECT squared(10); RETURNS 100 --
+
+
+-----------------------------------------------------------
+** Improving Text Search with Extensions
+-- Commonly used extension
+POSTGIS
+POSTPIC
+Fuzzystrmatch
+========================================================
+
+SUMMARY
+** Common Data types in PostgreSQL  -- including Arrays
+** Date / Time functions and operators
+** Parsing and manipulating text
+** PostgreSQL Extensions and full text search

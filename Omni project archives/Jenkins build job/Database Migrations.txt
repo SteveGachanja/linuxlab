@@ -1,0 +1,109 @@
+set +x
+echo "================================================================="
+start=$(date +'%s')
+echo $start > start_time
+
+for (( ; ; ))
+do
+DevBuild_exists=`ls ../digitalFaceApplication-DevBuild/ | wc -l`
+case "$DevBuild_exists" in
+
+0)
+echo "DevBuild_exists_status::$DevBuild_exists"
+echo "Kindly wait DevBuild is happening...DBmigrate DIRECTORY is still being populated by the DevBuild."
+exec &>/dev/null
+;;
+
+*)
+echo "DevBuild_exists_status::$DevBuild_exists"
+echo "DevBuild DIRECTORY exists."
+break
+;;
+
+esac
+done
+#-----------------------------------------------------------------------
+
+
+
+
+
+set +x
+echo "================================================================="
+start=`cat start_time`
+echo "It took $(($(date +'%s') - $start)) seconds to fetch $BUILD_TAG"
+sleep 3
+rsync -azvhq ../digitalFaceApplication-DevBuild/DBMigration_CT ./LASTBUILD_UNRENAMED_SCRIPTS/
+rm -rf DBMigration_*
+cp -r LASTBUILD_UNRENAMED_SCRIPTS/DBMigration_CT .
+ls -lrt . | grep -v LASTBUILD_UNRENAMED_SCRIPTS | grep -v start_time
+echo "================================================================="
+
+
+
+set +x
+echo " "
+echo "<----- CHECK BUILD PARAMETERS ------->"
+echo " "
+
+echo "BUILD_ID"::$BUILD_ID 
+echo "BUILD_USER"::$BUILD_USER
+echo "BUILD_TIMESTAMP"::$BUILD_TIMESTAMP
+
+echo "DEV_GIT_BRANCH"::$DEV_GIT_BRANCH
+
+echo " "
+echo "<----- Pulling from GIT Repo ~ CT DataBase Migrations on DEV------->"
+echo " "
+
+ls -1ltr ./DBMigration_CT/*sql
+
+
+
+
+
+set +x
+echo "<----- Rename and Migrate DBMigration_CT\ DEV------->"
+
+ls ./DBMigration_CT/*CT-COOP*.sql | awk -F/ '{print $NF}'| while read sqlfile
+do mv DBMigration_CT/"$sqlfile" DBMigration_CT/"$(echo "$sqlfile" | sed -e 's/CT-COOP/R__CT-COOP/g')"
+done
+
+
+
+
+set +x
+echo ""
+echo "======================================================================================="
+echo "Migrate CT DBMigration scripts"
+
+FLYWAY_PASSWORD=BrY3XcKrGuFbbGWdxEts
+
+/usr/local/bin/flyway -user=CTSACCO -password=$FLYWAY_PASSWORD -locations=filesystem:$WORKSPACE/DBMigration_CT repair
+/usr/local/bin/flyway -user=CTSACCO -password=$FLYWAY_PASSWORD -locations=filesystem:$WORKSPACE/DBMigration_CT migrate
+/usr/local/bin/flyway -user=CTSACCO -password=$FLYWAY_PASSWORD -locations=filesystem:$WORKSPACE/DBMigration_CT/POST_EXECUTION_CT_SCRIPTS migrate
+/usr/local/bin/flyway -user=CTSACCO -password=$FLYWAY_PASSWORD -locations=filesystem:$WORKSPACE/DBMigration_CT/POST_EXECUTION_CT_SCRIPTS/_ApplyLast migrate
+
+echo "======================================================================================="
+echo "Confirm successful Database migrations ..."
+echo "======================================================================================="
+
+/usr/local/bin/flyway -user=CTSACCO -password=$FLYWAY_PASSWORD -locations=filesystem:$WORKSPACE/DBMigration_CT info
+
+echo "======================================================================================="
+
+
+
+
+set +x
+echo "<----- Rename and Migrate DBMigration_CT\POST_EXECUTION_CT_SCRIPTS DEV------->"
+
+ls -1ltr ./DBMigration_CT/POST_EXECUTION_CT_SCRIPTS/*sql
+
+ls ./DBMigration_CT/POST_EXECUTION_CT_SCRIPTS/*CT-COOP*.sql | awk -F/ '{print $NF}'| while read sqlfile
+do mv DBMigration_CT/POST_EXECUTION_CT_SCRIPTS/"$sqlfile" DBMigration_CT/POST_EXECUTION_CT_SCRIPTS/"$(echo "$sqlfile" | sed -e 's/CT-COOP/R__CT-COOP/g')"
+
+done
+
+
+

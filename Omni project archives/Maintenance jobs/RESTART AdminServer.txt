@@ -1,0 +1,71 @@
+#!/bin/bash
+
+echo "RESTART AdminServer .."
+echo "============================================================="
+
+export BUILD_ID=dontKillMe
+
+cd /app/appadmin/Oracle/Middleware/OmniDev/user_projects/domains/Omni_domain/bin
+
+echo "Step 1. Find and Kill Admin processes::"
+
+process_sh=`ps -ef | grep AdminServer | grep /bin/sh | awk -F " " {'print $02'} | tr -d "[:blank:]"`
+process_Admin=`ps -ef | grep AdminServer | grep /app/software/jdk1.8.0_202/bin/java | awk -F " " {'print $02'} | tr -d "[:blank:]"`
+
+
+echo "$process_sh $process_Admin" | while read process; do echo $process && kill -9 $process 2>/dev/null; done
+sleep 3
+
+echo "-------------------------------------------------------------"
+echo "Step 2. Starting the ./startWebLogic.sh process ..."
+
+nohup ./startWebLogic.sh 1>nohup.out 2>nohup.out &
+sleep 3
+
+echo "-------------------------------------------------------------"
+#./read.nohup.out.sh
+
+for (( ; ; ))
+do
+
+RUNNING=`cat nohup.out | grep "The server started in RUNNING mode" | wc -l`
+
+if [ $RUNNING == 0 ];
+then
+export RUNNING_mode=0
+
+elif [ $RUNNING == 1 ];
+then
+export RUNNING_mode=1
+
+else
+export RUNNING_mode=5
+fi
+
+case "$RUNNING_mode" in
+
+0)
+echo "RUNNING_mode:$RUNNING_mode" > PROPERTY_FILE
+echo "Kindly wait for approx. 3 mins while Admin Server is Restarting..." >> PROPERTY_FILE
+cat nohup.out | grep -B 10 -A 20 "RUNNING" >> PROPERTY_FILE
+cat PROPERTY_FILE
+exec &>/dev/null
+;;
+
+1)
+sleep 2
+echo "===================================================" > PROPERTY_FILE
+echo "RUNNING_mode:$RUNNING_mode" >> PROPERTY_FILE
+echo "1) Admin server has Successfully Restarted..." >> PROPERTY_FILE
+cat nohup.out | grep -B 10 -A 20 "RUNNING" >> PROPERTY_FILE
+cat nohup.out | grep "Error" >> PROPERTY_FILE
+cat nohup.out | grep "RUNNING" >> PROPERTY_FILE
+echo "===================================================" >> PROPERTY_FILE
+cat PROPERTY_FILE
+break
+;;
+
+esac
+done
+
+echo "********* End of script ***************************" >> PROPERTY_FILE

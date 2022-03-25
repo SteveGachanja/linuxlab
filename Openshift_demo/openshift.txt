@@ -1,0 +1,35 @@
+{username}			stevegachanja
+{token}				sha256~W7l1Efzz2ckg4QeDjoNs0oKgqBnRkfRBj9mOvku9lnA
+{cluster_name}		api-sandbox-x8i5-p1-openshiftapps-com:6443
+{context}			{username}-dev/{cluster_name}/{username}
+					stevegachanja-dev/api-sandbox-x8i5-p1-openshiftapps-com:6443/stevegachanja
+					
+{api_server_url}	https://api.sandbox.x8i5.p1.openshiftapps.com:6443
+
+--------------------------------------------------------------------------------------
+
+backend 	:http://quotes-stevegachanja-dev.apps.sandbox.x8i5.p1.openshiftapps.com/quotes
+backend 	:http://quotes-stevegachanja-dev.apps.sandbox.x8i5.p1.openshiftapps.com/quotes/random
+frontent	:http://quotesweb-stevegachanja-dev.apps.sandbox.x8i5.p1.openshiftapps.com/
+
+curl http://quotes-stevegachanja-dev.apps.sandbox.x8i5.p1.openshiftapps.com/quotes/
+
+-------------------------------------------------------------------------
+
+"Next Setup database scripts"
+#kubectl exec $podname -it -- ls -t tmp 
+#kubectl exec $podname date
+
+# Get output from running 'date' in mariadb-container from pod podname
+#kubectl exec $podname -c mariadb date 
+
+# Switch to raw terminal mode, sends stdin to 'bash' in mariadb-container from pod podname # and sends stdout/stderr from 'bash' back to the client
+#kubectl exec $podname -c mariadb -it -- bash -il
+
+------------------------------------------------------------------------
+
+OPENSHIFT links
+console: https://console-openshift-console.apps.sandbox.x8i5.p1.openshiftapps.com/topology/ns/stevegachanja-dev
+https://developers.redhat.com/devnation/deep-dive/kubernetes
+https://kubebyexample.com/
+https://developers.redhat.com/topics/kubernetes

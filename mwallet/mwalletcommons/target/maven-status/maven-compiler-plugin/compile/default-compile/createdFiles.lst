@@ -1,7 +1,0 @@
-com\coop\mwalletapi\functions\Functions.class
-com\coop\mwalletapi\commons\MwalletCommonDataReq.class
-com\coop\mwalletapi\commons\RequestHeader.class
-com\coop\mwalletapi\kafka\KafkaLogProducer.class
-com\coop\mwalletapi\commons\ResponseHeader.class
-com\coop\mwalletapi\kafka\KafkaConfigs.class
-com\coop\mwalletapi\commons\ApiUsers.class

@@ -1,0 +1,387 @@
+set +x
+echo ""
+echo "======================================================================="
+echo "MODULE 02 :: FEATURE BRANCH RENAMING | $SIT_GIT_BRANCH"
+echo "======================================================================="
+echo ""
+
+git checkout $SIT_GIT_BRANCH
+git branch
+
+if [[ $CSS_CHANGE_APPROVALS = "true" || $ROLLBACK_CSS_CHANGES = "true" || $ACCEPT_PRELOGIN_CHANGES = "true" ]];
+then
+EXCEPTION_BUILD=true
+echo "Changed_EXCEPTION_BUILD to::$EXCEPTION_BUILD"
+else
+echo "EXCEPTION_BUILD::$EXCEPTION_BUILD"
+fi
+
+#-----------------------------------------------------------------------------------------------
+#EXCEPTION_BUILD_parameters
+
+FUNCTION=EXCEPTION_BUILD
+CAPABILITIES=`cat $CAPABILITIES_FILE | grep $FUNCTION` || echo "WARNING :: FUNCTION $FUNCTION not available for $BUILD_USER_ID"
+echo "BUILD_USER CAPABILITIES"::$CAPABILITIES
+
+if [[ $EXCEPTION_BUILD = "true" ]] && [[ "$CAPABILITIES" = "$FUNCTION" ]];
+then
+exit_status=0
+echo "Unrestricted build exit_status=($exit_status) , change all exit status (1) to status (0)"
+
+else
+exit_status=1
+echo "Make build as usual with restrictions exit_status=($exit_status) .."
+fi
+
+echo "-----------------------------------------------------------------------------------------------------"
+echo "Fetching $MERGED_FEATURE ..."
+git fetch origin $MERGED_FEATURE:$MERGED_FEATURE
+git checkout $MERGED_FEATURE
+echo ""
+
+echo "------------------------------------------------------------------------------------------------------"
+#FAIL BUILD IF FEATURE BRANCH IS EMPTY OR IS EQUAL TO A SYSTEM BRANCH
+
+if [[ $MERGED_FEATURE = "" ]] || [[ $MERGED_FEATURE == *$DEV_GIT_BRANCH* ]] || [[ $MERGED_FEATURE == *$SIT_GIT_BRANCH* ]] || [[ $MERGED_FEATURE == *$UAT_GIT_BRANCH* ]] || [[ $MERGED_FEATURE == *$PREPROD_GIT_BRANCH* ]] || [[ $MERGED_FEATURE == *$PROD_GIT_BRANCH* ]];
+then
+echo " "
+echo "------  WARNING :: Branch-Renaming failed because MERGED feature branch is EMPTY OR a SYSTEM RELEASE BRANCH ==> $MERGED_FEATURE ------"
+echo " "
+exit 0
+
+#-------------------------------------------------------------------------------------------------------
+#REMOVE CONFLICT BRANCH, FIND AND RENAME ORIGINAL DEV_FEATURE_BRANCH
+
+elif [[ $MERGED_FEATURE == *CONFLICT_* ]] || [[ $MERGED_FEATURE == *Conflict_* ]] || [[ $MERGED_FEATURE == *CONFLICT-* ]];
+then
+
+echo "MERGED_FEATURE :: $MERGED_FEATURE *** This as a Conflict_feature_branch *** " && echo ""
+CONFLICT_BRANCH=$MERGED_FEATURE
+echo "Attempting to retrieve ORIGINAL_FEATURE_BRANCH ..."
+
+#---------------------------------------------------------------------------------
+echo "" && echo "Find the DEV_FEATURE_BRANCH ..." && echo ""
+
+REMOVE_CONFLICT=`git ls-remote | grep heads | grep $CONFLICT_BRANCH | awk -F "CONFLICT_" '{print $NF}' | awk -F "Conflict_" '{print $NF}' | awk -F "CONFLICT-" '{print $NF}' | cut -d "-" -f 1-6`
+echo "REMOVE_CONFLICT"::$REMOVE_CONFLICT
+
+RAW_FEATURE=`echo $REMOVE_CONFLICT | awk -F'SIT_' '{ print $NF }'| awk -F'UAT_' '{ print $NF }' | awk -F'PREPROD_' '{ print $NF }'`
+echo "RAW_FEATURE"::$RAW_FEATURE
+
+FIND_FEATURE=`git ls-remote | grep heads | grep $RAW_FEATURE | grep -v $CONFLICT_BRANCH | grep -v CONFLICT_ | grep -v CONFLICT- | grep -v Conflict_ | tr ' ' '\n' | awk -F "refs/heads/" '{print $02}'`
+echo "FIND_FEATURE"::$FIND_FEATURE
+
+count_result=`git ls-remote | grep heads | grep $RAW_FEATURE | grep -v $CONFLICT_BRANCH | grep -v CONFLICT_ | grep -v CONFLICT- | grep -v Conflict_ | tr ' ' '\n' | wc -l`
+echo ""
+#--------------------------------------------------------------
+for (( ; ; ))
+do
+
+case "$count_result" in
+
+0)
+echo "count_result::$count_result"
+echo "*** WARNING :: FEATURE_BRANCH <$FIND_FEATURE> not found .. Invoke Re-try ***"
+#--------------------------------------------------------------
+
+#####################################################
+
+#RAW_FEATURE=$FIND_FEATURE
+re_tries=5
+#------------------------------------------------------
+for ((counter=1;counter<=$re_tries;counter++))
+do
+echo "**********************************************"
+
+#if [[ $FEATURE_EXISTENCE == 1 ]] && [[ $counter < $re_tries ]];
+if [[ $counter < $re_tries ]];
+then
+FEATURE_EXISTENCE=1
+elif [[ $counter == $re_tries ]];
+then
+echo "More than ($counter) Re-tries.. exit 0"
+echo "--------------------------------------"
+exit 0
+else
+echo "Start/Continue search ..!"
+fi
+
+#------------------------------------------------------
+
+echo "INPUT::${RAW_FEATURE}"
+SEARCH=`echo "${RAW_FEATURE::-$counter}"`
+echo "SEARCH ($counter) ::${SEARCH}"
+FEATURE_EXISTENCE=`git ls-remote | grep ${SEARCH} | grep -v CONFLICT_ | wc -l`
+echo "FEATURE_EXISTENCE INPUT::$FEATURE_EXISTENCE"
+
+#------------------------------------------------------
+
+case "$FEATURE_EXISTENCE" in
+0) echo "NOT found FEATURE <${SEARCH}>..Try again.."
+#RAW_FEATURE=$FIND_FEATURE
+echo "----------------------------------------------------------"
+;;
+1) echo "Count ($counter) :: BINGO! Successfully found FEATURE_BRANCH ${SEARCH} .."
+FIND_FEATURE=$SEARCH
+echo "----------------------------------------------------------"
+break
+
+;;
+*) echo "Too complex! Found more than one FEATURE"
+echo "----------------------------------------------------------"
+break
+
+;;
+esac
+done
+
+#####################################################
+;;
+
+1)
+echo "count_result::$count_result"
+echo "ALL is OK , Found the DEV_FEATURE_BRANCH <$FIND_FEATURE>"
+echo "continue with verifying local variables ..."
+break
+;;
+
+2)
+echo "count_result::$count_result"
+echo "WARNING:: Found more than one(1) Feature Branch"
+echo "..Loop and try to find the Feature Branch could be in SIT/UAT/PREPROD"
+
+if [[ $FIND_FEATURE == *SIT_* ]];
+then
+FIND_FEATURE=`echo $FIND_FEATURE | tr ' ' '\n' | grep SIT_`
+echo "Found an SIT_FEATURE_BRANCH::$FIND_FEATURE"
+
+elif [[ $FIND_FEATURE == *UAT_* ]];
+then
+FIND_FEATURE=`echo $FIND_FEATURE | tr ' ' '\n' | grep UAT_`
+echo "Found a UAT_FEATURE_BRANCH::$FIND_FEATURE"
+
+elif [[ $FIND_FEATURE == *PREPROD_* ]];
+then
+FIND_FEATURE=`echo $FIND_FEATURE | tr ' ' '\n' | grep PREPROD_`
+echo "Found a PREPROD_FEATURE_BRANCH::$FIND_FEATURE"
+
+else
+FIND_FEATURE=`echo $FIND_FEATURE | tr ' ' '\n' | grep SIT_ | grep UAT_ | grep PREPROD_`
+echo "Found this as the FEATURE_BRANCH::$FIND_FEATURE"
+
+fi
+break
+;;
+
+*)
+echo "count_result::$count_result"
+echo $FIND_FEATURE | tr ' ' '\n'
+echo "*** WARNING :: Found an invalid number of feature_branches, count_result is <$count_result>..exit 0 ***"
+exit 0
+;;
+
+esac
+done
+
+echo "---------------------------------------------------------------"
+
+#VERIFY FOUND_FEATURE
+VERIFY=`git ls-remote | grep heads | grep -v $CONFLICT_BRANCH | grep -w $FIND_FEATURE | wc -l`
+
+if [[ $VERIFY == 1 ]];
+then
+echo "Found DEV_FEATURE_BRANCH .. <$FIND_FEATURE>"
+DEV_FEATURE_BRANCH=$FIND_FEATURE
+else
+echo "*** WARNING :: Found an invalid feature_branch <$FIND_FEATURE> ..exit 0 ***"
+exit 0
+fi
+
+echo "---------------------------------------------------------------"
+echo "LOCAL VARIABLES in FEATURE_BRANCH <$DEV_FEATURE_BRANCH>"
+echo "---------------------------------------------------------------"
+
+BRANCH_REMOTE_COMMIT_ID=`git ls-remote | grep heads | grep -v $CONFLICT_BRANCH | grep -w $DEV_FEATURE_BRANCH | awk -F "refs/heads/" '{print $01}' | tr -d "[:blank:]"` || echo "Error:: Could not find the DEV_FEATURE_BRANCH"
+echo "BRANCH_REMOTE_COMMIT_ID::$BRANCH_REMOTE_COMMIT_ID"
+
+IS_DIT_MERGED=`git branch -r --merged origin/$DEV_GIT_BRANCH | grep $DEV_FEATURE_BRANCH 2>/dev/null | wc -l`
+echo "$DEV_GIT_BRANCH merged status $IS_DIT_MERGED"
+
+DEV_LOCAL_COMMIT_ID=`cat ../changelog-DEV/DEV_REMOTE_COMMIT_ID.log | grep $BRANCH_REMOTE_COMMIT_ID | tail -n 1 | awk -F "refs/heads/" '{print $01}' | tr -d "[:blank:]"`
+echo "DEV_LOCAL_COMMIT_ID::$DEV_LOCAL_COMMIT_ID"
+
+echo "---------------------------------------------------------------"
+
+if [[ $DEV_LOCAL_COMMIT_ID == "" ]];
+then
+echo "DEV_LOCAL_COMMIT_ID is empty .. find in DevBuild"
+cd /var/lib/jenkins/workspace/OmniBuilds/digitalFaceApplication-DevBuild
+DEV_LOCAL_COMMIT_ID=`git log | grep $BRANCH_REMOTE_COMMIT_ID | grep commit | awk -F"commit" '{print $NF}' | tr -d "[:blank:]"`
+{ echo -n `git ls-remote | grep heads | grep $BRANCH_REMOTE_COMMIT_ID`; echo " $BUILD_TIMESTAMP"; } >> ../changelog-DEV/DEV_REMOTE_COMMIT_ID.log || echo "Warning :: BRANCH_COMMIT_ID is empty"
+echo "DEV_LOCAL_COMMIT_ID found in DevBuild <$DEV_LOCAL_COMMIT_ID>"
+cd $WORKSPACE
+else
+echo "*** ALL is OK ***"
+fi
+
+#----------------------------------------------------------------------------
+#Check if FEATURE_BRANCH is merged and built into DIT
+
+if [[ $BRANCH_REMOTE_COMMIT_ID == $DEV_LOCAL_COMMIT_ID ]];
+then
+echo ""
+echo "----------------------------------------------------------"
+echo "FEATURE_BRANCH <$DEV_FEATURE_BRANCH> is built into DIT"
+echo "----------------------------------------------------------"
+echo ""
+
+elif [[ $IS_DIT_MERGED < 1 ]];
+then
+echo ""
+echo "---------------------------------------------------------------"
+echo "FEATURE_BRANCH <$DEV_FEATURE_BRANCH> is not merged into develop"
+echo "---------------------------------------------------------------"
+echo ""
+exit $exit_status
+exit 1
+
+elif [[ $BRANCH_REMOTE_COMMIT_ID != $DEV_LOCAL_COMMIT_ID ]];
+then
+echo ""
+echo "----------------------------------------------------------"
+echo "FEATURE_BRANCH <$DEV_FEATURE_BRANCH> is not built into DIT"
+echo "----------------------------------------------------------"
+echo ""
+exit $exit_status
+exit 1
+
+elif [[ $IS_DIT_MERGED > 0 ]] && [[ $BRANCH_REMOTE_COMMIT_ID = $DEV_LOCAL_COMMIT_ID ]];
+then
+echo ""
+echo "-----------------------------------------------------------------------------------"
+echo "FEATURE_BRANCH <$DEV_FEATURE_BRANCH> is merged into develop, continue the build ..."
+echo "-----------------------------------------------------------------------------------"
+echo ""
+
+else
+echo ""
+echo "----------------------------------------------------------"
+echo " *** WARNING :: Could not resolve the Conflict < $CONFLICT_BRANCH > *** "
+echo "----------------------------------------------------------"
+echo ""
+exit $exit_status
+exit 1
+fi
+
+#----------------------------------------------------------------------------
+
+echo ""
+echo "Fetching DEV_FEATURE_BRANCH <$DEV_FEATURE_BRANCH> ..."
+git fetch origin $DEV_FEATURE_BRANCH:$DEV_FEATURE_BRANCH
+git checkout $DEV_FEATURE_BRANCH
+echo ""
+
+#----------------------------------------------------------------------------
+#Final clean up before renaming
+DEV_FEATURE_BRANCH=`echo $DEV_FEATURE_BRANCH | awk -F'SIT_' '{ print $NF }'| awk -F'UAT_' '{ print $NF }' | awk -F'PREPROD_' '{ print $NF }'`
+echo "DEV_FEATURE_BRANCH"::$DEV_FEATURE_BRANCH
+
+SIT_FEATURE_BRANCH=SIT_$DEV_FEATURE_BRANCH
+git branch -m $SIT_FEATURE_BRANCH
+
+#Delete all similar existing upstream branches
+git ls-remote | grep heads | grep $DEV_FEATURE_BRANCH | awk -F " " '{print $2}' > feature_list.log
+
+echo "" && echo "----------------------------------------------"
+echo "check_if_similar_branches_exists ..."
+ls -lrt feature_list.log && cat feature_list.log 
+echo "----------------------------------------------" && echo ""
+
+cat feature_list.log | while read feature_list;
+do `git push origin :"$feature_list"`
+done
+echo ""
+
+#Push and record new feature of out CONFLICT zone SIT_FEATURE_BRANCH
+git push origin $SIT_FEATURE_BRANCH
+{ echo -n `git ls-remote | grep heads | grep $SIT_FEATURE_BRANCH`; echo " $BUILD_TIMESTAMP"; } >> ../changelog-SIT/SIT_REMOTE_COMMIT_ID.log
+echo " "
+exit 0
+
+#-------------------------------------------------------------------------------------------------------
+
+#AVOIDS THE RENAMING OF FUTURE BRANCHES COMMITTED IN SIT-SYSTEM BRANCH
+
+elif [[ $MERGED_FEATURE == *SIT_* ]] && [[ $SIT_REMOTE_COMMIT_ID == $DEV_LOCAL_COMMIT_ID ]] ;
+then
+echo "$MERGED_FEATURE :: This SIT_ feature is already BUILT into DEV environment"
+git ls-remote | grep $MERGED_FEATURE
+echo ""
+
+elif [[ $MERGED_FEATURE == *UAT_* ]] && [[ $SIT_REMOTE_COMMIT_ID == $UAT_LOCAL_COMMIT_ID ]] ;
+then
+echo "$MERGED_FEATURE :: This UAT_ feature is already BUILT into UAT environment"
+git ls-remote | grep $MERGED_FEATURE
+echo ""
+
+elif [[ $MERGED_FEATURE == *PREPROD_* ]] && [[ $SIT_REMOTE_COMMIT_ID == $PREPROD_LOCAL_COMMIT_ID ]] ;
+then
+echo "$MERGED_FEATURE :: This PREPROD_ feature is already BUILT into PREPROD environment"
+git ls-remote | grep $MERGED_FEATURE
+echo ""
+
+#-------------------------------------------------------------------------------------------------------
+ 
+elif [[ $MERGED_FEATURE == *SIT_* || $MERGED_FEATURE == *UAT_* || $MERGED_FEATURE == *PREPROD_* ]] && [[ $IS_COMMIT_EMPTY > 0 ]] ;
+then
+echo "$MERGED_FEATURE :: This is a modified SIT_/UAT_/PREPROD_ feature branch with GIT COMMIT DIFFERENCES "
+RAW_MERGED_FEATURE=`echo $MERGED_FEATURE | awk -F'SIT_' '{ print $NF }'| awk -F'UAT_' '{ print $NF }' | awk -F'PREPROD_' '{ print $NF }'`
+SIT_FEATURE_BRANCH=SIT_$RAW_MERGED_FEATURE
+git branch -m $SIT_FEATURE_BRANCH
+
+#Delete all similar existing upstream branches
+git ls-remote | grep heads | grep $RAW_MERGED_FEATURE | awk -F " " '{print $2}' > feature_list.log
+
+echo "" && echo "----------------------------------------------"
+echo "check_if_similar_branches_exists ..."
+ls -lrt feature_list.log && cat feature_list.log 
+echo "----------------------------------------------" && echo ""
+
+cat feature_list.log | while read feature_list;
+do `git push origin :"$feature_list"`
+done
+echo ""
+
+#Push new SIT_feature_branch
+git push origin $SIT_FEATURE_BRANCH
+git ls-remote | grep $SIT_FEATURE_BRANCH
+echo " "
+
+else
+#--------------------------------------------------------------------------------------------------------------
+echo ""
+echo "$MERGED_FEATURE :: Rename to SIT_: This is a develop feature branch"
+RAW_MERGED_FEATURE=`echo $MERGED_FEATURE | awk -F'SIT_' '{ print $NF }'| awk -F'UAT_' '{ print $NF }' | awk -F'PREPROD_' '{ print $NF }'`
+SIT_FEATURE_BRANCH=SIT_$RAW_MERGED_FEATURE
+git branch -m $SIT_FEATURE_BRANCH
+
+#Delete all similar existing upstream branches
+git ls-remote | grep heads | grep $RAW_MERGED_FEATURE | awk -F " " '{print $2}' > feature_list.log
+
+echo "-----------------------------------"
+echo "check_if_similar_branches_exists ..."
+ls -lrt feature_list.log && cat feature_list.log 
+echo "-----------------------------------"
+
+cat feature_list.log | while read feature_list;
+do `git push origin :"$feature_list"`
+done
+echo ""
+
+#Push new SIT_FEATURE_BRANCH
+git push origin $SIT_FEATURE_BRANCH
+git ls-remote | grep $SIT_FEATURE_BRANCH
+echo ""
+
+fi
+#-------------------------------------------------------------------------------------------------------#

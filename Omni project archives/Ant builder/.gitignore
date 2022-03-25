@@ -1,0 +1,14 @@
+/*
+!/Source
+!/Library
+!bank.properties
+!build.xml
+!.gitignore
+!DBMigration_CT
+!DBMigration_DF
+!DBMigration_MH
+!DBMigration_ARX
+!antiPhishingImages
+!MANUAL_EXECUTION_DBSCRIPTS
+!_Documentation
+**/.DS_Store

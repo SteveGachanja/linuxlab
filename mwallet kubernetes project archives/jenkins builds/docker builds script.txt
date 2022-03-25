@@ -1,0 +1,42 @@
+set +x
+docker_workspace=/app/appadmin/jenkins/workspace/M-Wallet-Project/Deploy-Mwallet-Dev
+cd $docker_workspace/kubernetes/
+
+echo "======================================================="
+echo "Preparing the DEV deploy yaml ..."
+echo "TAG and DEPLOY DEV IMAGE "
+
+DOCKER_BUILDTAG=`cat DOCKER_BUILDTAG_DEV`
+
+cd $docker_workspace/mwallet/
+
+sudo docker build -t ${DOCKER_BUILDTAG} .
+
+echo "======================================================="
+
+echo "CONFIRM THE DOCKER BUILD "
+sudo docker images | grep $(echo $DOCKER_BUILDTAG | awk -F ':' '{print $03}')
+
+echo "======================================================="
+
+CONFIRM_DOCKERBUILD=`sudo docker images | grep $(echo $DOCKER_BUILDTAG | awk -F ':' '{print $03}') | wc -l`
+
+if [[ $CONFIRM_DOCKERBUILD = 1 ]];
+then
+echo "IMAGE SUCCESSFULLY BUILT AND TAGGED :: $DOCKER_BUILDTAG" ;
+else 
+echo " [ERROR] :: IMAGE BUILD TAG DOES NOT EXIST";
+exit 1 ;
+fi
+
+echo "======================================================="
+
+echo "PUSH THE DOCKER BUILD "
+sudo docker push ${DOCKER_BUILDTAG}
+
+echo "======================================================="
+
+
+sudo docker images | grep devbuild | head -n 10
+
+echo "======================================================="

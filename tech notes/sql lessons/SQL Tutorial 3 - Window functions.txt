@@ -1,0 +1,426 @@
+-- Shape, Transform and Manipulate Data
+POSTGRESQL SUMMARY STATS AND WINDOW FUNCTIONS
+Topics covered
+** Window Functions -- Give  results that you cannot get by GROUP BY
+** Fetching , Ranking and Paging
+** Aggregate window functions and frames
+** Beyond Windows Functions - PIVOTING using CROSSTAB, ROLLUP and CUBE
+==================================================
+Window functions --- Windows functions are similar to GROUP BY aggregate functions, but all rows remain in the output.
+
+ANATOMY of a window function
+ROW_NUMBER() OVER() AS ROW_N
+
+FUNCTION_NAME() OVER(...)
+	** ORDER BY
+	** PARTITION BY --- Similar to GROUP BY , partitions based on a columns unique values
+	** ROWS/RANGE PRECEDING/FOLLOWING/UNBOUNDED
+    ** ROW_NUMBER() --- will reset for each partition
+
+** FETCHING FUNCTIONS
+RELATIVE 
+	** LAG() --- will only fetch a row's previous value if its previous row is in the same partition
+	** LAG(column, n) --- returns column's value at the n rows before the current row
+	** LEAD(column, n) --- returns column's value at the n rows after the current row
+ABSOLUTE
+    ** FIRST_VALUE(column) --- returns the first value in the table or partition
+	** LAST_VALUE(column) --- returns the last value in the table or partition
+	
+#NUMBERING ROWS - Window functions enable you to easily fetch the nth row
+SELECT
+  Year,
+  -- Assign numbers to each year
+  ROW_NUMBER() OVER() AS Row_N
+FROM (
+  SELECT DISTINCT year
+  FROM Summer_Medals
+  ORDER BY Year ASC
+) AS Years
+ORDER BY Year ASC;
+
+==================================================
+
+WITH Tennis_Gold AS (
+  SELECT DISTINCT
+    Gender, Year, Country
+  FROM Summer_Medals
+  WHERE
+    Year >= 2000 AND
+    Event = 'Javelin Throw' AND
+    Medal = 'Gold')
+
+SELECT
+  Gender, Year,
+  Country AS Champion,
+  -- Fetch the previous year's champion by gender and event
+  ---  LAG() function, returns the previous row , while maintaining same row (in two different columns)
+  LAG(Country) OVER (Partition by Gender,Event
+  ORDER BY year ASC) AS Last_Champion
+FROM Tennis_Gold
+ORDER BY Gender ASC, Year ASC;
+
+=====================================
+--- "peek into the future" with the LEAD fetching function. 
+
+WITH Discus_Medalists AS (
+  SELECT DISTINCT
+    Year,
+    Athlete
+  FROM Summer_Medals
+  WHERE Medal = 'Gold'
+    AND Event = 'Discus Throw'
+    AND Gender = 'Women'
+    AND Year >= 2000)
+
+SELECT
+  -- For each year, fetch the current and future medalists
+  year,
+  athlete,
+  LEAD(athlete, 1) OVER (ORDER BY year ASC) AS Future_Champion
+FROM Discus_Medalists
+ORDER BY Year ASC;
+
+=====================================
+
+WITH Hosts AS (
+  SELECT DISTINCT Year, City
+    FROM Summer_Medals)
+
+SELECT
+  Year,
+  City,
+  -- Get the last city in which the Olympic games were held
+  LAST_VALUE(City) OVER(ORDER BY Year ASC RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS Last_City
+FROM Hosts
+ORDER BY Year ASC;
+
+=====================================
+** RANKING FUNCTIONS
+   ** ROW_NUMBER()  --- always assigns unique numbers in sequential order based on the provided order
+   ** RANK()		--- skips the next available ranking value
+   ** DENSE_RANK()  --- nevers skips ranks
+   
+WITH Athlete_Medals AS (
+  SELECT
+    Athlete,
+    COUNT(*) AS Medals
+  FROM Summer_Medals
+  GROUP BY Athlete)
+
+SELECT
+  Athlete,
+  Medals,
+  -- Rank athletes by the medals they've won
+  RANK() OVER (ORDER BY Medals DESC) AS Rank_N
+FROM Athlete_Medals
+ORDER BY Medals DESC;
+==========================================
+WITH Athlete_Medals AS (
+  SELECT
+    Country, Athlete, COUNT(*) AS Medals
+  FROM Summer_Medals
+  WHERE
+    Country IN ('JPN', 'KOR')
+    AND Year >= 2000
+  GROUP BY Country, Athlete
+  HAVING COUNT(*) > 1)
+
+SELECT
+  Country,
+  -- Rank athletes in each country by the medals they've won
+  Athlete,
+  DENSE_RANK() OVER (PARTITION BY Country               --- DENSE_RANK is typically how we'd assign ranks in real life
+                ORDER BY Medals DESC) AS Rank_N
+FROM Athlete_Medals
+ORDER BY Country ASC, RANK_N ASC;
+
+
+=====================================
+** PAGING FUNCTIONS
+   ** NTILE(n) - splits a dataset into n equal pages
+
+WITH Events AS (
+  SELECT DISTINCT Event
+  FROM Summer_Medals)
+  
+SELECT
+  --- Split up the distinct events into 111 unique groups
+  Event,
+  NTILE(111) OVER (ORDER BY Event ASC) AS Page
+FROM Events
+ORDER BY Event ASC;
+
+=====================================
+** AGGREGATE window functions
+    ** MAX(column) OVER(PARTITION BY column) 
+	** SUM(column) OVER()  --- calculates cummulative running totals
+	
+====================================
+
+WITH Athlete_Medals AS (
+  SELECT
+    Athlete, COUNT(*) AS Medals
+  FROM Summer_Medals
+  WHERE
+    Country = 'USA' AND Medal = 'Gold'
+    AND Year >= 2000
+  GROUP BY Athlete)
+
+SELECT
+  -- Calculate the running total of athlete medals
+  athlete,
+  medals,
+  SUM(medals) OVER (ORDER BY athlete ) AS Max_Medals
+FROM Athlete_Medals
+ORDER BY Athlete ASC;
+
+=======================================
+WITH Country_Medals AS (
+  SELECT
+    Year, Country, COUNT(*) AS Medals
+  FROM Summer_Medals
+  WHERE
+    Country IN ('CHN', 'KOR', 'JPN')
+    AND Medal = 'Gold' AND Year >= 2000
+  GROUP BY Year, Country)
+
+SELECT
+  -- Return the max medals earned so far per country
+  year,
+  country,
+  medals,
+  MAX(medals) OVER (PARTITION BY country ORDER BY year ASC) AS Max_Medals
+FROM Country_Medals
+ORDER BY Country ASC, Year ASC;
+=======================================
+
+** FRAMES IN window functions
+/*
+Frames allow you to restrict the rows passed as input to your window function to a sliding window for you to define the start and finish.
+By default a frame starts at the beginning of a table or partition and ends at the current row.
+Frames allow you to "peek" forwards or backward without first using the relative fetching functions, LAG and LEAD, to fetch previous rows' values into the current row.
+*/
+  --- EXAMPLE
+   ** ROWS BETWEEN [START] AND [FINISH]
+   PRECEDING -- n rows before the current row
+   CURRENT
+   FOLLOWING -- n rows after the current row
+
+WITH Scandinavian_Medals AS (
+  SELECT
+    Year, COUNT(*) AS Medals
+  FROM Summer_Medals
+  WHERE Country IN ('DEN', 'NOR', 'FIN', 'SWE', 'ISL') AND Medal = 'Gold'
+  GROUP BY Year)
+
+SELECT
+  -- Select each year's medals
+  year,
+  Medals,
+  -- Get the max of the current and next years'  medals
+  MAX(medals) OVER (ORDER BY year ASC ROWS BETWEEN CURRENT ROW  AND 1 FOLLOWING) AS Max_Medals
+FROM Scandinavian_Medals
+ORDER BY Year ASC;
+
+=======================================
+
+WITH Chinese_Medals AS (
+  SELECT
+    Athlete, COUNT(*) AS Medals
+  FROM Summer_Medals
+  WHERE
+    Country = 'CHN' AND Medal = 'Gold'
+    AND Year >= 2000
+  GROUP BY Athlete)
+
+SELECT
+  -- Select the athletes and the medals they've earned
+  athlete,
+  Medals,
+  -- Get the max of the last two and current rows' medals 
+  MAX(Medals) OVER (ORDER BY Athlete ASC ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS Max_Medals
+FROM Chinese_Medals
+ORDER BY Athlete ASC;
+
+=======================================
+
+*** MOVING AVERAGES AND TOTALS
+  ** AVERAGE/SUM of last n periods
+ 
+ ** ROWS vs RANGE -- RANGE aggregates duplicates together as a single entity
+ 
+WITH Russian_Medals AS (
+  SELECT
+    Year, COUNT(*) AS Medals
+  FROM Summer_Medals
+  WHERE
+    Country = 'RUS'
+    AND Medal = 'Gold'
+    AND Year >= 1980
+  GROUP BY Year)
+
+SELECT
+  Year, Medals,
+  --- Calculate the 3-year moving average of medals earned
+  AVG(Medals) OVER(ORDER BY Year ASC ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS Medals_MA
+FROM Russian_Medals
+ORDER BY Year ASC;
+
+
+=======================================
+
+WITH Country_Medals AS (
+  SELECT
+    Year, Country, COUNT(*) AS Medals
+  FROM Summer_Medals
+  GROUP BY Year, Country)
+
+SELECT
+  Year, Country, Medals,
+  -- Calculate each country's 3-game moving total
+  SUM(Medals) OVER
+    (PARTITION BY country
+     ORDER BY Year ASC
+     ROWS BETWEEN
+     2 PRECEDING AND CURRENT ROW) AS Medals_MA
+FROM Country_Medals
+ORDER BY Country ASC, Year ASC;
+
+=====================================
+** Beyond Windows Functions
+** PIVOTING -- transforming tables pivoting by a common column
+   CROSSTAB -- allows you to pivot tables by a certain column
+  
+-- From this table 
+ SELECT
+    Gender, Year, Country
+  FROM Summer_Medals
+  WHERE
+    Year IN (2008, 2012)
+    AND Medal = 'Gold'
+    AND Event = 'Pole Vault'
+  ORDER By Gender ASC, Year ASC;
+  
+-- To this transformed table  
+-- Create the correct extention to enable CROSSTAB
+CREATE EXTENSION IF NOT EXISTS tablefunc;
+
+SELECT * FROM CROSSTAB($$
+  SELECT
+    Gender, Year, Country
+  FROM Summer_Medals
+  WHERE
+    Year IN (2008, 2012)
+    AND Medal = 'Gold'
+    AND Event = 'Pole Vault'
+  ORDER By Gender ASC, Year ASC;
+-- Fill in the correct column names for the pivoted table
+$$) AS ct (Gender VARCHAR,
+           "2008" VARCHAR,
+           "2012" VARCHAR)
+
+ORDER BY Gender ASC;  
+=============================================
+
+CREATE EXTENSION IF NOT EXISTS tablefunc;
+
+SELECT * FROM CROSSTAB($$
+  WITH Country_Awards AS (
+    SELECT
+      Country,
+      Year,
+      COUNT(*) AS Awards
+    FROM Summer_Medals
+    WHERE
+      Country IN ('FRA', 'GBR', 'GER')
+      AND Year IN (2004, 2008, 2012)
+      AND Medal = 'Gold'
+    GROUP BY Country, Year)
+
+  SELECT
+    Country,
+    Year,
+    RANK() OVER
+      (PARTITION BY Year
+       ORDER BY Awards DESC) :: INTEGER AS rank
+  FROM Country_Awards
+  ORDER BY Country ASC, Year ASC;
+-- Fill in the correct column names for the pivoted table
+$$) AS ct (country VARCHAR,
+           "2004" INTEGER,
+           "2008" INTEGER,
+           "2012" INTEGER)
+
+Order by Country ASC;
+  
+===================================================
+** BEYOND WINDOW FUNCTIONS
+
+** ROLLUP is a hierarchical (from the leftmost provided column) GROUP BY subclause that includes extra rows for group-level aggregations
+** CUBE generates all  possible group-level aggregations
+** COALESCE - replace NULL with meaningful value
+
+-- Count the gold medals per country and gender
+-- Using COALESCE , Replace the nulls in the columns with meaningful text
+
+SELECT
+  COALESCE(Country, 'All countries') AS Country,
+  COALESCE(Gender, 'All genders') AS Gender,
+  COUNT(*) AS Awards
+FROM Summer_Medals
+WHERE
+  Year = 2004
+  AND Medal = 'Gold'
+  AND Country IN ('DEN', 'NOR', 'SWE')
+GROUP BY ROLLUP(Country, Gender)
+ORDER BY Country ASC, Gender ASC;
+
+-- Count the medals per country and medal type
+SELECT
+  Gender,
+  Medal,
+  COUNT(*) AS Awards
+FROM Summer_Medals
+WHERE
+  Year = 2012
+  AND Country = 'RUS'
+-- Get all possible group-level subtotals
+GROUP BY CUBE(Gender, Medal)
+ORDER BY Gender ASC, Medal ASC;
+
+===================================================
+
+** USING STRING_AGG to compress three rows into one, without losing information in the process
+
+WITH Country_Medals AS (
+  SELECT
+    Country,
+    COUNT(*) AS Medals
+  FROM Summer_Medals
+  WHERE Year = 2000
+    AND Medal = 'Gold'
+  GROUP BY Country),
+
+  Country_Ranks AS (
+  SELECT
+    Country,
+    RANK() OVER (ORDER BY Medals DESC) AS Rank
+  FROM Country_Medals
+  ORDER BY Rank ASC)
+
+-- Compress the countries column
+SELECT STRING_AGG(Country,', ')
+FROM Country_Ranks
+-- Select only the top three ranks
+WHERE Rank <= 3;
+
+
+
+
+
+
+
+
+
+
+
