@@ -1,0 +1,115 @@
+set +x
+#------------------------------------------------------------------------------------------------------
+export TARGET=Omni.SIT
+MATRIXPATH=/var/lib/jenkins/workspace/ROLE_PERMISSIONS_MATRIX
+CAPABILITIES_FILE=$MATRIXPATH/$TARGET/$BUILD_USER_ID.CAPABILITIES
+
+FUNCTION1=ROLLBACK_WITH_COMMIT_IDs
+CAPABILITIES1=`cat $CAPABILITIES_FILE | grep $FUNCTION1` || echo "WARNING :: FUNCTION $FUNCTION1 not available for $BUILD_USER_ID"
+
+FUNCTION2=ROLLBACK_BUILD_TAGS
+CAPABILITIES2=`cat $CAPABILITIES_FILE | grep $FUNCTION2` || echo "WARNING :: FUNCTION $FUNCTION2 not available for $BUILD_USER_ID"
+
+#------------------------------------------------------------------------------------------------------
+
+if [[ "$ROLLBACK_SIT_WITH_COMMIT_ID" = "true" ]]  && [[ "$CAPABILITIES1" = "$FUNCTION1" ]] && [[ $COMMIT_ID != " " ]] ;
+then
+
+echo " "
+echo "============================================================================================="
+echo "Conditions are TRUE, AND Build user $BUILD_USER with CAPABILITIES to ROLLBACK_WITH_COMMIT_IDs.."
+echo "---------------------------------------------------------------------------------------------"
+
+COMMIT_ID=`echo $ROLLBACK_COMMIT_ID | tr -d "[:blank:]"`
+echo "ROLLBACK_COMMIT_ID entered is <$COMMIT_ID>"
+
+git fetch origin $SIT_GIT_BRANCH:$SIT_GIT_BRANCH
+git checkout $SIT_GIT_BRANCH
+git branch
+git tag -l | xargs git tag -d
+
+echo "--------------------------------------------------------"
+echo "Confirming last commit ..."
+git log -1 --merges
+echo "--------------------------------------------------------"
+git log -25 --oneline
+echo "--------------------------------------------------------"
+git reset --hard $COMMIT_ID
+git push origin :$SIT_GIT_BRANCH
+git push -f origin $SIT_GIT_BRANCH
+echo "--------------------------------------------------------"
+echo "Confirming changes made by Rollback ..."
+git log -15 --oneline
+echo "-------------------------------------------------------------------------------------------------"
+echo "SUCCESSFUL ROLLBACK OF SIT. EXITING THE BUILD .. WAIT FOR THE NEXT BUILD TO COMPLETE THE ROLLBACK"
+echo "================================================================================================="
+exit 1
+
+elif [[ "$ROLLBACK_SIT_BUILD_TAGS" = "true" ]] && [[ "$CAPABILITIES2" = "$FUNCTION2" ]] && [[ $PREVIOUS_DEPLOYED_SIT_BUILD_TAGS != " " ]] ;
+then
+
+echo " "
+echo "============================================================================================="
+echo "Conditions are TRUE, AND Build user $BUILD_USER with CAPABILITIES to ROLLBACK_SIT_BUILD_TAGS.."
+echo "---------------------------------------------------------------------------------------------"
+
+PICK_SIT_TAG=`echo $PREVIOUS_DEPLOYED_SIT_BUILD_TAGS | tr -d "[:blank:]"`
+echo "PREVIOUS_DEPLOYED_SIT_BUILD_TAGS entered is <$PICK_SIT_TAG>"
+
+git fetch origin $SIT_GIT_BRANCH:$SIT_GIT_BRANCH
+git checkout $SIT_GIT_BRANCH
+git branch
+git tag -l | xargs git tag -d
+echo "--------------------------------------------------------"
+echo "Confirming last commit ..."
+git log -1 --merges
+echo "--------------------------------------------------------"
+git log -25 --oneline
+echo "--------------------------------------------------------"
+echo "Fetching all remote tags ... "
+git ls-remote | grep tags | awk '(NR%2)'
+git fetch --all --tags
+echo "--------------------------------------------------------"
+echo "PROCEDURE NOTES::"
+echo "1. Create a new branch from tag"
+echo "2. Fetch and Build SIT with <"feature-$PICK_SIT_TAG"> instead of <$SIT_GIT_BRANCH>"
+echo "--------------------------------------------------------"
+
+#Create a new branch from tag
+git checkout -b "feature-$PICK_SIT_TAG" "$PICK_SIT_TAG"
+git branch
+
+#Backup, delete and push time-stamped SIT-system-branch
+git checkout $SIT_GIT_BRANCH
+git branch -m "$SIT_GIT_BRANCH-backup-$BUILD_TIMESTAMP"
+git push origin "$SIT_GIT_BRANCH-backup-$BUILD_TIMESTAMP"
+
+echo "--------------------------------------------------------"
+
+#1. Delete local SIT branc
+#2. Checkout to new branch from tag
+#3. REname to form new SIT-system-branch
+
+git checkout "feature-$PICK_SIT_TAG"
+git branch -D $SIT_GIT_BRANCH || echo "skip if SIT_GIT_BRANCH does not exist"
+git branch
+git branch -m $SIT_GIT_BRANCH
+git push origin :$SIT_GIT_BRANCH
+git push -f origin $SIT_GIT_BRANCH
+
+echo "--------------------------------------------------------"
+echo "Confirming changes made by Rollback ..."
+git log -15 --oneline
+echo "-------------------------------------------------------------------------------------------------"
+echo "SUCCESSFUL ROLLBACK OF SIT. EXITING THE BUILD .. WAIT FOR THE NEXT BUILD TO COMPLETE THE ROLLBACK"
+echo "================================================================================================="
+exit 1
+
+
+else
+echo "--------------------------------------------------------------"
+echo "Continue Build as Normal, NO ROLLBACKS INITIATED... "
+echo "--------------------------------------------------------------"
+echo " "
+exit 0
+fi

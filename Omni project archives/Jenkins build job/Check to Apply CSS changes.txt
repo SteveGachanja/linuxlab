@@ -1,0 +1,98 @@
+set +x
+echo "=========================================================================="
+echo "CHECK TO APPLY SIT-Staging CSS STYLES ...  status:$CSS_CHANGE_APPROVALS" 
+echo "=========================================================================="
+
+sit_css_changes_path=../../OmniBuilds/changelog-SIT/CSS-Changes
+sit_css_last_changes=`ls -rt $sit_css_changes_path/ | grep -v dfbase-jqtbs-ltr.css | grep -v jqtbs-dfbase-app.css | grep -v unique.CSS.Backup.output | tail -n 1`
+iportal_css_path=./Source/iportalweb/WebContent/iportal/css/style/dfbase/jqtbs
+css_backup_path=$sit_css_changes_path/Omni.CSS.SIT_Backup.BUILD.0$BUILD_ID.$BUILD_TIMESTAMP
+
+FUNCTION=CSS_CHANGE_APPROVALS
+CAPABILITIES=`cat $CAPABILITIES_FILE | grep $FUNCTION` || echo "WARNING :: FUNCTION $FUNCTION not available for $BUILD_USER_ID"
+echo "BUILD_USER CAPABILITIES"::$CAPABILITIES
+
+if [[ $CSS_CHANGE_APPROVALS = "true" ]] && [[ "$CAPABILITIES" = "$FUNCTION" ]];
+then
+
+echo "--------------------------------------------------------------------------"
+echo "Conditions are true:: $BUILD_USER_ID Executing an APPROVED CSS_CHANGE in SIT ..."
+echo "--------------------------------------------------------------------------"
+
+echo "Clean up backup CSS before sync ..."
+
+for filename in `ls -rt $sit_css_changes_path | grep Omni.CSS.SIT_Backup`
+do ls -rt $sit_css_changes_path | grep Omni.CSS.SIT_Backup | head -n -7 | while read files; do rm -rf $sit_css_changes_path/"$files"; done
+done
+
+ls -rt $sit_css_changes_path | grep Omni.CSS.SIT_Backup
+ls -rt $sit_css_changes_path | grep Omni.CSS.SIT_Backup | wc -l
+
+
+echo "========================================================================="
+rsync -avzh $sit_css_changes_path/dfbase-jqtbs-ltr.css $iportal_css_path/dfbase-jqtbs-ltr.css
+rsync -avzh $sit_css_changes_path/jqtbs-dfbase-app.css $iportal_css_path/jqtbs-dfbase-app.css
+
+echo "Backup CSS after sync ..."
+
+mkdir -p $css_backup_path
+cp $sit_css_changes_path/dfbase-jqtbs-ltr.css $css_backup_path/dfbase-jqtbs-ltr.css
+cp $sit_css_changes_path/jqtbs-dfbase-app.css $css_backup_path/jqtbs-dfbase-app.css
+
+echo "SUCCESSFULL APPLIED CSS_CHANGES :: $BUILD_TIMESTAMP"
+echo "========================================================================="
+echo "Maintain only unique CSS Backup ..."
+
+ls -rt $sit_css_changes_path | grep Omni.CSS.SIT_Backup | cut -d "." -f 6-7 | sort | uniq -d > $sit_css_changes_path/unique.CSS.Backup.output
+for filename in `cat $sit_css_changes_path/unique.CSS.Backup.output`
+do ls -rt $sit_css_changes_path | grep "$filename" | head -n -1 | while read files; do rm -rf $sit_css_changes_path/"$files"; done
+rm -rf $sit_css_changes_path/unique.CSS.Backup.output || echo "skip if file does not exist"
+done
+
+echo "--------------------------------------------------------------------------"
+
+else
+echo "--------------------------------------------------------------------------"
+echo "No CSS_CHANGE APPROVED, Continue build with sit_css_last_changes ..."
+echo "--------------------------------------------------------------------------"
+echo "sit_css_last_changes :: $sit_css_last_changes"
+ls -lrt $sit_css_changes_path/$sit_css_last_changes
+rsync -avzh $sit_css_changes_path/$sit_css_last_changes/dfbase-jqtbs-ltr.css $iportal_css_path/dfbase-jqtbs-ltr.css
+rsync -avzh $sit_css_changes_path/$sit_css_last_changes/jqtbs-dfbase-app.css $iportal_css_path/jqtbs-dfbase-app.css
+
+echo "-------------------------------------------------------------------------"
+fi
+
+
+#ROLLBACK CSS CHANGES
+echo "=========================================================================="
+echo "CHECK TO ROLLBACK_CSS_CHANGES::$ROLLBACK_CSS_CHANGES"
+echo "=========================================================================="
+
+FUNCTION=ROLLBACK_CSS_CHANGES
+CAPABILITIES=`cat $CAPABILITIES_FILE | grep $FUNCTION` || echo "WARNING :: FUNCTION $FUNCTION not available for $BUILD_USER_ID"
+echo "BUILD_USER CAPABILITIES"::$CAPABILITIES
+
+if [[ $ROLLBACK_CSS_CHANGES = "true" ]] && [[ "$CAPABILITIES" = "$FUNCTION" ]];
+then
+
+echo "-------------------------------------------------------------------------"
+echo "Conditions are true:: $BUILD_USER_ID Executing an APPROVED CSS_ROllback ..."
+echo "CHERRYPICK_CSS_BACKUP::$CHERRYPICK_CSS_BACKUP"
+echo "-------------------------------------------------------------------------"
+
+rsync -avzh $sit_css_changes_path/$CHERRYPICK_CSS_BACKUP/dfbase-jqtbs-ltr.css $sit_css_changes_path/dfbase-jqtbs-ltr.css
+rsync -avzh $sit_css_changes_path/$CHERRYPICK_CSS_BACKUP/jqtbs-dfbase-app.css $sit_css_changes_path/jqtbs-dfbase-app.css
+
+cp $sit_css_changes_path/dfbase-jqtbs-ltr.css $iportal_css_path/dfbase-jqtbs-ltr.css
+cp $sit_css_changes_path/jqtbs-dfbase-app.css $iportal_css_path/jqtbs-dfbase-app.css
+
+echo "========================================================================="
+echo "SUCCESSFULL APPLIED CSS_ROllback to $CHERRYPICK_CSS_BACKUP :: $BUILD_TIMESTAMP"
+echo "========================================================================="
+
+else
+echo "------------------------------------------------------------------------"
+echo "No ROLLBACK_CSS_CHANGES APPROVED, Continue build as normal ..."
+echo "------------------------------------------------------------------------"
+fi

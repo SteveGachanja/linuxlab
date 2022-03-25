@@ -1,0 +1,14 @@
+set +x
+echo ""
+echo "VERSION EAR FILE"
+echo "----------------------------------------------------------------------"
+echo ""
+
+SIT_APPLICATION_NAME=SIT_DIGITAL_APPLICATION_${SPRINT}
+
+ls OUTPUT/digital*ear | awk -F/ '{print $NF}' | while read filename
+do mv OUTPUT/"$filename" OUTPUT/"$(echo "$filename" | sed -e 's/digitalFaceApplication_IBMB_18.2.0.0/'"$SIT_APPLICATION_NAME"'.0.'"$BUILD_ID"'/g')"
+done
+
+ls OUTPUT/SIT_DIGITAL_APPLICATION*ear
+echo "---------------------------------------------------------------------"

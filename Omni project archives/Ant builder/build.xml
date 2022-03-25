@@ -1,0 +1,799 @@
+<project name="build" default="cleanup_IBMB" basedir=".">
+    <property file="bank.properties" />
+    <property name="src" location="../" />
+    <target name="cleanup_IBMB">
+        <mkdir dir="${BUILD_LOCATION}/${bankEAR}" />
+        <echo message="Create Build location - ${BUILD_LOCATION}/${bankEAR}." />
+        <unzip src="${K1_LOCATION}/digitalFaceApplication_IBMB_18.2.0.0.ear" dest="${BUILD_LOCATION}/${bankEAR}" />
+        <echo message="Unpacking K1 - ${BUILD_LOCATION}/${bankEAR}." />
+	
+		<antcall target="compile.CoopCommon" />
+		<antcall target="compile.coopCommonLib"/>
+        <antcall target="compile.CoopSelfRegistration" />
+		<antcall target="compile.coopManageAuthentication" />
+        <antcall target="compile.CoopAccSummary" />
+        <antcall target="compile.CoopAccStatement" />
+        <antcall target="compile.coopAccountCheqebookRequestLib" />
+        <antcall target="compile.CoopFundTransfer" />
+        <antcall target="compile.CoopOtherTransfer" />
+        <antcall target="compile.coopAccountMobileTransferLib" />
+        <antcall target="compile.coopAirtimePurchaseLib"/>
+		<antcall target="compile.coopELoansApplication"/>
+		<antcall target="compile.coopKRAPayments" />
+		<antcall target="compile.coopAccountMpesaB2BLib"/>
+		<antcall target="compile.coopMpesaDepositLib"/>
+		<antcall target="compile.CoopCardSummary" />
+		<antcall target="compile.coopdfPayNewBiller" />
+       <antcall target="compile.CoopLoanAccSummary"/>
+	    <antcall target="compile.coopCardlessWithdrawal"/>			
+		<antcall target="compile.CoopFundTransfer_RTGS" />
+		<antcall target="compile.coopLinkDelinkLib"/>	
+		<antcall target="compile.coopAlertsSubscriptionsLib"/>
+		<antcall target="compile.coopPesalinkRegistrationLib"/>
+		<antcall target="compile.coopBillReminders"/>
+		<antcall target="compile.coopMcollectionPayment" />
+		<antcall target="compile.CoopCRM_MailBox" />
+		<antcall target="compile.CoopPersonalDetails" />
+		<antcall target="compile.CoopFundTransfer_SWIFT" />
+		<antcall target="compile.CoopWalletTransfersLib" />
+		<antcall target="compile.iportalweb" />
+		
+		<zip destfile="${OUTPUT_LOCATION}/digitalFaceApplication_IBMB_18.2.0.0.ear" basedir="${BUILD_LOCATION}/${bankEAR}" />
+		<delete dir="${BUILD_LOCATION}/${bankEAR}" />
+		<echo message="Delete Build location - ${BUILD_LOCATION}/${bankEAR}." />
+	</target>
+	<path id="base.path">
+		<fileset dir="${JAVA_JRE}">
+			<include name="**/*.jar" />
+		</fileset>
+		<fileset dir="${CT_JARS}">
+			<include name="**/*.jar" />
+		</fileset>
+		<fileset dir="${THIRD_PARTY_JARS}">
+			<include name="**/*.jar" />
+		</fileset>
+		<fileset dir="${ARMOR_JARS}">
+			<include name="**/*.jar" />
+		</fileset>
+		<fileset dir="${RBX_JARS}">
+			<include name="**/*.jar" />
+		</fileset>
+		<fileset dir="${RBX_JAR}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+	
+	<target name="compile.iportalweb">
+		<unzip src="${BUILD_LOCATION}/${bankEAR}/iportalweb.war" dest="${BUILD_LOCATION}/${bankEAR}/iportalweb" />
+		<copy todir="${BUILD_LOCATION}/${bankEAR}/iportalweb" overwrite="true">
+			<fileset dir="${SVN_PATH}/iportalweb/WebContent" />
+		</copy>
+		<copy todir="${BUILD_LOCATION}/${bankEAR}/iportalweb/templatesModelHouseCompile">
+			<fileset dir="${BUILD_LOCATION}/${bankEAR}/${IMPL_TEMPLATES_FOLDER_PATH}">
+				<include name="**/*.cttpl" />
+				<include name="**/*.html" />
+			</fileset>
+		</copy>
+		<java jar="${THIRD_PARTY_JARS}/handlebars/rhino-js.jar" fork="true" failonerror="true">
+		<arg value="${THIRD_PARTY_JARS}/handlebars/rhino-handlebars-precompiler.js"/>
+		   <arg value="--handlebars"/>
+		   <arg value="${THIRD_PARTY_JARS}/handlebars/handlebars.js"/>
+		   <arg value="--templates"/>
+		   <arg value="${BUILD_LOCATION}/${bankEAR}/iportalweb/templatesModelHouseCompile"/>
+		   <arg value="--output"/>
+		   <arg value="${BUILD_LOCATION}/${bankEAR}/iportalweb/templatesModelHouseJs/compileModelHouseTemplate.js"/>
+		</java>
+		<echo>ModelHouse Templates compiled successfully...</echo> 
+		<delete dir="${BUILD_LOCATION}/${bankEAR}/iportalweb/templatesModelHouseCompile"/>
+
+
+		<delete file="${BUILD_LOCATION}/${bankEAR}/iportalweb.war" />
+		<zip destfile="${BUILD_LOCATION}/${bankEAR}/iportalweb.war" basedir="${BUILD_LOCATION}/${bankEAR}/iportalweb" />
+		<delete dir="${BUILD_LOCATION}/${bankEAR}/iportalweb" />
+	</target>
+				
+		<target name="compile.CoopSelfRegistration">
+			<delete dir="${BUILD_LOCATION}/CoopSelfRegistration/bin" />
+			<mkdir dir="${BUILD_LOCATION}/CoopSelfRegistration/bin" />
+			<javac srcdir="${SVN_PATH}/CoopSelfRegistration/${CoopSelfRegistration.source.version}/${source_path}" destdir="${BUILD_LOCATION}/CoopSelfRegistration/bin" debug="on" deprecation="off" verbose="false" optimize="false" nowarn="true" includeantruntime="true">
+				<classpath refid="base.path" />
+			</javac>
+			<jar destfile="${BUILD_LOCATION}/${bankEAR}/${lib}/${CoopSelfRegistration_jar}" compress="false">
+				<zipfileset dir="${BUILD_LOCATION}/CoopSelfRegistration/bin">
+					<include name="**/*.*" />
+					<exclude name="**/*.java" />
+				</zipfileset>
+				<manifest>
+					<attribute name="Created-By" value="${unit.name}" />
+					<attribute name="Implementation-Vendor" value="${company.name}" />
+					<attribute name="Implementation-Title" value="${product.name}" />
+					<attribute name="Implementation-Version" value="${product.version}" />
+					<attribute name="Class-Path" value="${CbxRetail_Class_Path}" />
+				</manifest>
+			</jar>
+			<delete dir="${BUILD_LOCATION}/CoopSelfRegistration" />
+		</target>
+		
+		<target name="compile.CoopAccSummary">
+			<delete dir="${BUILD_LOCATION}/CoopAccSummary/bin" />
+			<mkdir dir="${BUILD_LOCATION}/CoopAccSummary/bin" />
+			<copy todir="${BUILD_LOCATION}/${bankEAR}/iportalweb/js/CoopAccSummaryJs" preservelastmodified="true" verbose="true" includeemptydirs="true">
+					<fileset dir="${SVN_PATH}/CoopAccSummary/${CoopAccSummary.source.version}/web"/>
+			</copy>
+			<javac srcdir="${SVN_PATH}/CoopAccSummary/${CoopAccSummary.source.version}/${source_path}" destdir="${BUILD_LOCATION}/CoopAccSummary/bin" debug="on" deprecation="off" verbose="false" optimize="false" nowarn="true" includeantruntime="true">
+				<classpath refid="base.path" />
+			</javac>
+			<jar destfile="${BUILD_LOCATION}/${bankEAR}/${lib}/${CoopAccSummary_jar}" compress="false">
+				<zipfileset dir="${BUILD_LOCATION}/CoopAccSummary/bin">
+					<include name="**/*.*" />
+					<exclude name="**/*.java" />
+				</zipfileset>
+				<manifest>
+					<attribute name="Created-By" value="${unit.name}" />
+					<attribute name="Implementation-Vendor" value="${company.name}" />
+					<attribute name="Implementation-Title" value="${product.name}" />
+					<attribute name="Implementation-Version" value="${product.version}" />
+					<attribute name="Class-Path" value="${CbxRetail_Class_Path}" />
+				</manifest>
+			</jar>
+			<delete dir="${BUILD_LOCATION}/CoopAccSummary" />
+		</target>
+		
+		
+		<target name="compile.CoopAccStatement">
+			<delete dir="${BUILD_LOCATION}/CoopAccStatement/bin" />
+			<mkdir dir="${BUILD_LOCATION}/CoopAccStatement/bin" />
+			<copy todir="${BUILD_LOCATION}/${bankEAR}/iportalweb/js/CoopAccStatementJs" preservelastmodified="true" verbose="true" includeemptydirs="true">
+					<fileset dir="${SVN_PATH}/CoopAccStatement/${CoopAccStatement.source.version}/web"/>
+			</copy>
+			<javac srcdir="${SVN_PATH}/CoopAccStatement/${CoopAccStatement.source.version}/${source_path}" destdir="${BUILD_LOCATION}/CoopAccStatement/bin" debug="on" deprecation="off" verbose="false" optimize="false" nowarn="true" includeantruntime="true">
+				<classpath refid="base.path" />
+			</javac>
+			<jar destfile="${BUILD_LOCATION}/${bankEAR}/${lib}/${CoopAccStatement_jar}" compress="false">
+				<zipfileset dir="${BUILD_LOCATION}/CoopAccStatement/bin">
+					<include name="**/*.*" />
+					<exclude name="**/*.java" />
+				</zipfileset>
+				<manifest>
+					<attribute name="Created-By" value="${unit.name}" />
+					<attribute name="Implementation-Vendor" value="${company.name}" />
+					<attribute name="Implementation-Title" value="${product.name}" />
+					<attribute name="Implementation-Version" value="${product.version}" />
+					<attribute name="Class-Path" value="${CbxRetail_Class_Path}" />
+				</manifest>
+			</jar>
+			<delete dir="${BUILD_LOCATION}/CoopAccStatement" />
+		</target>
+			<target name="compile.CoopLoanAccSummary">
+			<delete dir="${BUILD_LOCATION}/CoopLoanAccSummary/bin" />
+			<mkdir dir="${BUILD_LOCATION}/CoopLoanAccSummary/bin" />
+			<copy todir="${BUILD_LOCATION}/${bankEAR}/iportalweb/js/CoopLoanAccSummaryJs" preservelastmodified="true" verbose="true" includeemptydirs="true">
+					<fileset dir="${SVN_PATH}/CoopLoanAccSummary/${CoopLoanAccSummary.source.version}/web"/>
+			</copy>
+			<javac srcdir="${SVN_PATH}/CoopLoanAccSummary/${CoopLoanAccSummary.source.version}/${source_path}" destdir="${BUILD_LOCATION}/CoopLoanAccSummary/bin" debug="on" deprecation="off" verbose="false" optimize="false" nowarn="true" includeantruntime="true">
+				<classpath refid="base.path" />
+			</javac>
+			<jar destfile="${BUILD_LOCATION}/${bankEAR}/${lib}/${CoopLoanAccSummary_jar}" compress="false">
+				<zipfileset dir="${BUILD_LOCATION}/CoopLoanAccSummary/bin">
+					<include name="**/*.*" />
+					<exclude name="**/*.java" />
+				</zipfileset>
+				<manifest>
+					<attribute name="Created-By" value="${unit.name}" />
+					<attribute name="Implementation-Vendor" value="${company.name}" />
+					<attribute name="Implementation-Title" value="${product.name}" />
+					<attribute name="Implementation-Version" value="${product.version}" />
+					<attribute name="Class-Path" value="${CbxRetail_Class_Path}" />
+				</manifest>
+			</jar>
+			<delete dir="${BUILD_LOCATION}/CoopLoanAccSummary" />
+		</target>
+		<target name="compile.coopCardlessWithdrawal">
+        <delete dir="${BUILD_LOCATION}/coopCardlessWithdrawal/bin" />
+        <mkdir dir="${BUILD_LOCATION}/coopCardlessWithdrawal/bin" />
+        <copy todir="${BUILD_LOCATION}/${bankEAR}/iportalweb/js/coopCardlessWithdrawalJs" preservelastmodified="true" verbose="true" includeemptydirs="true">
+            <fileset dir="${SVN_PATH}/coopCardlessWithdrawal/${coopCardlessWithdrawal.source.version}/web"/>
+        </copy>
+        <javac srcdir="${SVN_PATH}/coopCardlessWithdrawal/${coopCardlessWithdrawal.source.version}/${source_path}" destdir="${BUILD_LOCATION}/coopCardlessWithdrawal/bin" debug="on" deprecation="off" verbose="false" optimize="false" nowarn="true" includeantruntime="true">
+            <classpath refid="base.path" />
+        </javac>
+        <jar destfile="${BUILD_LOCATION}/${bankEAR}/${lib}/${coopCardlessWithdrawal_jar}" compress="false">
+            <zipfileset dir="${BUILD_LOCATION}/coopCardlessWithdrawal/bin">
+                <include name="**/*.*" />
+                <exclude name="**/*.java" />
+            </zipfileset>
+            <manifest>
+                <attribute name="Created-By" value="${unit.name}" />
+                <attribute name="Implementation-Vendor" value="${company.name}" />
+                <attribute name="Implementation-Title" value="${product.name}" />
+                <attribute name="Implementation-Version" value="${product.version}" />
+                <attribute name="Class-Path" value="${CbxRetail_Class_Path}" />
+            </manifest>
+        </jar>
+        <delete dir="${BUILD_LOCATION}/coopCardlessWithdrawal" />
+    </target>
+		<target name="compile.coopAccountCheqebookRequestLib">
+			<delete dir="${BUILD_LOCATION}/coopAccountCheqebookRequestLib/bin" />
+			<mkdir dir="${BUILD_LOCATION}/coopAccountCheqebookRequestLib/bin" />
+			<copy todir="${BUILD_LOCATION}/${bankEAR}/iportalweb/js/coopAccountCheqebookRequestLibJs" preservelastmodified="true" verbose="true" includeemptydirs="true">
+					<fileset dir="${SVN_PATH}/coopAccountCheqebookRequestLib/${coopAccountCheqebookRequestLib.source.version}/web"/>
+			</copy>
+			<javac srcdir="${SVN_PATH}/coopAccountCheqebookRequestLib/${coopAccountCheqebookRequestLib.source.version}/${source_path}" destdir="${BUILD_LOCATION}/coopAccountCheqebookRequestLib/bin" debug="on" deprecation="off" verbose="false" optimize="false" nowarn="true" includeantruntime="true">
+				<classpath refid="base.path" />
+			</javac>
+			<jar destfile="${BUILD_LOCATION}/${bankEAR}/${lib}/${coopAccountCheqebookRequest_jar}" compress="false">
+				<zipfileset dir="${BUILD_LOCATION}/coopAccountCheqebookRequestLib/bin">
+					<include name="**/*.*" />
+					<exclude name="**/*.java" />
+				</zipfileset>
+				<manifest>
+					<attribute name="Created-By" value="${unit.name}" />
+					<attribute name="Implementation-Vendor" value="${company.name}" />
+					<attribute name="Implementation-Title" value="${product.name}" />
+					<attribute name="Implementation-Version" value="${product.version}" />
+					<attribute name="Class-Path" value="${CbxRetail_Class_Path}" />
+				</manifest>
+			</jar>
+			<delete dir="${BUILD_LOCATION}/coopAccountCheqebookRequestLib" />
+		</target>
+		
+		<target name="compile.CoopFundTransfer">
+			<delete dir="${BUILD_LOCATION}/CoopFundTransfer/bin" />
+			<mkdir dir="${BUILD_LOCATION}/CoopFundTransfer/bin" />
+			<copy todir="${BUILD_LOCATION}/${bankEAR}/iportalweb/js/CoopFundTransferJs" preservelastmodified="true" verbose="true" includeemptydirs="true">
+					<fileset dir="${SVN_PATH}/CoopFundTransfer/${CoopFundTransfer.source.version}/web"/>
+			</copy>
+			<javac srcdir="${SVN_PATH}/CoopFundTransfer/${CoopFundTransfer.source.version}/${source_path}" destdir="${BUILD_LOCATION}/CoopFundTransfer/bin" debug="on" deprecation="off" verbose="false" optimize="false" nowarn="true" includeantruntime="true">
+				<classpath refid="base.path" />
+			</javac>
+			<jar destfile="${BUILD_LOCATION}/${bankEAR}/${lib}/${CoopFundTransfer_jar}" compress="false">
+				<zipfileset dir="${BUILD_LOCATION}/CoopFundTransfer/bin">
+					<include name="**/*.*" />
+					<exclude name="**/*.java" />
+				</zipfileset>
+				<manifest>
+					<attribute name="Created-By" value="${unit.name}" />
+					<attribute name="Implementation-Vendor" value="${company.name}" />
+					<attribute name="Implementation-Title" value="${product.name}" />
+					<attribute name="Implementation-Version" value="${product.version}" />
+					<attribute name="Class-Path" value="${CbxRetail_Class_Path}" />
+				</manifest>
+			</jar>
+			<delete dir="${BUILD_LOCATION}/CoopFundTransfer" />
+		</target>
+		
+		<target name="compile.CoopOtherTransfer">
+			<delete dir="${BUILD_LOCATION}/CoopOtherTransfer/bin" />
+			<mkdir dir="${BUILD_LOCATION}/CoopOtherTransfer/bin" />
+			<copy todir="${BUILD_LOCATION}/${bankEAR}/iportalweb/js/CoopOtherTransferJs" preservelastmodified="true" verbose="true" includeemptydirs="true">
+					<fileset dir="${SVN_PATH}/CoopOtherTransfer/${CoopOtherTransfer.source.version}/web"/>
+			</copy>
+			<!--
+			<javac srcdir="${SVN_PATH}/CoopOtherTransfer/${CoopOtherTransfer.source.version}/${source_path}" destdir="${BUILD_LOCATION}/CoopOtherTransfer/bin" debug="on" deprecation="off" verbose="false" optimize="false" nowarn="true" includeantruntime="true">
+				<classpath refid="base.path" />
+			</javac>
+			<jar destfile="${BUILD_LOCATION}/${bankEAR}/${lib}/${CoopOtherTransfer_jar}" compress="false">
+				<zipfileset dir="${BUILD_LOCATION}/CoopOtherTransfer/bin">
+					<include name="**/*.*" />
+					<exclude name="**/*.java" />
+				</zipfileset>
+				<manifest>
+					<attribute name="Created-By" value="${unit.name}" />
+					<attribute name="Implementation-Vendor" value="${company.name}" />
+					<attribute name="Implementation-Title" value="${product.name}" />
+					<attribute name="Implementation-Version" value="${product.version}" />
+					<attribute name="Class-Path" value="${CbxRetail_Class_Path}" />
+				</manifest>
+			</jar>
+			-->
+			<delete dir="${BUILD_LOCATION}/CoopOtherTransfer" />
+		</target>
+				<target name="compile.coopAccountMobileTransferLib">
+			<delete dir="${BUILD_LOCATION}/coopAccountMobileTransferLib/bin" />
+			<mkdir dir="${BUILD_LOCATION}/coopAccountMobileTransferLib/bin" />
+			<copy todir="${BUILD_LOCATION}/${bankEAR}/iportalweb/js/coopAccountMobileTransferLibJs" preservelastmodified="true" verbose="true" includeemptydirs="true">
+					<fileset dir="${SVN_PATH}/coopAccountMobileTransferLib/${coopAccountMobileTransferLib.source.version}/web"/>
+			</copy>
+			<javac srcdir="${SVN_PATH}/coopAccountMobileTransferLib/${coopAccountMobileTransferLib.source.version}/${source_path}" destdir="${BUILD_LOCATION}/coopAccountMobileTransferLib/bin" debug="on" deprecation="off" verbose="false" optimize="false" nowarn="true" includeantruntime="true">
+				<classpath refid="base.path" />
+			</javac>
+			<jar destfile="${BUILD_LOCATION}/${bankEAR}/${lib}/${coopAccountMobileTransfer_jar}" compress="false">
+				<zipfileset dir="${BUILD_LOCATION}/coopAccountMobileTransferLib/bin">
+					<include name="**/*.*" />
+					<exclude name="**/*.java" />
+				</zipfileset>
+				<manifest>
+					<attribute name="Created-By" value="${unit.name}" />
+					<attribute name="Implementation-Vendor" value="${company.name}" />
+					<attribute name="Implementation-Title" value="${product.name}" />
+					<attribute name="Implementation-Version" value="${product.version}" />
+					<attribute name="Class-Path" value="${CbxRetail_Class_Path}" />
+				</manifest>
+			</jar>
+			<delete dir="${BUILD_LOCATION}/coopAccountMobileTransferLib" />
+		</target>
+		
+		<target name="compile.CoopCardSummary">
+			<delete dir="${BUILD_LOCATION}/CoopCardSummary/bin" />
+			<mkdir dir="${BUILD_LOCATION}/CoopCardSummary/bin" />
+			<copy todir="${BUILD_LOCATION}/${bankEAR}/iportalweb/js/CoopCardSummaryJs" preservelastmodified="true" verbose="true" includeemptydirs="true">
+					<fileset dir="${SVN_PATH}/CoopCardSummary/${CoopCardSummary.source.version}/web"/>
+			</copy>
+			<javac srcdir="${SVN_PATH}/CoopCardSummary/${CoopCardSummary.source.version}/${source_path}" destdir="${BUILD_LOCATION}/CoopCardSummary/bin" debug="on" deprecation="off" verbose="false" optimize="false" nowarn="true" includeantruntime="true">
+				<classpath refid="base.path" />
+			</javac>
+			<jar destfile="${BUILD_LOCATION}/${bankEAR}/${lib}/${CoopCardSummary_jar}" compress="false">
+				<zipfileset dir="${BUILD_LOCATION}/CoopCardSummary/bin">
+					<include name="**/*.*" />
+					<exclude name="**/*.java" />
+				</zipfileset>
+				<manifest>
+					<attribute name="Created-By" value="${unit.name}" />
+					<attribute name="Implementation-Vendor" value="${company.name}" />
+					<attribute name="Implementation-Title" value="${product.name}" />
+					<attribute name="Implementation-Version" value="${product.version}" />
+					<attribute name="Class-Path" value="${CbxRetail_Class_Path}" />
+				</manifest>
+			</jar>
+			<delete dir="${BUILD_LOCATION}/CoopCardSummary" />
+		</target>
+
+		<target name="compile.coopdfPayNewBiller">
+			<delete dir="${BUILD_LOCATION}/coopdfPayNewBiller/bin" />
+			<mkdir dir="${BUILD_LOCATION}/coopdfPayNewBiller/bin" />
+			<copy todir="${BUILD_LOCATION}/${bankEAR}/iportalweb" preservelastmodified="true" verbose="true" includeemptydirs="true">
+					<fileset dir="${SVN_PATH}/coopdfPayNewBiller/${coopdfPayNewBiller.source.version}/web"/>
+			</copy>
+			<javac srcdir="${SVN_PATH}/coopdfPayNewBiller/${coopdfPayNewBiller.source.version}/${source_path}" destdir="${BUILD_LOCATION}/coopdfPayNewBiller/bin" debug="on" deprecation="off" verbose="false" optimize="false" nowarn="true" includeantruntime="true">
+				<classpath refid="base.path" />
+			</javac>
+			<jar destfile="${BUILD_LOCATION}/${bankEAR}/${lib}/${coopdfPayNewBiller_jar}" compress="false">
+				<zipfileset dir="${BUILD_LOCATION}/coopdfPayNewBiller/bin">
+					<include name="**/*.*" />
+					<exclude name="**/*.java" />
+				</zipfileset>
+				<manifest>
+					<attribute name="Created-By" value="${unit.name}" />
+					<attribute name="Implementation-Vendor" value="${company.name}" />
+					<attribute name="Implementation-Title" value="${product.name}" />
+					<attribute name="Implementation-Version" value="${product.version}" />
+					<attribute name="Class-Path" value="${CbxRetail_Class_Path}" />
+				</manifest>
+			</jar>
+			<delete dir="${BUILD_LOCATION}/coopdfPayNewBiller" />
+		</target>
+		
+		<target name="compile.CoopCommon">
+			<delete dir="${BUILD_LOCATION}/CoopCommon/bin" />
+			<mkdir dir="${BUILD_LOCATION}/CoopCommon/bin" />
+			<copy todir="${BUILD_LOCATION}/${bankEAR}/iportalweb/js/CoopCommonJs" preservelastmodified="true" verbose="true" includeemptydirs="true">
+					<fileset dir="${SVN_PATH}/CoopCommon/${CoopCommon.source.version}/web"/>
+			</copy>
+			<javac srcdir="${SVN_PATH}/CoopCommon/${CoopCommon.source.version}/${source_path}" destdir="${BUILD_LOCATION}/CoopCommon/bin" debug="on" deprecation="off" verbose="false" optimize="false" nowarn="true" includeantruntime="true">
+				<classpath refid="base.path" />
+			</javac>
+			<jar destfile="${BUILD_LOCATION}/${bankEAR}/${lib}/${CoopCommon_jar}" compress="false">
+				<zipfileset dir="${BUILD_LOCATION}/CoopCommon/bin">
+					<include name="**/*.*" />
+					<exclude name="**/*.java" />
+				</zipfileset>
+				<manifest>
+					<attribute name="Created-By" value="${unit.name}" />
+					<attribute name="Implementation-Vendor" value="${company.name}" />
+					<attribute name="Implementation-Title" value="${product.name}" />
+					<attribute name="Implementation-Version" value="${product.version}" />
+					<attribute name="Class-Path" value="${CbxRetail_Class_Path}" />
+				</manifest>
+			</jar>
+			<delete dir="${BUILD_LOCATION}/CoopCommon" />
+		</target>
+						<target name="compile.coopCommonLib">
+			<delete dir="${BUILD_LOCATION}/coopCommonLib/bin" />
+			<mkdir dir="${BUILD_LOCATION}/coopCommonLib/bin" />
+			<copy todir="${BUILD_LOCATION}/${bankEAR}/iportalweb/js/coopCommonLibJs" preservelastmodified="true" verbose="true" includeemptydirs="true">
+					<fileset dir="${SVN_PATH}/coopCommonLib/${coopCommonLib.source.version}/web"/>
+			</copy>
+			<javac srcdir="${SVN_PATH}/coopCommonLib/${coopCommonLib.source.version}/${source_path}" destdir="${BUILD_LOCATION}/coopCommonLib/bin" debug="on" deprecation="off" verbose="false" optimize="false" nowarn="true" includeantruntime="true">
+				<classpath refid="base.path" />
+			</javac>
+			<jar destfile="${BUILD_LOCATION}/${bankEAR}/${lib}/${coopCommon_jar}" compress="false">
+				<zipfileset dir="${BUILD_LOCATION}/coopCommonLib/bin">
+					<include name="**/*.*" />
+					<exclude name="**/*.java" />
+				</zipfileset>
+				<manifest>
+					<attribute name="Created-By" value="${unit.name}" />
+					<attribute name="Implementation-Vendor" value="${company.name}" />
+					<attribute name="Implementation-Title" value="${product.name}" />
+					<attribute name="Implementation-Version" value="${product.version}" />
+					<attribute name="Class-Path" value="${CbxRetail_Class_Path}" />
+				</manifest>
+			</jar>
+			<delete dir="${BUILD_LOCATION}/coopCommonLib" />
+		</target>
+				<target name="compile.coopAirtimePurchaseLib">
+			<delete dir="${BUILD_LOCATION}/coopAirtimePurchaseLib/bin" />
+			<mkdir dir="${BUILD_LOCATION}/coopAirtimePurchaseLib/bin" />
+			<copy todir="${BUILD_LOCATION}/${bankEAR}/iportalweb/js/coopAirtimePurchaseLibJs" preservelastmodified="true" verbose="true" includeemptydirs="true">
+					<fileset dir="${SVN_PATH}/coopAirtimePurchaseLib/${coopAirtimePurchaseLib.source.version}/web"/>
+			</copy>
+			<javac srcdir="${SVN_PATH}/coopAirtimePurchaseLib/${coopAirtimePurchaseLib.source.version}/${source_path}" destdir="${BUILD_LOCATION}/coopAirtimePurchaseLib/bin" debug="on" deprecation="off" verbose="false" optimize="false" nowarn="true" includeantruntime="true">
+				<classpath refid="base.path" />
+			</javac>
+			<jar destfile="${BUILD_LOCATION}/${bankEAR}/${lib}/${coopAirtimePurchase_jar}" compress="false">
+				<zipfileset dir="${BUILD_LOCATION}/coopAirtimePurchaseLib/bin">
+					<include name="**/*.*" />
+					<exclude name="**/*.java" />
+				</zipfileset>
+				<manifest>
+					<attribute name="Created-By" value="${unit.name}" />
+					<attribute name="Implementation-Vendor" value="${company.name}" />
+					<attribute name="Implementation-Title" value="${product.name}" />
+					<attribute name="Implementation-Version" value="${product.version}" />
+					<attribute name="Class-Path" value="${CbxRetail_Class_Path}" />
+				</manifest>
+			</jar>
+			<delete dir="${BUILD_LOCATION}/coopAirtimePurchaseLib" />
+		</target>
+		
+								<target name="compile.coopMpesaDepositLib">
+			<delete dir="${BUILD_LOCATION}/coopMpesaDepositLib/bin" />
+			<mkdir dir="${BUILD_LOCATION}/coopMpesaDepositLib/bin" />
+			<copy todir="${BUILD_LOCATION}/${bankEAR}/iportalweb/js/coopMpesaDepositLibJs" preservelastmodified="true" verbose="true" includeemptydirs="true">
+					<fileset dir="${SVN_PATH}/coopMpesaDepositLib/${coopMpesaDepositLib.source.version}/web"/>
+			</copy>
+			<javac srcdir="${SVN_PATH}/coopMpesaDepositLib/${coopMpesaDepositLib.source.version}/${source_path}" destdir="${BUILD_LOCATION}/coopMpesaDepositLib/bin" debug="on" deprecation="off" verbose="false" optimize="false" nowarn="true" includeantruntime="true">
+				<classpath refid="base.path" />
+			</javac>
+			<jar destfile="${BUILD_LOCATION}/${bankEAR}/${lib}/${coopMpesaDeposit_jar}" compress="false">
+				<zipfileset dir="${BUILD_LOCATION}/coopMpesaDepositLib/bin">
+					<include name="**/*.*" />
+					<exclude name="**/*.java" />
+				</zipfileset>
+				<manifest>
+					<attribute name="Created-By" value="${unit.name}" />
+					<attribute name="Implementation-Vendor" value="${company.name}" />
+					<attribute name="Implementation-Title" value="${product.name}" />
+					<attribute name="Implementation-Version" value="${product.version}" />
+					<attribute name="Class-Path" value="${CbxRetail_Class_Path}" />
+				</manifest>
+			</jar>
+			<delete dir="${BUILD_LOCATION}/coopMpesaDepositLib" />
+		</target>
+		
+         <target name="compile.coopLinkDelinkLib">
+			<delete dir="${BUILD_LOCATION}/coopLinkDelinkLib/bin" />
+			<mkdir dir="${BUILD_LOCATION}/coopLinkDelinkLib/bin" />
+			<copy todir="${BUILD_LOCATION}/${bankEAR}/iportalweb/js/coopLinkDelinkLibJs" preservelastmodified="true" verbose="true" includeemptydirs="true">
+					<fileset dir="${SVN_PATH}/coopLinkDelinkLib/${coopLinkDelinkLib.source.version}/web"/>
+			</copy>
+			<javac srcdir="${SVN_PATH}/coopLinkDelinkLib/${coopLinkDelinkLib.source.version}/${source_path}" destdir="${BUILD_LOCATION}/coopLinkDelinkLib/bin" debug="on" deprecation="off" verbose="false" optimize="false" nowarn="true" includeantruntime="true">
+				<classpath refid="base.path" />
+			</javac>
+			<jar destfile="${BUILD_LOCATION}/${bankEAR}/${lib}/${coopLinkDelinkLib_jar}" compress="false">
+				<zipfileset dir="${BUILD_LOCATION}/coopLinkDelinkLib/bin">
+					<include name="**/*.*" />
+					<exclude name="**/*.java" />
+				</zipfileset>
+				<manifest>
+					<attribute name="Created-By" value="${unit.name}" />
+					<attribute name="Implementation-Vendor" value="${company.name}" />
+					<attribute name="Implementation-Title" value="${product.name}" />
+					<attribute name="Implementation-Version" value="${product.version}" />
+					<attribute name="Class-Path" value="${CbxRetail_Class_Path}" />
+				</manifest>
+			</jar>
+			<delete dir="${BUILD_LOCATION}/coopLinkDelinkLib" />
+		</target>
+		
+		         <target name="compile.coopAlertsSubscriptionsLib">
+			<delete dir="${BUILD_LOCATION}/coopAlertsSubscriptionsLib/bin" />
+			<mkdir dir="${BUILD_LOCATION}/coopAlertsSubscriptionsLib/bin" />
+			<copy todir="${BUILD_LOCATION}/${bankEAR}/iportalweb/js/coopAlertsSubscriptionsLibJs" preservelastmodified="true" verbose="true" includeemptydirs="true">
+					<fileset dir="${SVN_PATH}/coopAlertsSubscriptionsLib/${coopAlertsSubscriptionsLib.source.version}/web"/>
+			</copy>
+			<javac srcdir="${SVN_PATH}/coopAlertsSubscriptionsLib/${coopAlertsSubscriptionsLib.source.version}/${source_path}" destdir="${BUILD_LOCATION}/coopAlertsSubscriptionsLib/bin" debug="on" deprecation="off" verbose="false" optimize="false" nowarn="true" includeantruntime="true">
+				<classpath refid="base.path" />
+			</javac>
+			<jar destfile="${BUILD_LOCATION}/${bankEAR}/${lib}/${coopAlertsSubscriptionsLib_jar}" compress="false">
+				<zipfileset dir="${BUILD_LOCATION}/coopAlertsSubscriptionsLib/bin">
+					<include name="**/*.*" />
+					<exclude name="**/*.java" />
+				</zipfileset>
+				<manifest>
+					<attribute name="Created-By" value="${unit.name}" />
+					<attribute name="Implementation-Vendor" value="${company.name}" />
+					<attribute name="Implementation-Title" value="${product.name}" />
+					<attribute name="Implementation-Version" value="${product.version}" />
+					<attribute name="Class-Path" value="${CbxRetail_Class_Path}" />
+				</manifest>
+			</jar>
+			<delete dir="${BUILD_LOCATION}/coopAlertsSubscriptionsLib" />
+		</target>
+				         <target name="compile.coopPesalinkRegistrationLib">
+			<delete dir="${BUILD_LOCATION}/coopPesalinkRegistrationLib/bin" />
+			<mkdir dir="${BUILD_LOCATION}/coopPesalinkRegistrationLib/bin" />
+			<copy todir="${BUILD_LOCATION}/${bankEAR}/iportalweb/js/coopPesalinkRegistrationLibJs" preservelastmodified="true" verbose="true" includeemptydirs="true">
+					<fileset dir="${SVN_PATH}/coopPesalinkRegistrationLib/${coopPesalinkRegistrationLib.source.version}/web"/>
+			</copy>
+			<javac srcdir="${SVN_PATH}/coopPesalinkRegistrationLib/${coopPesalinkRegistrationLib.source.version}/${source_path}" destdir="${BUILD_LOCATION}/coopPesalinkRegistrationLib/bin" debug="on" deprecation="off" verbose="false" optimize="false" nowarn="true" includeantruntime="true">
+				<classpath refid="base.path" />
+			</javac>
+			<jar destfile="${BUILD_LOCATION}/${bankEAR}/${lib}/${coopPesalinkRegistrationLib_jar}" compress="false">
+				<zipfileset dir="${BUILD_LOCATION}/coopPesalinkRegistrationLib/bin">
+					<include name="**/*.*" />
+					<exclude name="**/*.java" />
+				</zipfileset>
+				<manifest>
+					<attribute name="Created-By" value="${unit.name}" />
+					<attribute name="Implementation-Vendor" value="${company.name}" />
+					<attribute name="Implementation-Title" value="${product.name}" />
+					<attribute name="Implementation-Version" value="${product.version}" />
+					<attribute name="Class-Path" value="${CbxRetail_Class_Path}" />
+				</manifest>
+			</jar>
+			<delete dir="${BUILD_LOCATION}/coopPesalinkRegistrationLib" />
+		</target>
+		         <target name="compile.coopBillReminders">
+			<delete dir="${BUILD_LOCATION}/coopBillReminders/bin" />
+			<mkdir dir="${BUILD_LOCATION}/coopBillReminders/bin" />
+			<copy todir="${BUILD_LOCATION}/${bankEAR}/iportalweb/js/coopBillRemindersJs" preservelastmodified="true" verbose="true" includeemptydirs="true">
+					<fileset dir="${SVN_PATH}/coopBillReminders/${coopBillReminders.source.version}/web"/>
+			</copy>
+			<javac srcdir="${SVN_PATH}/coopBillReminders/${coopBillReminders.source.version}/${source_path}" destdir="${BUILD_LOCATION}/coopBillReminders/bin" debug="on" deprecation="off" verbose="false" optimize="false" nowarn="true" includeantruntime="true">
+				<classpath refid="base.path" />
+			</javac>
+			<jar destfile="${BUILD_LOCATION}/${bankEAR}/${lib}/${coopBillReminders_jar}" compress="false">
+				<zipfileset dir="${BUILD_LOCATION}/coopBillReminders/bin">
+					<include name="**/*.*" />
+					<exclude name="**/*.java" />
+				</zipfileset>
+				<manifest>
+					<attribute name="Created-By" value="${unit.name}" />
+					<attribute name="Implementation-Vendor" value="${company.name}" />
+					<attribute name="Implementation-Title" value="${product.name}" />
+					<attribute name="Implementation-Version" value="${product.version}" />
+					<attribute name="Class-Path" value="${CbxRetail_Class_Path}" />
+				</manifest>
+			</jar>
+			<delete dir="${BUILD_LOCATION}/coopBillReminders" />
+		</target>
+		<target name="compile.coopAccountMpesaB2BLib">
+			<delete dir="${BUILD_LOCATION}/coopAccountMpesaB2BLib/bin" />
+			<mkdir dir="${BUILD_LOCATION}/coopAccountMpesaB2BLib/bin" />
+			<copy todir="${BUILD_LOCATION}/${bankEAR}/iportalweb/js/coopAccountMpesaB2BLibJs" preservelastmodified="true" verbose="true" includeemptydirs="true">
+					<fileset dir="${SVN_PATH}/coopAccountMpesaB2BLib/${coopAccountMpesaB2BLib.source.version}/web"/>
+			</copy>
+			<javac srcdir="${SVN_PATH}/coopAccountMpesaB2BLib/${coopAccountMpesaB2BLib.source.version}/${source_path}" destdir="${BUILD_LOCATION}/coopAccountMpesaB2BLib/bin" debug="on" deprecation="off" verbose="false" optimize="false" nowarn="true" includeantruntime="true">
+				<classpath refid="base.path" />
+			</javac>
+			<jar destfile="${BUILD_LOCATION}/${bankEAR}/${lib}/${coopAccountMpesaB2B_jar}" compress="false">
+				<zipfileset dir="${BUILD_LOCATION}/coopAccountMpesaB2BLib/bin">
+					<include name="**/*.*" />
+					<exclude name="**/*.java" />
+				</zipfileset>
+				<manifest>
+					<attribute name="Created-By" value="${unit.name}" />
+					<attribute name="Implementation-Vendor" value="${company.name}" />
+					<attribute name="Implementation-Title" value="${product.name}" />
+					<attribute name="Implementation-Version" value="${product.version}" />
+					<attribute name="Class-Path" value="${CbxRetail_Class_Path}" />
+				</manifest>
+			</jar>
+			<delete dir="${BUILD_LOCATION}/coopAccountMpesaB2BLib" />
+		</target>
+		
+		<target name="compile.coopELoansApplication">
+			<delete dir="${BUILD_LOCATION}/coopELoansApplication/bin" />
+			<mkdir dir="${BUILD_LOCATION}/coopELoansApplication/bin" />
+			<copy todir="${BUILD_LOCATION}/${bankEAR}/iportalweb/js/coopELoansApplicationJs" preservelastmodified="true" verbose="true" includeemptydirs="true">
+				<fileset dir="${SVN_PATH}/coopELoansApplication/${coopELoansApplication.source.version}/web"/>
+			</copy>
+			<javac srcdir="${SVN_PATH}/coopELoansApplication/${coopELoansApplication.source.version}/${source_path}" destdir="${BUILD_LOCATION}/coopELoansApplication/bin" debug="on" deprecation="off" verbose="false" optimize="false" nowarn="true" includeantruntime="true">
+				<classpath refid="base.path" />
+			</javac>
+			<jar destfile="${BUILD_LOCATION}/${bankEAR}/${lib}/${coopELoansApplication_jar}" compress="false">
+				<zipfileset dir="${BUILD_LOCATION}/coopELoansApplication/bin">
+					<include name="**/*.*" />
+					<exclude name="**/*.java" />
+				</zipfileset>
+				<manifest>
+					<attribute name="Created-By" value="${unit.name}" />
+					<attribute name="Implementation-Vendor" value="${company.name}" />
+					<attribute name="Implementation-Title" value="${product.name}" />
+					<attribute name="Implementation-Version" value="${product.version}" />
+					<attribute name="Class-Path" value="${CbxRetail_Class_Path}" />
+				</manifest>
+			</jar>
+			<delete dir="${BUILD_LOCATION}/coopELoansApplication" />
+		</target>
+		
+		<target name="compile.CoopFundTransfer_RTGS">
+			<delete dir="${BUILD_LOCATION}/CoopFundTransfer_RTGS/bin" />
+			<mkdir dir="${BUILD_LOCATION}/CoopFundTransfer_RTGS/bin" />
+			<copy todir="${BUILD_LOCATION}/${bankEAR}/iportalweb/js/CoopFundTransfer_RTGSJs" preservelastmodified="true" verbose="true" includeemptydirs="true">
+				<fileset dir="${SVN_PATH}/CoopFundTransfer_RTGS/${CoopFundTransfer_RTGS.source.version}/web" />
+			</copy>
+			<javac srcdir="${SVN_PATH}/CoopFundTransfer_RTGS/${CoopFundTransfer_RTGS.source.version}/${source_path}" destdir="${BUILD_LOCATION}/CoopFundTransfer_RTGS/bin" debug="on" deprecation="off" verbose="false" optimize="false" nowarn="true" includeantruntime="true">
+				<classpath refid="base.path" />
+			</javac>
+			<jar destfile="${BUILD_LOCATION}/${bankEAR}/${lib}/${CoopFundTransfer_RTGS_jar}" compress="false">
+				<zipfileset dir="${BUILD_LOCATION}/CoopFundTransfer_RTGS/bin">
+					<include name="**/*.*" />
+					<exclude name="**/*.java" />
+				</zipfileset>
+				<manifest>
+					<attribute name="Created-By" value="${unit.name}" />
+					<attribute name="Implementation-Vendor" value="${company.name}" />
+					<attribute name="Implementation-Title" value="${product.name}" />
+					<attribute name="Implementation-Version" value="${product.version}" />
+					<attribute name="Class-Path" value="${CbxRetail_Class_Path}" />
+				</manifest>
+			</jar>
+			<delete dir="${BUILD_LOCATION}/CoopFundTransfer_RTGS" />
+		</target>
+		<target name="compile.coopManageAuthentication">
+			<delete dir="${BUILD_LOCATION}/coopManageAuthentication/bin" />
+			<mkdir dir="${BUILD_LOCATION}/coopManageAuthentication/bin" />
+			<javac srcdir="${SVN_PATH}/coopManageAuthentication/src" destdir="${BUILD_LOCATION}/coopManageAuthentication/bin" debug="on" deprecation="off" verbose="false" optimize="false" nowarn="true" includeantruntime="true">
+				<classpath refid="base.path" />
+			</javac>
+			<jar destfile="${BUILD_LOCATION}/${bankEAR}/${lib}/${coopManageAuthentication_jar}" compress="false">
+				<zipfileset dir="${BUILD_LOCATION}/coopManageAuthentication/bin">
+					<include name="**/*.*" />
+					<exclude name="**/*.java" />
+				</zipfileset>
+				<manifest>
+					<attribute name="Created-By" value="${unit.name}" />
+					<attribute name="Implementation-Vendor" value="${company.name}" />
+					<attribute name="Implementation-Title" value="${product.name}" />
+					<attribute name="Implementation-Version" value="${product.version}" />
+					<attribute name="Class-Path" value="${CbxRetail_Class_Path}" />
+				</manifest>
+			</jar>
+			<delete dir="${BUILD_LOCATION}/coopManageAuthentication" />
+		</target>
+		<target name="compile.coopMcollectionPayment">
+			<delete dir="${BUILD_LOCATION}/coopMcollectionPayment/bin" />
+			<mkdir dir="${BUILD_LOCATION}/coopMcollectionPayment/bin" />
+			<copy todir="${BUILD_LOCATION}/${bankEAR}/iportalweb/js/coopMcollectionPaymentJs" preservelastmodified="true" verbose="true" includeemptydirs="true">
+					<fileset dir="${SVN_PATH}/coopMcollectionPayment/${coopMcollectionPayment.source.version}/web"/>
+			</copy>
+			<javac srcdir="${SVN_PATH}/coopMcollectionPayment/${coopMcollectionPayment.source.version}/${source_path}" destdir="${BUILD_LOCATION}/coopMcollectionPayment/bin" debug="on" deprecation="off" verbose="false" optimize="false" nowarn="true" includeantruntime="true">
+				<classpath refid="base.path" />
+			</javac>
+			<jar destfile="${BUILD_LOCATION}/${bankEAR}/${lib}/${coopMcollectionPayment_jar}" compress="false">
+				<zipfileset dir="${BUILD_LOCATION}/coopMcollectionPayment/bin">
+					<include name="**/*.*" />
+					<exclude name="**/*.java" />
+				</zipfileset>
+				<manifest>
+					<attribute name="Created-By" value="${unit.name}" />
+					<attribute name="Implementation-Vendor" value="${company.name}" />
+					<attribute name="Implementation-Title" value="${product.name}" />
+					<attribute name="Implementation-Version" value="${product.version}" />
+					<attribute name="Class-Path" value="${CbxRetail_Class_Path}" />
+				</manifest>
+			</jar>
+			<delete dir="${BUILD_LOCATION}/coopMcollectionPayment" />
+		</target>
+		
+		<target name="compile.CoopCRM_MailBox">
+		<delete dir="${BUILD_LOCATION}/CoopCRM_MailBox/bin" />
+		<mkdir dir="${BUILD_LOCATION}/CoopCRM_MailBox/bin" />
+		<copy todir="${BUILD_LOCATION}/${bankEAR}/iportalweb/js/CoopCRM_MailBoxJs" preservelastmodified="true" verbose="true" includeemptydirs="true">
+			<fileset dir="${SVN_PATH}/CoopCRM_MailBox/${CoopCRM_MailBox.source.version}/web" />
+		</copy>
+		<javac srcdir="${SVN_PATH}/CoopCRM_MailBox/${CoopCRM_MailBox.source.version}/${source_path}" destdir="${BUILD_LOCATION}/CoopCRM_MailBox/bin" debug="on" deprecation="off" verbose="false" optimize="false" nowarn="true" includeantruntime="true">
+			<classpath refid="base.path" />
+		</javac>
+		<jar destfile="${BUILD_LOCATION}/${bankEAR}/${lib}/${CoopCRM_MailBox_jar}" compress="false">
+			<zipfileset dir="${BUILD_LOCATION}/CoopCRM_MailBox/bin">
+				<include name="**/*.*" />
+				<exclude name="**/*.java" />
+			</zipfileset>
+			<manifest>
+				<attribute name="Created-By" value="${unit.name}" />
+				<attribute name="Implementation-Vendor" value="${company.name}" />
+				<attribute name="Implementation-Title" value="${product.name}" />
+				<attribute name="Implementation-Version" value="${product.version}" />
+				<attribute name="Class-Path" value="${CbxRetail_Class_Path}" />
+			</manifest>
+		</jar>
+		<delete dir="${BUILD_LOCATION}/CoopCRM_MailBox" />
+	</target>	  
+		<target name="compile.CoopPersonalDetails">
+			<delete dir="${BUILD_LOCATION}/CoopPersonalDetails/bin" />
+			<mkdir dir="${BUILD_LOCATION}/CoopPersonalDetails/bin" />
+			<javac srcdir="${SVN_PATH}/CoopPersonalDetails/${CoopPersonalDetails.source.version}/${source_path}" destdir="${BUILD_LOCATION}/CoopPersonalDetails/bin" debug="on" deprecation="off" verbose="false" optimize="false" nowarn="true" includeantruntime="true">
+				<classpath refid="base.path" />
+			</javac>
+			<jar destfile="${BUILD_LOCATION}/${bankEAR}/${lib}/${CoopPersonalDetails_jar}" compress="false">
+				<zipfileset dir="${BUILD_LOCATION}/CoopPersonalDetails/bin">
+					<include name="**/*.*" />
+					<exclude name="**/*.java" />
+				</zipfileset>
+				<manifest>
+					<attribute name="Created-By" value="${unit.name}" />
+					<attribute name="Implementation-Vendor" value="${company.name}" />
+					<attribute name="Implementation-Title" value="${product.name}" />
+					<attribute name="Implementation-Version" value="${product.version}" />
+					<attribute name="Class-Path" value="${CbxRetail_Class_Path}" />
+				</manifest>
+			</jar>
+			<delete dir="${BUILD_LOCATION}/CoopPersonalDetails" />
+		</target>	
+				<target name="compile.CoopFundTransfer_SWIFT">
+			<delete dir="${BUILD_LOCATION}/CoopFundTransfer_SWIFT/bin" />
+			<mkdir dir="${BUILD_LOCATION}/CoopFundTransfer_SWIFT/bin" />
+			<copy todir="${BUILD_LOCATION}/${bankEAR}/iportalweb/js/CoopFundTransfer_SWIFTJs" preservelastmodified="true" verbose="true" includeemptydirs="true">
+				<fileset dir="${SVN_PATH}/CoopFundTransfer_SWIFT/${CoopFundTransfer_SWIFT.source.version}/web" />
+			</copy>
+			<javac srcdir="${SVN_PATH}/CoopFundTransfer_SWIFT/${CoopFundTransfer_SWIFT.source.version}/${source_path}" destdir="${BUILD_LOCATION}/CoopFundTransfer_SWIFT/bin" debug="on" deprecation="off" verbose="false" optimize="false" nowarn="true" includeantruntime="true">
+				<classpath refid="base.path" />
+			</javac>
+			<jar destfile="${BUILD_LOCATION}/${bankEAR}/${lib}/${CoopFundTransfer_SWIFT_jar}" compress="false">
+				<zipfileset dir="${BUILD_LOCATION}/CoopFundTransfer_SWIFT/bin">
+					<include name="**/*.*" />
+					<exclude name="**/*.java" />
+				</zipfileset>
+				<manifest>
+					<attribute name="Created-By" value="${unit.name}" />
+					<attribute name="Implementation-Vendor" value="${company.name}" />
+					<attribute name="Implementation-Title" value="${product.name}" />
+					<attribute name="Implementation-Version" value="${product.version}" />
+					<attribute name="Class-Path" value="${CbxRetail_Class_Path}" />
+				</manifest>
+			</jar>
+			<delete dir="${BUILD_LOCATION}/CoopFundTransfer_SWIFT" />
+		</target>	
+				<target name="compile.CoopWalletTransfersLib">
+			<delete dir="${BUILD_LOCATION}/CoopWalletTransfersLib/bin" />
+			<mkdir dir="${BUILD_LOCATION}/CoopWalletTransfersLib/bin" />
+			<copy todir="${BUILD_LOCATION}/${bankEAR}/iportalweb/js/CoopWalletTransfersLibJs" preservelastmodified="true" verbose="true" includeemptydirs="true">
+					<fileset dir="${SVN_PATH}/CoopWalletTransfersLib/${CoopWalletTransfersLib.source.version}/web"/>
+			</copy>
+			<javac srcdir="${SVN_PATH}/CoopWalletTransfersLib/${CoopWalletTransfersLib.source.version}/${source_path}" destdir="${BUILD_LOCATION}/CoopWalletTransfersLib/bin" debug="on" deprecation="off" verbose="false" optimize="false" nowarn="true" includeantruntime="true">
+				<classpath refid="base.path" />
+			</javac>
+			<jar destfile="${BUILD_LOCATION}/${bankEAR}/${lib}/${CoopWalletTransfers_jar}" compress="false">
+				<zipfileset dir="${BUILD_LOCATION}/CoopWalletTransfersLib/bin">
+					<include name="**/*.*" />
+					<exclude name="**/*.java" />
+				</zipfileset>
+				<manifest>
+					<attribute name="Created-By" value="${unit.name}" />
+					<attribute name="Implementation-Vendor" value="${company.name}" />
+					<attribute name="Implementation-Title" value="${product.name}" />
+					<attribute name="Implementation-Version" value="${product.version}" />
+					<attribute name="Class-Path" value="${CbxRetail_Class_Path}" />
+				</manifest>
+			</jar>
+			<delete dir="${BUILD_LOCATION}/CoopWalletTransfersLib" />
+		</target>		
+		
+		<target name="compile.coopKRAPayments">
+			<delete dir="${BUILD_LOCATION}/coopKRAPayments/bin" />
+			<mkdir dir="${BUILD_LOCATION}/coopKRAPayments/bin" />
+			<copy todir="${BUILD_LOCATION}/${bankEAR}/iportalweb/js/coopKRAPaymentsJs" preservelastmodified="true" verbose="true" includeemptydirs="true">
+				<fileset dir="${SVN_PATH}/coopKRAPayments/${coopKRAPayments.source.version}/web"/>
+			</copy>
+			<javac srcdir="${SVN_PATH}/coopKRAPayments/${coopKRAPayments.source.version}/${source_path}" destdir="${BUILD_LOCATION}/coopKRAPayments/bin" debug="on" deprecation="off" verbose="false" optimize="false" nowarn="true" includeantruntime="true">
+				<classpath refid="base.path" />
+			</javac>
+			<jar destfile="${BUILD_LOCATION}/${bankEAR}/${lib}/${coopKRAPayments_jar}" compress="false">
+				<zipfileset dir="${BUILD_LOCATION}/coopKRAPayments/bin">
+					<include name="**/*.*" />
+					<exclude name="**/*.java" />
+				</zipfileset>
+				<manifest>
+					<attribute name="Created-By" value="${unit.name}" />
+					<attribute name="Implementation-Vendor" value="${company.name}" />
+					<attribute name="Implementation-Title" value="${product.name}" />
+					<attribute name="Implementation-Version" value="${product.version}" />
+					<attribute name="Class-Path" value="${CbxRetail_Class_Path}" />
+				</manifest>
+			</jar>
+			<delete dir="${BUILD_LOCATION}/coopKRAPayments" />
+		</target>
+</project>

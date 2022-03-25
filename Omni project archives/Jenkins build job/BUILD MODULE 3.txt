@@ -1,0 +1,67 @@
+set +x
+echo ""
+echo "========================================================================"
+echo "MODULE 03 SIT Changelog"
+echo "========================================================================"
+echo ""
+
+git checkout $SIT_GIT_BRANCH
+git branch
+
+mkdir -p ../changelog-SIT/logdir-DF-"$BUILD_ID"
+git diff --diff-filter=ACMR --name-only HEAD~1 HEAD~0 > ../changelog-SIT/logdir-DF-"$BUILD_ID"/changedfiles-"$BUILD_ID".log
+ls -1drt ../changelog-SIT/*logdir-DF* | head -n -5 | awk -F / '{print $NF}' | while read files; do rm -rf ../changelog-SIT/"$files"; done
+
+cat ../changelog-SIT/logdir-DF-"$BUILD_ID"/changedfiles-"$BUILD_ID".log | while read files; do
+rsync -avzhq --relative --ignore-missing-args ./$files ../changelog-SIT/logdir-DF-"$BUILD_ID"/
+done
+
+echo "" && echo "------------------------------------------------------------------------------"
+viewchangelog=`ls ../changelog-SIT/logdir-DF-"$BUILD_ID"/changedfiles-"$BUILD_ID".log`
+echo "$viewchangelog" && cat $viewchangelog
+echo ""
+
+#-----------------------------------------------------------------------------------
+#send changelog file over to SIT-Deploy-Stage
+deploy_sit_path="/app/appadmin/jenkins/workspace/OmniBuilds/Deploy-SIT/"
+scp $viewchangelog appadmin@172.16.19.166:$deploy_sit_path
+
+
+#-----------------------------------------------------------------------------------
+
+FUNCTION=TAG_YOUR_BUILD
+CAPABILITIES=`cat $CAPABILITIES_FILE | grep $FUNCTION` || echo "WARNING :: FUNCTION $FUNCTION not available for $BUILD_USER_ID"
+
+if [[ $TAG_SIT_BUILD = "true" ]] && [[ "$CAPABILITIES" = "$FUNCTION" ]];
+then
+
+echo "------------------------------------------------------------------------------"
+echo "Conditions are true:: $BUILD_USER_ID TAGGING_SIT_BUILD  ..."
+echo "BUILD_USER CAPABILITIES"::$CAPABILITIES
+echo "BUILD_TAG::$BUILD_TAG"
+
+git tag -l | xargs git tag -d 2>&1 >/dev/null
+git tag -a "$BUILD_TAG-$MERGED_FEATURE-$BUILD_TIMESTAMP" -m "$PULL_REQUEST_ID"
+git push origin "$BUILD_TAG-$MERGED_FEATURE-$BUILD_TIMESTAMP"
+
+echo "================================================================"
+echo "SUCCESSFULL TAGGED SIT BUILD :: $BUILD_TIMESTAMP"
+echo "----------------------------------------------------------------"
+git show --name-only "$BUILD_TAG-$MERGED_FEATURE-$BUILD_TIMESTAMP"
+echo "----------------------------------------------------------------"
+git ls-remote | grep tags | awk '(NR%2)' | grep "digitalFaceApplication-SITBuild" | head -n -5 | awk -F"refs/tags/" {'print $NF'} > tag_list.log
+cat tag_list.log | while read tag_list;
+do `git push origin :"$tag_list"`
+done
+echo "----------------------------------------------------------------"
+git ls-remote | grep tags | awk '(NR%2)' | grep "digitalFaceApplication-SITBuild" | awk -F"refs/tags/" {'print $NF'}
+echo "================================================================"
+
+else
+echo "-----------------------------------------------------------------"
+echo "No BUILD TO TAG, Continue build as normal ..."
+echo "-----------------------------------------------------------------"
+echo "Previous Tags"
+git ls-remote | grep tags | awk '(NR%2)' | grep "digitalFaceApplication-SITBuild" || echo "skip if no tags are listed .."
+echo "-----------------------------------------------------------------"
+fi

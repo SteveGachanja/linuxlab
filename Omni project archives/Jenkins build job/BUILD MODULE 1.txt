@@ -1,0 +1,123 @@
+set +x
+echo ""
+echo "=================================================================="
+echo "MODULE 01:: VERIFY PREVIOUS BUILD COMMITS on $DEV_GIT_BRANCH"
+echo "=================================================================="
+echo ""
+
+if [[ $CSS_CHANGE_APPROVALS = "true" || $ROLLBACK_CSS_CHANGES = "true" || $ACCEPT_PRELOGIN_CHANGES = "true" ]];
+then
+EXCEPTION_BUILD=true
+echo "Changed_EXCEPTION_BUILD to::$EXCEPTION_BUILD"
+else
+echo "EXCEPTION_BUILD::$EXCEPTION_BUILD"
+fi
+
+#-----------------------------------------------------------------------------------------------
+#EXCEPTION_BUILD_parameters
+
+FUNCTION=EXCEPTION_BUILD
+CAPABILITIES=`cat $CAPABILITIES_FILE | grep $FUNCTION` || echo "WARNING :: FUNCTION $FUNCTION not available for $BUILD_USER_ID"
+echo "BUILD_USER CAPABILITIES"::$CAPABILITIES
+
+if [[ $EXCEPTION_BUILD = "true" ]] && [[ "$CAPABILITIES" = "$FUNCTION" ]];
+then
+exit_status=0
+echo "Unrestricted build exit_status=($exit_status) , change all exit status=(1) to status=(0)"
+
+else
+exit_status=1
+echo "Make build as usual with restrictions exit_status=($exit_status) .."
+fi
+
+#CONDITIONS TO CONFIRM THAT COMMIT EXISTS IN $DEV_GIT_BRANCH  
+#-----------------------------------------------------------------------------------------------
+#CONDITION 1 - FEATURE BRANCH COMMIT DOES NOT EXIST ON DIT 
+
+if [[ $IS_DIT_MERGED = 0 || $IS_DIT_MERGED > 0 ]] && [[ $IS_COMMIT_EMPTY = 0 ]];
+then
+echo "" && echo " *** Allow Pass -- Nothing has changed and the Feature branch is Empty *** " && echo ""
+exit 0
+
+#-----------------------------------------------------------------------------------------------
+#CONDITION 2 - CONFLICT CHECKS
+
+elif [[ $MERGED_FEATURE == *CONFLICT_* ]] || [[ $MERGED_FEATURE == *Conflict_* ]] || [[ $MERGED_FEATURE == *CONFLICT-* ]];
+then
+echo "" && echo "MERGED_FEATURE :: $MERGED_FEATURE *** Mark this as a CONFLICT branch ... *** " && echo ""
+exit 0
+
+elif [[ $MERGED_FEATURE = "" ]];
+then
+echo ""
+echo "--------------------------------------------------------------------------------------------"
+echo " *** Fail Build, -- MERGED_FEATURE is empty, Looks like a Conflict was Resolving  *** "
+echo "--------------------------------------------------------------------------------------------"
+echo ""
+exit $exit_status
+exit 1
+
+#----------------------------------------------------------------------------------------------
+#CONDITION 3 - COMMIT DOES NOT MATCH DETAILS IN DEV
+
+elif [[ $IS_DIT_MERGED < 1 ]];
+then
+echo ""
+echo "--------------------------------------------------------------------------------------------"
+echo " *** Fail Build, This Feature_branch <$MERGED_FEATURE> has not been merged into $DEV_GIT_BRANCH *** "
+echo "--------------------------------------------------------------------------------------------"
+echo ""
+exit $exit_status
+exit 1
+
+elif [[ $IS_DIT_MERGED < 1 ]] && [[ $SIT_REMOTE_COMMIT_ID != $DEV_LOCAL_COMMIT_ID ]];
+then
+echo ""
+echo "-------------------------------------------------------------------------------"
+echo " *** COMMIT_ID $BRANCH_COMMIT_ID DOES NOT MATCH DETAILS IN $DEV_GIT_BRANCH branch *** "
+echo "-------------------------------------------------------------------------------"
+echo ""
+exit $exit_status
+exit 1
+
+elif [[ $IS_DIT_MERGED = 0 ]] && [[ $IS_COMMIT_EMPTY > 0 ]];
+then
+echo ""
+echo "-------------------------------------------------------------------------------"
+echo " *** Fail Build, -- Looks like a Conflict was Resolving , please check on TFS *** "
+echo "-------------------------------------------------------------------------------"
+echo ""
+exit $exit_status
+exit 1
+
+#----------------------------------------------------------------------------------------------
+#CONDITION 4 - FURTHER CHECKS
+
+elif [[ $SIT_REMOTE_COMMIT_ID != $DEV_LOCAL_COMMIT_ID ]];
+then
+echo ""
+echo "-------------------------------------------------------------------------------"
+echo " *** This Feature_branch <$MERGED_FEATURE> is not BUILT in DIT *** "
+echo "-------------------------------------------------------------------------------"
+echo ""
+exit $exit_status
+exit 1
+
+#---------------------------------------------------------------------------------------------
+#CONDITION 5 - COMMIT MATCHES DETAILS IN DEV
+
+elif [[ $IS_DIT_MERGED > 0 ]] && [[ $SIT_REMOTE_COMMIT_ID = $DEV_LOCAL_COMMIT_ID ]];
+then
+echo ""
+echo "------------------------------------------------------------------------------------------------------------------------------"
+echo " *** Jenkins confirmed COMMIT_ID $BRANCH_COMMIT_ID of Feature_branch <$MERGED_FEATURE> exists in $DEV_GIT_BRANCH branch  *** "
+echo "------------------------------------------------------------------------------------------------------------------------------"
+echo ""
+
+else
+echo ""
+echo "-------------------------------------------------------------------------"
+echo "Build continuing as normal..."
+echo "-------------------------------------------------------------------------"
+echo ""
+fi

@@ -1,0 +1,24 @@
+=============================================
+git reset HEAD <file>     					to unstage a file
+git checkout -- <file>  					discards changes from the "not stage area" in the current branch, in the current working directory
+git checkout <commit_id> -- <path_to_file>   reverts back to a timecopy of the hash commit id , in the current branch
+git diff
+git diff --color-words
+git diff --staged
+
+REVERT A COMMIT
+git show <hash_id>					to see your changes
+git revert <hash_id>				reverts a commit from the hash_id
+git show HEAD
+
+Remove Junk files
+git clean -n <files>   to see which files to be removed from the hard disk <use -f option to remove>
+
+GIT DIFF
+git diff <oldest_hash_id>..<newest_hash_id>   >> compare two different version of commits
+git diff <oldest_hash_id>..HEAD          >>> Compares to the latest commit
+git diff --diff-filter=ACMR --name-only HEAD~1 HEAD~0
+
+git reflog 									>> Check History logs of all the references
+git checkout -b old-dev-branch HEAD@{1}		>> you can then checkout to any HEAD history 
+											>> for example this points to HEAD pointer 

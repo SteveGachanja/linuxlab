@@ -1,0 +1,421 @@
+Each row, or record, of a table contains information about a single entity.
+Each column, or field, of a table contains a single attribute for all rows in the table.
+
+SELECT COUNT(birthdate) FROM people;
+SELECT COUNT(DISTINCT birthdate) FROM people;
+SELECT name FROM kids WHERE age BETWEEN 2 AND 12 AND nationality = 'USA';
+SELECT name FROM kids WHERE age IN (2, 4, 6, 8, 10);
+SELECT name FROM people WHERE birthdate IS NOT NULL;
+SELECT COUNT(*) FROM people WHERE birthdate IS NULL;
+SELECT name FROM companies WHERE name LIKE 'Data%';  #The % wildcard will match zero, one, or many characters in text. 
+SELECT name FROM companies WHERE name NOT LIKE 'DataC_mp'; #The _ wildcard will match a single character. For example, the following query matches companies like 'DataCamp', 'DataComp'
+SELECT AVG(budget) FROM films;
+SELECT MAX(budget) FROM films;
+SELECT MIN(budget) FROM films;
+SELECT SUM(budget) FROM films;
+SELECT MAX(budget) AS max_budget, MAX(duration) AS max_duration FROM films;
+SELECT title, (duration/60.0) AS duration_hours FROM films;
+SELECT AVG(duration)/60.0 AS avg_duration_hours FROM films;
+SELECT (4.0 / 3.0) AS result;
+SELECT name FROM people ORDER BY name DESC;
+SELECT sex, count(*) FROM employees GROUP BY sex ORDER BY count DESC;
+Select release_year, max(budget) from films group by release_year;
+
+SELECT release_year FROM films GROUP BY release_year WHERE COUNT(title) > 10;  # In SQL,  WHERE clauses cannot be used in aggregate functions
+SELECT release_year FROM films GROUP BY release_year HAVING COUNT(title) > 10; # USe HAVING clause instead.
+
+SELECT release_year, AVG(budget) AS avg_budget, AVG(gross) AS avg_gross
+FROM films
+WHERE release_year > 1990
+GROUP BY release_year
+HAVING AVG(budget) > 60000000
+Order by avg_gross desc
+;
+
+** Problem Statement
+======================
+Get the country, average budget, and average gross take
+of countries that have made more than 10 films.
+Order the result by country name, and limit the number of results displayed to 5.
+You should alias the averages as avg_budget and avg_gross respectively.
+
+** Query Breakdown
+=============================
+-- select country, average budget, 
+--     and average gross
+
+-- from the films table
+
+-- group by country 
+
+-- where the country has more than 10 titles
+
+-- order by country
+
+-- limit to only show 5 results
+
+
+INNER JOINS
+====================================
+SELECT *
+FROM left_table
+INNER JOIN right_table
+ON left_table.id = right_table.id;
+ 
+SELECT c1.name AS city, c2.name AS country
+FROM cities AS c1
+INNER JOIN countries AS c2
+ON c1.country_code = c2.code;
+====================================
+
+SELECT *
+FROM left_table
+  INNER JOIN right_table
+    ON left_table.id = right_table.id
+  INNER JOIN another_table
+    ON left_table.id = another_table.id and left_table.another_column = another_table.another_column;
+====================================
+
+SELECT countries.name AS country, COUNT(*) AS cities_num
+  FROM cities
+    INNER JOIN countries
+    ON countries.code = cities.country_code
+GROUP BY country
+ORDER BY cities_num DESC, country
+LIMIT 9;	
+	
+	
+INNER JOINS via USING
+====================================
+SELECT *
+FROM countries
+  INNER JOIN economies
+    USING(code);
+	
+-- Select fields with aliases
+Select p1.country_code, p1.size as size2010, p2.size as size2015 
+-- From populations (alias as p1)
+from populations as p1
+  -- Join to itself (alias as p2)
+inner join populations as p2
+    -- Match on country code
+    using (country_code);
+ 
+====================================
+ -- Select fields with aliases
+SELECT p1.country_code,
+       p1.size AS size2010, 
+       p2.size AS size2015,
+       -- Calculate growth_perc
+       ((p2.size - p1.size)/p1.size * 100.0) AS growth_perc
+-- From populations (alias as p1)
+FROM populations AS p1
+  -- Join to itself (alias as p2)
+  INNER JOIN populations AS p2
+    -- Match on country code
+    on p1.country_code = p2.country_code
+        -- and year (with calculation)
+       AND p1.year = p2.year - 5
+       ;
+	   
+CASE Statements
+====================================	   
+	   
+SELECT name, continent, code, surface_area,
+    -- First case
+    CASE WHEN surface_area > 2000000 THEN 'large'
+        -- Second case
+        WHEN surface_area > 350000 THEN 'medium'
+        -- Else clause + end
+        ELSE 'small' END
+        -- Alias name
+        AS geosize_group
+-- From table
+FROM countries;	   
+
+
+Observe the use of (and the placement of) the INTO command to create this countries_plus table:
+========================================================================
+SELECT country_code, size,
+  CASE WHEN size > 50000000
+            THEN 'large'
+       WHEN size > 1000000
+            THEN 'medium'
+       ELSE 'small' END
+       AS popsize_group
+INTO pop_plus       
+FROM populations
+WHERE year = 2015;
+
+-- Select fields
+Select c.name as country ,continent,geosize_group,popsize_group    ## Use of Alias
+-- From countries_plus (alias as c)
+from countries_plus as c
+  -- Join to pop_plus (alias as p)
+  inner join pop_plus as p
+    -- Match on country code
+    on c.code = p.country_code
+-- Order the table    
+Order by geosize_group;
+===============================================
+INSERT INTO target_table (col1, col2, col3)
+SELECT col1,
+       col2,
+       col3
+FROM source_table
+WHERE condition;
+===============================================
+
+**** TYPES OF JOINS ******
+=============================
+INNER JOIN
+SELF JOIN
+
+OUTER JOIN
+	LEFT JOIN
+	RIGHT JOIN
+	FULL JOIN
+CROSS JOIN  (does not have an ON or USING clause)
+Semi-Join and Anti-join
+
+**** TYPES OF UNION -- SET THEORY
+===================================
+UNION      -- includes all records in two tables, but does not double count
+UNION ALL  -- includes all records in two tables, and double counts or replicates records found in both tables
+INTERSECT  -- will only return records that both tables have in common. That is only a subset of data found in both tables
+EXCEPT     -- only records on one table , but not the other
+
+
+-- Select fields
+SELECT code, year
+  -- From economies
+  FROM economies
+	-- Set theory clause
+	union all
+-- Select fields
+SELECT country_code, year
+  -- From populations
+  FROM populations
+-- Order by code, year
+ORDER BY code, year;
+
+=============================
+-- Select field
+SELECT name
+  -- From cities
+  FROM cities
+	-- Set theory clause
+	Except
+-- Select field
+SELECT capital
+  -- From countries
+  FROM countries
+-- Order by result
+ORDER BY name;
+
+*** SEMI JOIN using SUB-QUERIES
+=================================
+
+-- Query from step 2
+SELECT DISTINCT name
+  FROM languages
+-- Where in statement
+WHERE code IN
+  -- Query from step 1
+  -- Subquery
+  (SELECT code
+   FROM countries
+   WHERE region = 'Middle East')
+-- Order by name
+Order by name;
+
+*** ANTI JOIN using SUB-QUERIES
+================================
+
+-- Select fields
+Select name,code
+  -- From Countries
+  from Countries
+  -- Where continent is Oceania
+  where continent = 'Oceania' and
+  	-- And code not in
+  	code NOT IN
+  	-- Subquery
+  	(Select code
+  	 from currencies);
+	 
+
+** WHERE IN SEMI-JOIN
+================================
+SELECT
+	-- Select the team long name and team API id
+	team_long_name,
+	team_api_id
+FROM teams_germany
+-- Only include FC Schalke 04 and FC Bayern Munich
+WHERE team_long_name IN ('FC Schalke 04', 'FC Bayern Munich');
+
+================================
+
+	 
+-- Select the city name
+Select name
+  -- Alias the table where city name resides
+  from cities AS c1
+  -- Choose only records matching the result of multiple set theory clauses
+  WHERE country_code IN
+(
+    -- Select appropriate field from economies AS e
+    SELECT e.code
+    FROM economies AS e
+-- Get all additional (unique) values of the field from currencies AS c2  
+    union
+    SELECT c2.code
+    FROM currencies AS c2
+    -- Exclude those appearing in populations AS p
+    Except
+    SELECT p.country_code
+    FROM populations  AS p
+);	 
+
+** NESTED SUB-QUERIES
+================================
+Types of Basic SUB-QUERIES
+- SUB-QUERIES inside SELECT clause
+- SUB-QUERIES inside FROM clause
+- SUB-QUERIES inside WHERE clause
+================================
+
+-- Select fields
+SELECT *
+  -- From populations
+  FROM populations
+-- Where life_expectancy is greater than
+WHERE life_expectancy >
+  -- 1.15 * subquery
+  1.15 * (SELECT AVG(life_expectancy)
+   FROM populations
+   WHERE year = 2015) AND
+  year = 2015;
+
+================================
+  
+-- Select fields
+Select name,country_code,urbanarea_pop
+  -- From cities
+  from cities
+-- Where city name in the field of capital cities
+where name IN
+  -- Subquery
+  (Select capital
+   from countries)
+ORDER BY urbanarea_pop DESC;
+
+*** SUB-QUERIES inside the FROM Clause
+=======================================
+
+-- Select fields
+Select local_name,subquery.lang_num
+  -- From countries
+  from countries,
+  	-- Subquery (alias as subquery)
+  	(SELECT code, COUNT(*) AS lang_num
+  	 FROM languages
+  	 GROUP BY code) AS subquery
+  -- Where country code matches the subquery code
+  where countries.code = subquery.code
+-- Order by descending number of languages
+Order by lang_num desc;
+
+
+==========================================
+
+-- Select fields
+SELECT name, continent, inflation_rate
+  -- From countries
+  FROM countries
+	-- Join to economies
+	INNER JOIN economies
+	-- Match on code
+	on countries.code = economies.code
+  -- Where year is 2015
+  WHERE year = 2015
+    -- And inflation rate in subquery (alias as subquery)
+    and inflation_rate in (
+        SELECT MAX(inflation_rate) AS max_inf
+        FROM (
+             SELECT name, continent, inflation_rate
+             FROM countries
+             INNER JOIN economies
+             on countries.code = economies.code
+             WHERE year = 2015) AS subquery
+      -- Group by continent
+        GROUP BY continent);
+
+		
+SUMMARY REVIEW
+======================================
+** TYPES OF JOINS
+** SET THEORY Clauses
+** TYPES OF BASIC SUB-QUERIES
+
+FINAL CHALLENGE 1
+=======================================
+-- Select fields
+SELECT DISTINCT name, total_investment, imports
+  -- From table (with alias)
+  FROM countries AS c
+    -- Join with table (with alias)
+    LEFT JOIN economies AS e
+      -- Match on code
+      ON (c.code = e.code
+      -- and code in Subquery
+        AND c.code IN (
+          SELECT l.code
+          FROM languages AS l
+          WHERE official = 'true'
+        ) )
+  -- Where region and year are correct
+  WHERE region = 'Central America' AND year = 2015
+-- Order by field
+ORDER BY name;
+
+
+FINAL CHALLENGE 2
+=======================================
+-- Select fields
+SELECT region, continent, avg(fertility_rate) AS avg_fert_rate
+  -- From left table
+  FROM countries AS c
+    -- Join to right table
+    INNER JOIN populations AS p
+      -- Match on join condition
+      ON c.code = p.country_code
+  -- Where specific records matching some condition
+  WHERE year = 2015
+-- Group appropriately
+GROUP BY region, continent
+-- Order appropriately
+ORDER BY avg_fert_rate ;
+
+FINAL CHALLENGE 3
+=======================================
+-- Select fields
+SELECT name, country_code, city_proper_pop, metroarea_pop,  
+      -- Calculate city_perc
+      city_proper_pop / metroarea_pop * 100 AS city_perc
+  -- From appropriate table
+  FROM cities
+  -- Where 
+  WHERE name IN
+    -- Subquery
+    (SELECT capital
+     FROM countries
+     WHERE (continent = 'Europe'
+        OR continent LIKE '%America%'))
+       AND metroarea_pop IS not null
+-- Order appropriately
+ORDER BY city_perc desc
+-- Limit amount
+Limit 10;
+
