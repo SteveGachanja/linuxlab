@@ -1,0 +1,13 @@
+commit 184abb4f997ebccada941e8273a43d3657243ad8
+tree d8e5094659e9b56bacb53474c6d9ef40e4c7aa2e
+parent bf45dc2ad6dcd4b528f54d39c71dcd74012ceb76
+author Julian Cranfield <jcranfie@tibco.com> 2018-03-26 19:56:06 +0100
+committer Julian Cranfield <jcranfie@tibco.com> 2018-03-26 19:56:06 +0100
+
+    Fix POM
+
+
+
+:100755 100755 b68e587e1c32b0b9769a44c8aa82428766afe466 8b47aa3e4a6a40b93fd5d49baefa1e899fd64e7e M	BW/POM/APP_TSDemoGetData.xml
+:100755 100755 5c256c3d127f8ab2ce18d667953ca75cafff907c ab0f4ac32272fb3926cf755f03d27d935dd42b58 M	BW/TechnicalServices/APP_TSDemoGetData.module.application/pom.xml
+:100755 100755 223ee4bd2e9ee67a13a257cf604a6c7d5671e8d3 a6116ae5211adbd899f7edda141476e1816757f1 M	BW/TechnicalServices/APP_TSDemoGetData.module/pom.xml

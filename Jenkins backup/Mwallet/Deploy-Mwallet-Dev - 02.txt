@@ -1,0 +1,41 @@
+set +x
+echo "===================================================="
+echo "MWALLET: DEPLOYMENT : DEV ENVIRONMENT"
+pwd
+cd kubernetes/
+echo "===================================================="
+
+echo "DEPLOY SECRETS configurations"
+cp secrets-dev.yml secrets.yml
+sudo kubectl delete -f secrets.yml || echo "skip if errors are found"
+sleep 5
+sudo kubectl apply -f secrets.yml
+sleep 15
+echo "===================================================="
+sudo kubectl get secrets | grep mwallet
+echo "===================================================="
+
+echo -n "DEPLOY MWALLET ENGINE"
+cat mwalletdeploy-backend.yaml | grep image:
+
+sudo kubectl delete -f mwalletdeploy-backend.yaml || echo "skip if errors are found"
+sleep 5
+sudo kubectl apply -f mwalletdeploy-backend.yaml
+sleep 15
+echo "===================================================="
+sudo kubectl get pods
+echo "===================================================="
+sudo kubectl get svc | grep mwallet
+echo "===================================================="
+echo "END OF DEPLOYMENT"
+
+POD_STATUS=`kubectl get pods | grep mwalletbackend | awk -F " " '{print$03}' | tr -d "[:blank:]"`
+
+if [[ $POD_STATUS == "Running" ]];
+then
+echo "IMAGE RUNNING SUCCESSFULLY" ;
+else 
+echo "ERROR :: IMAGE NOT RUNNING";
+exit 1 ;
+fi
+echo "===================================================="

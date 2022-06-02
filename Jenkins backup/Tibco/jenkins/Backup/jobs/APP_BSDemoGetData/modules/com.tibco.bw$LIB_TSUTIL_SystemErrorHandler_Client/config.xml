@@ -1,0 +1,33 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<maven2 plugin="maven-plugin@3.1">
+  <actions/>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <reporters/>
+  <displayName>LIB_TSUTIL_SystemErrorHandler_Client</displayName>
+  <version>1.0.7-SNAPSHOT</version>
+  <packaging>bwmodule</packaging>
+  <relativePath>BW/TechnicalServices/LIB_TSUTIL_SystemErrorHandler_Client</relativePath>
+  <dependencies>
+    <dependency>
+      <groupId>com.tibco.plugins</groupId>
+      <artifactId>bw6-maven-plugin</artifactId>
+      <version>1.3.1</version>
+      <plugin>true</plugin>
+    </dependency>
+    <dependency>
+      <groupId>com.tibco.bw</groupId>
+      <artifactId>APP_BSDemoGetData.module.application.parent</artifactId>
+      <version>1.0.7-SNAPSHOT</version>
+      <plugin>false</plugin>
+    </dependency>
+  </dependencies>
+  <children/>
+</maven2>

@@ -1,0 +1,13 @@
+commit 6e1e0968d31d98bdb79ce3065e1d9163cacbc3b3
+tree e1cd0b928b29e1686620b58e4d87f4cc64ccb0d6
+parent 2ffd4533b2763e86078fe2f28252da70cb752a80
+author Julian Cranfield <jcranfie@tibco.com> 2018-03-27 20:22:16 +0100
+committer Julian Cranfield <jcranfie@tibco.com> 2018-03-27 20:22:16 +0100
+
+    Fix JMS connection
+
+
+
+:100644 100644 f82003813eec89be042906f3971e832e00c087a5 bbd74e2a1499fa0b81226092ed1c28dcc3d7bb23 M	BW/BusinessServices/APP_BSDemoGetData.module.application/META-INF/default.substvar
+:100755 100755 f39231244a8ec071100cdcdb2882560de3f6c037 f7b8b46e78cc6ff8747765465f978999437677b0 M	BW/BusinessServices/APP_BSDemoGetData.module/META-INF/default.substvar
+:100755 100755 91e0e9938aa7735a39d3fb49c2dea36f9f6af8bf 1f43f5f9d13e18b89a293a65730c83b790097a9c M	BW/BusinessServices/APP_BSDemoGetData.module/Resources/services/bs/demo/getdata/JMSClient-ESB01.jmsConnResource

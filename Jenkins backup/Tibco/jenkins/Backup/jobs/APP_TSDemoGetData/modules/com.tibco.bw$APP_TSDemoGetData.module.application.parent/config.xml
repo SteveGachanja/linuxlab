@@ -1,0 +1,41 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<maven2 plugin="maven-plugin@3.1">
+  <actions/>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <reporters/>
+  <displayName>APP_TSDemoGetData.module.application.parent</displayName>
+  <version>1.0.64-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <relativePath>BW/POM</relativePath>
+  <dependencies/>
+  <children>
+    <hudson.maven.ModuleName>
+      <groupId>com.tibco.bw</groupId>
+      <artifactId>LIB_XML</artifactId>
+    </hudson.maven.ModuleName>
+    <hudson.maven.ModuleName>
+      <groupId>com.tibco.bw</groupId>
+      <artifactId>LIB_TSUTIL_SystemAudit_Client</artifactId>
+    </hudson.maven.ModuleName>
+    <hudson.maven.ModuleName>
+      <groupId>com.tibco.bw</groupId>
+      <artifactId>LIB_TSUTIL_SystemErrorHandler_Client</artifactId>
+    </hudson.maven.ModuleName>
+    <hudson.maven.ModuleName>
+      <groupId>com.tibco.bw</groupId>
+      <artifactId>APP_TSDemoGetData.module</artifactId>
+    </hudson.maven.ModuleName>
+    <hudson.maven.ModuleName>
+      <groupId>com.tibco.bw</groupId>
+      <artifactId>APP_TSDemoGetData.module.application</artifactId>
+    </hudson.maven.ModuleName>
+  </children>
+</maven2>

@@ -1,0 +1,22 @@
+[INFO] 
+[INFO] ------< com.tibco.bw:APP_TSDemoGetData.module.application.parent >------
+[INFO] Building APP_TSDemoGetData.module.application.parent 1.0.63-SNAPSHOT [4/6]
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[8mha:////4EdJbZ345c+avMuiHmwJL4emB+/U6LE6AKTu+lJQls/TAAAAYB+LCAAAAAAAAP9b85aBtbiIQSmjNKU4P0+vJLE4u1gvPjexLDVPzxdEGvvmZ+X75ZekLlOVfvTjc8FPJgaGiiIGKaiG5Py84vycVD1nCA1SyAABjCCFBQCV27OjYAAAAA==[0m[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ APP_TSDemoGetData.module.application.parent ---
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary:
+[INFO] 
+[INFO] LIB_XML ............................................ SUCCESS [  1.160 s]
+[INFO] LIB_TSUTIL_SystemAudit_Client ...................... SUCCESS [  0.089 s]
+[INFO] LIB_TSUTIL_SystemErrorHandler_Client ............... SUCCESS [  0.078 s]
+[INFO] APP_TSDemoGetData.module.application.parent 1.0.63-SNAPSHOT SUCCESS [  0.021 s]
+[INFO] APP_TSDemoGetData.module ........................... SUCCESS [  0.067 s]
+[INFO] APP_TSDemoGetData.module.application 1.0.63-SNAPSHOT SUCCESS [  0.153 s]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 2.702 s
+[INFO] Finished at: 2018-03-28T08:52:14+01:00
+[INFO] ------------------------------------------------------------------------
+Waiting for Jenkins to finish collecting data

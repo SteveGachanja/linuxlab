@@ -1,0 +1,49 @@
+set +x
+echo "===================================================="
+echo "MWALLET: SET ENVIRONMENT VARIABLES"
+pwd
+cd kubernetes/
+echo "===================================================="
+
+echo "MWALLET UAT ENDPOINT :: http://172.16.20.52:7091"
+echo "SOA HTTPS ENDPOINT :: https://172.16.20.39:8080"
+
+echo "===================================================="
+
+echo "Change DB configurations to MWALLETDB_SIT"
+previous_config=`cat mwalletdeploy-backend.yaml | grep jdbc | awk -F '/' '{print $02}' | awk -F '"' '{print $01}' | tr -d "[:blank:]"`
+echo "PREVIOUS DB CONFIGURATION :: $previous_config"
+sed -i 's#'$previous_config'#MWALLETDB_SIT#g' mwalletdeploy-backend.yaml
+echo -n "CURRENT DB CONFIGURATION :: " && cat mwalletdeploy-backend.yaml | grep jdbc
+
+echo "===================================================="
+
+echo "Change IP configurations to 172.16.20.52"
+previous_config=`cat mwalletdeploy-backend.yaml | grep -A 1 externalIPs | awk -F '-' '{print $02}' | grep -v '^[[:space:]]*$'`
+previous_config=`echo $previous_config | tr -d "[:blank]"`
+sed -i 's#'$previous_config'#172.16.20.52#g' mwalletdeploy-backend.yaml
+cat mwalletdeploy-backend.yaml | grep -C 2 externalIPs
+
+echo "===================================================="
+echo "PREPARE MWALLET YAML :: "
+
+if [[ $ROLLBACK_BUILDTAG_UAT = "" ]];
+then
+echo -n "BUILD AS NORMAL ::"
+cat mwalletdeploy-backend.yaml | grep image:
+
+else
+echo "ROLLING BACK_BUILDTAG_UAT"
+echo -n "CURRENT BUILD TAG ::"
+cat mwalletdeploy-backend.yaml | grep image:
+
+echo -n "ROLLBACK_BUILDTAG_UAT ::"
+CURRENT_BUILD_TAG=`cat mwalletdeploy-backend.yaml | grep image: | awk -F 'image:' '{print $02}' | tr -d '[:blank:]'`
+sed -i 's#'$CURRENT_BUILD_TAG'#'$ROLLBACK_BUILDTAG_UAT'#g' mwalletdeploy-backend.yaml
+cat mwalletdeploy-backend.yaml | grep image:
+fi
+
+echo "===================================================="
+echo "PREPARE PREPROD YAML"
+cp mwalletdeploy-backend.yaml preprod-mwalletdeploy-backend.yaml
+sed -i 's#172.16.20.52#172.16.20.55#g' preprod-mwalletdeploy-backend.yaml

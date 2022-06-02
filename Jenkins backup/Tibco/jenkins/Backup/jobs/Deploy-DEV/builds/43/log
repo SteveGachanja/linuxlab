@@ -1,0 +1,65 @@
+Started by upstream project "[8mha:////4JZHvAMfAU4e9OfWiba7hlfE+JsJzL9UqHfm6l2NPFKxAAAAox+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAzBEgZx/az8JH3HgID4kGCX1Nx899QSl8SSRH0A/awLo8wAAAA=[0mAPP_TSDemoGetData" build number [8mha:////4I+lUsZ7x6DPYf76QYr1BXgwCJ88GIQb+3XrAzmMyf8dAAAApR+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAymEgZJ/az8JH3HgID4kGCX1Nx899QSl8SSRH1TCwCLra/8zgAAAA==[0m58
+originally caused by:
+ Started by user [8mha:////4KURSn3OaMQL6bFrXuW5/3fXc55L78mMdzu6q+I/O50/AAAAlx+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAzWEgZu/dLi1CL9xJTczDwAj6GcLcAAAAA=[0madmin
+Building in workspace /Users/Shared/Jenkins/Home/workspace/Deploy-DEV
+ > git rev-parse --is-inside-work-tree # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/jcranfie/BW6Demo.git # timeout=10
+Fetching upstream changes from https://github.com/jcranfie/BW6Demo.git
+ > git --version # timeout=10
+using GIT_ASKPASS to set credentials 
+ > git fetch --tags --progress https://github.com/jcranfie/BW6Demo.git +refs/heads/*:refs/remotes/origin/*
+ > git rev-parse refs/remotes/origin/master^{commit} # timeout=10
+ > git rev-parse refs/remotes/origin/origin/master^{commit} # timeout=10
+Checking out Revision 67cdab7e3097f588984b746c1209b95b6b35bcd5 (refs/remotes/origin/master)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 67cdab7e3097f588984b746c1209b95b6b35bcd5
+Commit message: "Fix"
+ > git rev-list --no-walk 702c12e680724e2610c90953cf19438814beb234 # timeout=10
+[Deploy-DEV] $ /bin/sh -xe /Users/Shared/Jenkins/tmp/jenkins1185180802927701548.sh
++ echo APP_TSDemoGetData
+APP_TSDemoGetData
++ echo APP_TSDemoGetData-AppSpace
+APP_TSDemoGetData-AppSpace
++ echo DEMO
+DEMO
++ echo 58
+58
+[Jenkins] $ /Users/Shared/Jenkins/Home/tools/hudson.tasks.Ant_AntInstallation/Ant-default/bin/ant -file ant-deploy.xml -DDOMAIN=DEMO -DBUILD_JOB_VERSION=58 -DAPPSPACE=APP_TSDemoGetData-AppSpace -DAPPLICATION_NAME=APP_TSDemoGetData -Dbw.application.appspace=APP_TSDemoGetData-AppSpace -Dapplication.name=APP_TSDemoGetData -Dapplication.version=58 -Ddomain=DEMO -Denv.name=DEV deploy
+Buildfile: /Users/Shared/Jenkins/Home/workspace/Deploy-DEV/Jenkins/ant-deploy.xml
+
+[8mha:////4G4Msm6eXCh3UmxFLJYw4d6sniqLuE2f781FMntdH/s9AAAAYB+LCAAAAAAAAP9b85aBtbiIQT6jNKU4P0+vJLE4u1gvPjGvRM8xryQksSg9tcQvvyTVvqNr/s+Vl9uYGBgqihikoKqT8/OK83NS9ZwhNEghAwQwghQWAADROOumXQAAAA==[0mdeploy:
+     [echo] Uploads, Deploys and Starts one BW application...
+     [echo] 
+     [echo] Searching : ../../../jobs/APP_TSDemoGetData/builds/58 for **/APP_TSDemoGetData*_1.0.58.ear
+     [echo] EAR File: /Users/Shared/Jenkins/Home/jobs/APP_TSDemoGetData/builds/58/archive/BW/TechnicalServices/APP_TSDemoGetData.module.application/target/APP_TSDemoGetData.module.application_1.0.58.ear
+     [echo] Profile: ../../../jobs/APP_TSDemoGetData/builds/58/archive/Jenkins/ServiceProfiles/APP_TSDemoGetData-DEV.xml
+     [echo] 
+     [echo] Executing /Users/juliancranfield/TIBCO-BW642/bw/6.4/bin/bwadmin --propFile /Users/juliancranfield/TIBCO-BW642/bw/6.4/bin/bwadmin.tra -config /Users/juliancranfield/TIBCO-BW642/bw/6.4/config/bwagent-DEV.ini -f ./build/APP_TSDemoGetData/58/scripts/deploy.bwadmin
+     [echo] 
+     [exec] TIBCO ActiveMatrix BusinessWorks version 6.4.2, hotfix 3, build V51, 2018-02-22
+     [exec] Upload APP_TSDemoGetData.module.application_1.0.58.ear
+     [exec] Connecting to the BW Agent using
+     [exec]  TIBCO ActiveSpaces (Java). Enterprise Edition. Version 2.1.6.011
+     [exec]  Connected to BW Agent
+     [exec] 
+     [exec] TIBCO-BW-ADMIN-CLI-300410: Uploaded archive [/Users/Shared/Jenkins/Home/jobs/APP_TSDemoGetData/builds/58/archive/BW/TechnicalServices/APP_TSDemoGetData.module.application/target/APP_TSDemoGetData.module.application_1.0.58.ear].
+     [exec] Deploy and Start APP_TSDemoGetData.module.application_1.0.58.ear
+     [exec] TIBCO-BW-ADMIN-CLI-500414: Deployed application from the archive [APP_TSDemoGetData.module.application_1.0.58.ear], however not all application instances started.  <CausedBy> WARNING: exception with message ***Error starting application [APP_TSDemoGetData.module.application:1.0]*** has not been localized: TIBCO-BW-ADMIN-500444: Failed to start Application in AppNode [APP_TSDemoGetData-AppNode]. Check the AppNode log files for messages starting with TIBCO-THOR-FRWK, TIBCO-BW-FRWK, or TIBCO-BW-SR-FRWK for details. Application State [StartFailed], reason : TIBCO-BW-FRWK-600053: Failed to initialize BW Component [ComponentDemoGetData].
+     [exec]    <CausedBy> com.tibco.bw.core.runtime.api.BWEngineException: TIBCO-BW-CORE-500232: Failed to initialize BW Component [ComponentDemoGetData], Application [APP_TSDemoGetData.module.application:1.0] due to activity initialization error.
+     [exec]    <CausedBy> com.tibco.bw.core.runtime.ActivityInitException: TIBCO-BW-CORE-500618: Failed to initialize the activity [JMSSendMessage] in process [services.ts.util.systemaudit.sub.SendAuditEvent], module [LIB_TSUTIL_SystemAudit_Client] due to unexpected activity lifecycle error.
+     [exec]    <CausedBy> java.lang.NullPointerException
+     [exec] 
+     [exec] 
+     [exec] 
+     [exec] Domain: DEMO
+     [exec] 
+     [exec] Name                                               Version  AppSpace                       Profile                        Status          Deployment Status (Running/Total)
+     [exec] APP_TSDemoGetData.module.application               1.0      APP_TSDemoGetData-AppSpace     APP_TSDemoGetData-DEV.xml      StartFailed     Deployed          (0/1)
+     [echo] 
+     [echo] Executing /Users/juliancranfield/TIBCO-BW642/bw/6.4/bin/bwadmin --propFile /Users/juliancranfield/TIBCO-BW642/bw/6.4/bin/bwadmin.tra -config /Users/juliancranfield/TIBCO-BW642/bw/6.4/config/bwagent-DEV.ini -f ./build/APP_TSDemoGetData/58/scripts/deploy.bwadmin... Done.
+
+[8mha:////4EDLFAfJCoNexkn8UQdl60niWJVv+wnWeAPxG+8F0SaWAAAAYB+LCAAAAAAAAP9b85aBtbiIQSGjNKU4P0+vJLE4u1gvPjGvRM8xr8S/tCQ5PzfVL78ktUuDM0uMry+HiYGhoohBCqo8OT+vOD8nVc8ZQoMUMkAAI0hhAQAUXUdTXgAAAA==[0mBUILD SUCCESSFUL
+Total time: 1 minute 26 seconds
+Triggering a new build of [8mha:////4DEqSwv5fDF4cTviGMHFzvRn/nU8KyueruF1LvsQm1ozAAAAmh+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAyOEgY+/az8JP2Q1OISXRfXMH0AXvaUR8MAAAA=[0mTest-DEV
+Finished: SUCCESS

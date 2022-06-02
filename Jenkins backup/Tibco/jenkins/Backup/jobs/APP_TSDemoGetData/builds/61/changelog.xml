@@ -1,0 +1,14 @@
+commit 84640cbacaa0371c8c861973fd9d51014d73302a
+tree aff86de855dcec87572697b3d68072317e5d4168
+parent 73e78a8644791adae07fd971cdf34703fd01863b
+author Julian Cranfield <jcranfie@tibco.com> 2018-03-27 11:37:12 +0100
+committer Julian Cranfield <jcranfie@tibco.com> 2018-03-27 11:37:12 +0100
+
+    Fix
+
+
+
+:100755 100755 83886ff295ccff6ed9ccf364e0340d5532eaea27 7cb40b3d7fbf2838d5050aa6acf2c1263aeb40ce M	BW/TechnicalServices/LIB_TSUTIL_SystemAudit_Client/META-INF/MANIFEST.MF
+:100755 100755 86add2c5e82a5156d286bb8a2aaa26f53c584665 048992204e9d79882cbec2951a0499bc9a96264d M	BW/TechnicalServices/LIB_TSUTIL_SystemAudit_Client/Processes/services/ts/util/systemaudit/sub/SendAuditEvent.bwp
+:100755 100755 11012942d0916d1d2ece40a2dab67cdd37ef6f43 66a33d4643217949cd1e7876d5aa4aaa695dbaa2 M	BW/TechnicalServices/LIB_TSUTIL_SystemErrorHandler_Client/META-INF/MANIFEST.MF
+:100755 100755 f2e8c7045c2e7b11d9de614730af90a8de8545a5 53c672d8a98f1038603d80c75716b947034aea5f M	BW/TechnicalServices/LIB_TSUTIL_SystemErrorHandler_Client/Processes/services/ts/util/systemerrorhandler/sub/SendExceptionEvent.bwp

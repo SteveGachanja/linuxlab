@@ -1,0 +1,13 @@
+commit 2b15e7805ce979f495d040f0459fb9577c4421a2
+tree 2527bbddfefaa1785d4c5fd37c3c474d6a2940aa
+parent 67cdab7e3097f588984b746c1209b95b6b35bcd5
+author Julian Cranfield <jcranfie@tibco.com> 2018-03-27 10:48:32 +0100
+committer Julian Cranfield <jcranfie@tibco.com> 2018-03-27 10:48:32 +0100
+
+    Fix JMS connection
+
+
+
+:100755 100755 e022b2bbbc5c00fe98091364fd5c87a2c37e52c1 9fae6af3766bec6bb5c270fb26c9ea64fcc36f87 M	BW/TechnicalServices/APP_TSDemoGetData.module.application/META-INF/default.substvar
+:100755 100755 86c7e8249bac7bed0ac588938de98fc1d8ff7f52 930a8d76a31218d0846f41070acdf34081b1cecb M	BW/TechnicalServices/LIB_TSUTIL_SystemAudit_Client/META-INF/default.substvar
+:100755 100755 a748ff98357a4b2102aac03e1c1ef9cef17b9fe4 40e92e9e6038e6308fb26c9c86a5b0cfec562d17 M	BW/TechnicalServices/LIB_TSUTIL_SystemAudit_Client/Resources/services/ts/util/systemaudit/JMSClientResource.jmsConnResource

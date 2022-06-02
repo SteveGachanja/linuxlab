@@ -1,0 +1,14 @@
+commit 9be20307736cb053ebb53dc6cc4a95585794e0e4
+tree f12528f1206d39aa500d79e313592783cd73f4ca
+parent 005eaedbcbdb37d32fdfad5b8290c900c4b9375f
+author Julian Cranfield <jcranfie@tibco.com> 2018-03-26 15:34:48 +0100
+committer Julian Cranfield <jcranfie@tibco.com> 2018-03-26 15:34:48 +0100
+
+    Added deployment to Jenkins
+
+
+
+:100755 100755 e4ba5a8fa3dd252569aa6f70a50dff4eb85dbe6c 3455cd3deafffee57f483ed2b139b183d1ecc4c6 M	BW/TechnicalServices/APP_TSDemoGetData.module/META-INF/MANIFEST.MF
+:100755 100755 fbc28f3660635c8affc52c5c39f2faf1ca1cb514 93b2184ad3501201e849d1fc4314615decc6a25a M	BW/TechnicalServices/APP_TSDemoGetData.module/META-INF/module.bwm
+:100755 100755 a5809e15ec535d994d32b0de157f9b548eb93b59 a8663b3044a70c3baca28a60778bfd38a8c04cf1 M	BW/TechnicalServices/APP_TSDemoGetData.module/Processes/services/ts/demo/getdata/DemoGetData.bwp
+:100644 100644 bcbc9c8c5d082d6bda7aa862bff999343223d6bc a2a135afe9f653467f88f80ef899fa98b80e3f86 M	Jenkins/ant-deploy.xml

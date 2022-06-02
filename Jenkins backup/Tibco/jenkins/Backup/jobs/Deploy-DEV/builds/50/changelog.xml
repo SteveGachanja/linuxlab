@@ -1,0 +1,11 @@
+commit 2ffd4533b2763e86078fe2f28252da70cb752a80
+tree 26ef19e45ff58801a6c7ee1d469119989fe9b6cf
+parent 2e85fa43ab049ecd8d90759916e87a072bafd0b3
+author Julian Cranfield <jcranfie@tibco.com> 2018-03-27 15:53:49 +0100
+committer Julian Cranfield <jcranfie@tibco.com> 2018-03-27 15:53:49 +0100
+
+    Fix POM
+
+
+
+:100755 100755 2444cda72e038e17e98aa60b962478cbfdafb8c9 469f985edc2131831412992df703180c63b6eb17 M	BW/BusinessServices/APP_BSDemoGetData.module.application/pom.xml

@@ -1,0 +1,11 @@
+commit bf45dc2ad6dcd4b528f54d39c71dcd74012ceb76
+tree d3786898321e5d223806082780ec553fab1abfcd
+parent 015ff4f1ece004a5cba0e2fca4a3f72db1e9fe9f
+author Julian Cranfield <jcranfie@tibco.com> 2018-03-26 19:51:51 +0100
+committer Julian Cranfield <jcranfie@tibco.com> 2018-03-26 19:51:51 +0100
+
+    Fix nameing of module
+
+
+
+:100755 100755 61b72f7ed1092686c18aff3c30e0b5d5655fdf03 270ead9273dfe1f4b5374c0d531770cf66973d33 M	BW/TechnicalServices/APP_TSDemoGetData.module.application/META-INF/MANIFEST.MF

@@ -1,0 +1,42 @@
+Started by upstream project "[8mha:////4JZHvAMfAU4e9OfWiba7hlfE+JsJzL9UqHfm6l2NPFKxAAAAox+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAzBEgZx/az8JH3HgID4kGCX1Nx899QSl8SSRH0A/awLo8wAAAA=[0mAPP_TSDemoGetData" build number [8mha:////4GZoKw1+svA8qiDvAgSZARQbKYhM8skRKodwwgTSG4rCAAAApR+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAymEgZJ/az8JH3HgID4kGCX1Nx899QSl8SSRH0TMwDNsQwCzgAAAA==[0m46
+originally caused by:
+ Started by user [8mha:////4KURSn3OaMQL6bFrXuW5/3fXc55L78mMdzu6q+I/O50/AAAAlx+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAzWEgZu/dLi1CL9xJTczDwAj6GcLcAAAAA=[0madmin
+Building in workspace /Users/Shared/Jenkins/Home/workspace/Deploy-DEV
+Cloning the remote Git repository
+Cloning repository https://github.com/jcranfie/BW6Demo.git
+ > git init /Users/Shared/Jenkins/Home/workspace/Deploy-DEV # timeout=10
+Fetching upstream changes from https://github.com/jcranfie/BW6Demo.git
+ > git --version # timeout=10
+using GIT_ASKPASS to set credentials 
+ > git fetch --tags --progress https://github.com/jcranfie/BW6Demo.git +refs/heads/*:refs/remotes/origin/*
+ > git config remote.origin.url https://github.com/jcranfie/BW6Demo.git # timeout=10
+ > git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git config remote.origin.url https://github.com/jcranfie/BW6Demo.git # timeout=10
+Fetching upstream changes from https://github.com/jcranfie/BW6Demo.git
+using GIT_ASKPASS to set credentials 
+ > git fetch --tags --progress https://github.com/jcranfie/BW6Demo.git +refs/heads/*:refs/remotes/origin/*
+ > git rev-parse refs/remotes/origin/master^{commit} # timeout=10
+ > git rev-parse refs/remotes/origin/origin/master^{commit} # timeout=10
+Checking out Revision 005eaedbcbdb37d32fdfad5b8290c900c4b9375f (refs/remotes/origin/master)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 005eaedbcbdb37d32fdfad5b8290c900c4b9375f
+Commit message: "Added Jenkins ant jobs"
+First time build. Skipping changelog.
+[Deploy-DEV] $ /bin/sh -xe /Users/Shared/Jenkins/tmp/jenkins8790765448723511073.sh
++ echo APP_TSDemoGetData
+APP_TSDemoGetData
++ echo APP_TSDemoGetData-AppSpace
+APP_TSDemoGetData-AppSpace
++ echo TS-DOMAIN
+TS-DOMAIN
++ echo 46
+46
+[Jenkins] $ /Users/Shared/Jenkins/Home/tools/hudson.tasks.Ant_AntInstallation/Ant-default/bin/ant -file ant-deploy.xml -DDOMAIN=TS-DOMAIN -DBUILD_JOB_VERSION=46 -DAPPSPACE=APP_TSDemoGetData-AppSpace -DAPPLICATION_NAME=APP_TSDemoGetData -Dapplication.name=APP_TSDemoGetData -Dapplication.version=46 -Denv.name=DEV deploy
+Buildfile: /Users/Shared/Jenkins/Home/workspace/Deploy-DEV/Jenkins/ant-deploy.xml
+
+[8mha:////4EDLFAfJCoNexkn8UQdl60niWJVv+wnWeAPxG+8F0SaWAAAAYB+LCAAAAAAAAP9b85aBtbiIQSGjNKU4P0+vJLE4u1gvPjGvRM8xr8S/tCQ5PzfVL78ktUuDM0uMry+HiYGhoohBCqo8OT+vOD8nVc8ZQoMUMkAAI0hhAQAUXUdTXgAAAA==[0mBUILD FAILED
+Target "deploy" does not exist in the project "preservice-build". 
+
+Total time: 0 seconds
+Build step 'Invoke Ant' marked build as failure
+Finished: FAILURE

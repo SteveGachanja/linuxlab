@@ -1,0 +1,153 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<maven2-moduleset plugin="maven-plugin@3.1">
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <jenkins.model.BuildDiscarderProperty>
+      <strategy class="hudson.tasks.LogRotator">
+        <daysToKeep>2</daysToKeep>
+        <numToKeep>5</numToKeep>
+        <artifactDaysToKeep>-1</artifactDaysToKeep>
+        <artifactNumToKeep>-1</artifactNumToKeep>
+      </strategy>
+    </jenkins.model.BuildDiscarderProperty>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>APPLICATION_NAME</name>
+          <description></description>
+          <defaultValue>APP_TSDemoGetData</defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>APPSPACE</name>
+          <description></description>
+          <defaultValue>${APPLICATION_NAME}-AppSpace</defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>DOMAIN</name>
+          <description></description>
+          <defaultValue>DEMO</defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+  </properties>
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.8.0">
+    <configVersion>2</configVersion>
+    <userRemoteConfigs>
+      <hudson.plugins.git.UserRemoteConfig>
+        <name>origin</name>
+        <url>https://github.com/jcranfie/BW6Demo.git</url>
+        <credentialsId>cebaa783-bb50-4412-83ec-9886bd613bbe</credentialsId>
+      </hudson.plugins.git.UserRemoteConfig>
+    </userRemoteConfigs>
+    <branches>
+      <hudson.plugins.git.BranchSpec>
+        <name>*/master</name>
+      </hudson.plugins.git.BranchSpec>
+    </branches>
+    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+    <submoduleCfg class="list"/>
+    <extensions/>
+  </scm>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <rootModule>
+    <groupId>com.tibco.bw</groupId>
+    <artifactId>APP_TSDemoGetData.module.application.parent</artifactId>
+  </rootModule>
+  <rootPOM>BW/POM/$APPLICATION_NAME.xml</rootPOM>
+  <goals>clean package</goals>
+  <aggregatorStyleBuild>true</aggregatorStyleBuild>
+  <incrementalBuild>false</incrementalBuild>
+  <ignoreUpstremChanges>false</ignoreUpstremChanges>
+  <ignoreUnsuccessfulUpstreams>false</ignoreUnsuccessfulUpstreams>
+  <archivingDisabled>false</archivingDisabled>
+  <siteArchivingDisabled>false</siteArchivingDisabled>
+  <fingerprintingDisabled>false</fingerprintingDisabled>
+  <resolveDependencies>false</resolveDependencies>
+  <processPlugins>false</processPlugins>
+  <mavenValidationLevel>-1</mavenValidationLevel>
+  <runHeadless>false</runHeadless>
+  <disableTriggerDownstreamProjects>false</disableTriggerDownstreamProjects>
+  <blockTriggerWhenBuilding>true</blockTriggerWhenBuilding>
+  <settings class="jenkins.mvn.DefaultSettingsProvider"/>
+  <globalSettings class="jenkins.mvn.DefaultGlobalSettingsProvider"/>
+  <reporters/>
+  <publishers>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>BW/TechnicalServices/${APPLICATION_NAME}.module.application/target/*.ear,Jenkins/ServiceProfiles/${APPLICATION_NAME}-DEV.xml,Jenkins/ServiceProfiles/${APPLICATION_NAME}-SIT.xml,Jenkins/ServiceProfiles/${APPLICATION_NAME}-PROD.xml</artifacts>
+      <allowEmptyArchive>false</allowEmptyArchive>
+      <onlyIfSuccessful>false</onlyIfSuccessful>
+      <fingerprint>false</fingerprint>
+      <defaultExcludes>true</defaultExcludes>
+      <caseSensitive>true</caseSensitive>
+    </hudson.tasks.ArtifactArchiver>
+    <hudson.plugins.parameterizedtrigger.BuildTrigger plugin="parameterized-trigger@2.35.2">
+      <configs>
+        <hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
+          <configs>
+            <hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
+              <properties>BUILD_JOB_VERSION=${BUILD_ID}
+APPLICATION_NAME=${APPLICATION_NAME}
+DOMAIN=${DOMAIN}
+APPSPACE=${APPSPACE}
+</properties>
+              <textParamValueOnNewLine>false</textParamValueOnNewLine>
+            </hudson.plugins.parameterizedtrigger.PredefinedBuildParameters>
+          </configs>
+          <projects>Deploy-DEV</projects>
+          <condition>SUCCESS</condition>
+          <triggerWithNoParameters>false</triggerWithNoParameters>
+          <triggerFromChildProjects>false</triggerFromChildProjects>
+        </hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
+      </configs>
+    </hudson.plugins.parameterizedtrigger.BuildTrigger>
+  </publishers>
+  <buildWrappers/>
+  <prebuilders>
+    <hudson.tasks.Shell>
+      <command>echo $BUILD_ID 
+sed -i -e &apos;s/1.0.0-SNAPSHOT/1.0.${BUILD_ID}-SNAPSHOT/&apos; BW/POM/$APPLICATION_NAME.xml
+for filename in `find . -name pom.xml`
+do sed -i -e &apos;s/1.0.0-SNAPSHOT/1.0.${BUILD_ID}-SNAPSHOT/&apos; $filename
+done</command>
+    </hudson.tasks.Shell>
+  </prebuilders>
+  <postbuilders>
+    <hudson.tasks.Ant plugin="ant@1.8">
+      <targets>profile-create</targets>
+      <antName>Ant-default</antName>
+      <buildFile>./Jenkins/ant-deploy.xml</buildFile>
+      <properties>env.name=DEV
+service.name=$APPLICATION_NAME</properties>
+    </hudson.tasks.Ant>
+    <hudson.tasks.Ant plugin="ant@1.8">
+      <targets>profile-create</targets>
+      <antName>Ant-default</antName>
+      <buildFile>./Jenkins/ant-deploy.xml</buildFile>
+      <properties>env.name=SIT
+service.name=$APPLICATION_NAME</properties>
+    </hudson.tasks.Ant>
+    <hudson.tasks.Ant plugin="ant@1.8">
+      <targets>profile-create</targets>
+      <antName>Ant-default</antName>
+      <buildFile>./Jenkins/ant-deploy.xml</buildFile>
+      <properties>env.name=PROD
+service.name=$APPLICATION_NAME</properties>
+    </hudson.tasks.Ant>
+  </postbuilders>
+  <runPostStepsIfResult>
+    <name>FAILURE</name>
+    <ordinal>2</ordinal>
+    <color>RED</color>
+    <completeBuild>true</completeBuild>
+  </runPostStepsIfResult>
+</maven2-moduleset>

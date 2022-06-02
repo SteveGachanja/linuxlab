@@ -1,0 +1,60 @@
+Started by upstream project "[8mha:////4Hz2rA2jRcNEubtb3S13LfYAVOYIz9fsETkvpTxJTQfkAAAAox+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAzBEgZx/az8JH3HgIB4p2CX1Nx899QSl8SSRH0AJ9t7PcwAAAA=[0mAPP_BSDemoGetData" build number [8mha:////4E3G/shgA+A4opWjUpOQccIqSNQJbeuoiMcAx5CFgpoiAAAAox+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLQIwSBgn9rPwkfceAgHinYJfU3Hz31BKXxJJEfXMA/TqMNs0AAAA=[0m7
+originally caused by:
+ Started by user [8mha:////4KURSn3OaMQL6bFrXuW5/3fXc55L78mMdzu6q+I/O50/AAAAlx+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAzWEgZu/dLi1CL9xJTczDwAj6GcLcAAAAA=[0madmin
+Building in workspace /Users/Shared/Jenkins/Home/workspace/Deploy-DEV
+ > git rev-parse --is-inside-work-tree # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/jcranfie/BW6Demo.git # timeout=10
+Fetching upstream changes from https://github.com/jcranfie/BW6Demo.git
+ > git --version # timeout=10
+using GIT_ASKPASS to set credentials 
+ > git fetch --tags --progress https://github.com/jcranfie/BW6Demo.git +refs/heads/*:refs/remotes/origin/*
+ > git rev-parse refs/remotes/origin/master^{commit} # timeout=10
+ > git rev-parse refs/remotes/origin/origin/master^{commit} # timeout=10
+Checking out Revision 71e213414fb1edfa20b03ba8acbf30fa9aed8cff (refs/remotes/origin/master)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 71e213414fb1edfa20b03ba8acbf30fa9aed8cff
+Commit message: "Added test suite"
+ > git rev-list --no-walk 1f4a2f0f87f2efecbb75b74899780d62d4df6f2e # timeout=10
+[Deploy-DEV] $ /bin/sh -xe /Users/Shared/Jenkins/tmp/jenkins7495096551829370004.sh
++ echo APP_BSDemoGetData
+APP_BSDemoGetData
++ echo APP_BSDemoGetData-AppSpace
+APP_BSDemoGetData-AppSpace
++ echo BS_Domain
+BS_Domain
++ echo 7
+7
+[Jenkins] $ /Users/Shared/Jenkins/Home/tools/hudson.tasks.Ant_AntInstallation/Ant-default/bin/ant -file ant-deploy.xml -DDOMAIN=BS_Domain -DBUILD_JOB_VERSION=7 -DAPPSPACE=APP_BSDemoGetData-AppSpace -DAPPLICATION_NAME=APP_BSDemoGetData -Dbw.application.appspace=APP_BSDemoGetData-AppSpace -Dapplication.name=APP_BSDemoGetData -Dapplication.version=7 -Ddomain=BS_Domain -Denv.name=DEV deploy
+Buildfile: /Users/Shared/Jenkins/Home/workspace/Deploy-DEV/Jenkins/ant-deploy.xml
+
+[8mha:////4G4Msm6eXCh3UmxFLJYw4d6sniqLuE2f781FMntdH/s9AAAAYB+LCAAAAAAAAP9b85aBtbiIQT6jNKU4P0+vJLE4u1gvPjGvRM8xryQksSg9tcQvvyTVvqNr/s+Vl9uYGBgqihikoKqT8/OK83NS9ZwhNEghAwQwghQWAADROOumXQAAAA==[0mdeploy:
+     [echo] Uploads, Deploys and Starts one BW application...
+     [echo] 
+     [echo] EAR File: /Users/Shared/Jenkins/Home/jobs/APP_BSDemoGetData/builds/7/archive/BW/BusinessServices/APP_BSDemoGetData.module.application/target/APP_BSDemoGetData.module.application_1.0.7.ear
+     [echo] Profile File: /Users/Shared/Jenkins/Home/jobs/APP_BSDemoGetData/builds/7/archive/Jenkins/ServiceProfiles/APP_BSDemoGetData-DEV.xml
+     [echo] Creating deployment script...
+     [echo] 
+     [echo] Executing /Users/juliancranfield/TIBCO-BW642/bw/6.4/bin/bwadmin --propFile /Users/juliancranfield/TIBCO-BW642/bw/6.4/bin/bwadmin.tra -config /Users/juliancranfield/TIBCO-BW642/bw/6.4/config/bwagent-DEV.ini -f ./build/APP_BSDemoGetData/7/scripts/deploy.bwadmin
+     [echo] 
+     [exec] TIBCO ActiveMatrix BusinessWorks version 6.4.2, hotfix 3, build V51, 2018-02-22
+     [exec] Upload APP_BSDemoGetData.module.application_1.0.7.ear
+     [exec] Connecting to the BW Agent using
+     [exec]  TIBCO ActiveSpaces (Java). Enterprise Edition. Version 2.1.6.011
+     [exec]  Connected to BW Agent
+     [exec] 
+     [exec] TIBCO-BW-ADMIN-CLI-300410: Uploaded archive [/Users/Shared/Jenkins/Home/jobs/APP_BSDemoGetData/builds/7/archive/BW/BusinessServices/APP_BSDemoGetData.module.application/target/APP_BSDemoGetData.module.application_1.0.7.ear].
+     [exec] Deploy and Start APP_BSDemoGetData.module.application_1.0.7.ear
+     [exec] TIBCO-BW-ADMIN-CLI-300417: The application [APP_BSDemoGetData.module.application:1.0] deployed successfully to [APP_BSDemoGetData-AppSpace].
+     [exec] 
+     [exec] Domain: BS_Domain
+     [exec] 
+     [exec] Name                                               Version  AppSpace                       Profile                        Status          Deployment Status (Running/Total)
+     [exec] APP_BSDemoGetData.module.application               1.0      APP_BSDemoGetData-AppSpace     APP_BSDemoGetData-DEV.xml      Running         Deployed          (1/1)
+     [echo] 
+     [echo] Executing /Users/juliancranfield/TIBCO-BW642/bw/6.4/bin/bwadmin --propFile /Users/juliancranfield/TIBCO-BW642/bw/6.4/bin/bwadmin.tra -config /Users/juliancranfield/TIBCO-BW642/bw/6.4/config/bwagent-DEV.ini -f ./build/APP_BSDemoGetData/7/scripts/deploy.bwadmin... Done.
+
+[8mha:////4EDLFAfJCoNexkn8UQdl60niWJVv+wnWeAPxG+8F0SaWAAAAYB+LCAAAAAAAAP9b85aBtbiIQSGjNKU4P0+vJLE4u1gvPjGvRM8xr8S/tCQ5PzfVL78ktUuDM0uMry+HiYGhoohBCqo8OT+vOD8nVc8ZQoMUMkAAI0hhAQAUXUdTXgAAAA==[0mBUILD SUCCESSFUL
+Total time: 1 minute 27 seconds
+Triggering a new build of [8mha:////4DEqSwv5fDF4cTviGMHFzvRn/nU8KyueruF1LvsQm1ozAAAAmh+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAyOEgY+/az8JP2Q1OISXRfXMH0AXvaUR8MAAAA=[0mTest-DEV
+Finished: SUCCESS

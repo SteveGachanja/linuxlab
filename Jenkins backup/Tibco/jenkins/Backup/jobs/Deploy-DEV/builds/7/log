@@ -1,0 +1,11 @@
+Started by upstream project "[8mha:////4ATkwezMJ56U3LySdL0JL+VCKb9Wpl2PGDoPdzstNKjxAAAAqh+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAy5EgYV/az8JH3HgIB4p2DH5OT80rwS99QSKMspEWh2cqo+AHcBEhjZAAAA[0mAPP_BSAccountGetAccountBalance" build number [8mha:////4Ke+VLzJnIUOZ9pqsQziWm/m0AT37GmjSpqUJFq8OrxWAAAAqh+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLQIwSBlX9rPwkfceAgHinYMfk5PzSvBL31BIoyykRaHZyqr45AE4cMqvaAAAA[0m7
+originally caused by:
+ Started by user [8mha:////4KURSn3OaMQL6bFrXuW5/3fXc55L78mMdzu6q+I/O50/AAAAlx+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAzWEgZu/dLi1CL9xJTczDwAj6GcLcAAAAA=[0madmin
+Building in workspace /Users/Shared/Jenkins/Home/workspace/Deploy-DEV
+[Deploy-DEV] $ /bin/sh -xe /Users/Shared/Jenkins/tmp/jenkins3258142384297062924.sh
++ echo BSAccountGetAccountBalance
+BSAccountGetAccountBalance
++ echo BSAccountGetAccountBalance-AppSpace
+BSAccountGetAccountBalance-AppSpace
+[8mha:////4DEqSwv5fDF4cTviGMHFzvRn/nU8KyueruF1LvsQm1ozAAAAmh+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAyOEgY+/az8JP2Q1OISXRfXMH0AXvaUR8MAAAA=[0mTest-DEV is already in the queue
+Finished: SUCCESS

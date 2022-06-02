@@ -1,0 +1,59 @@
+Started by upstream project "[8mha:////4Hz2rA2jRcNEubtb3S13LfYAVOYIz9fsETkvpTxJTQfkAAAAox+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAzBEgZx/az8JH3HgIB4p2CX1Nx899QSl8SSRH0AJ9t7PcwAAAA=[0mAPP_BSDemoGetData" build number [8mha:////4Knkn2XNDv/tay7qzVlXDnH2ts9izzeJbDvqBNuLjc8zAAAAox+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLQIwSBgn9rPwkfceAgHinYJfU3Hz31BKXxJJEfSMAcs7mRs0AAAA=[0m2
+originally caused by:
+ Started by user [8mha:////4KURSn3OaMQL6bFrXuW5/3fXc55L78mMdzu6q+I/O50/AAAAlx+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAzWEgZu/dLi1CL9xJTczDwAj6GcLcAAAAA=[0madmin
+Building in workspace /Users/Shared/Jenkins/Home/workspace/Deploy-DEV
+ > git rev-parse --is-inside-work-tree # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/jcranfie/BW6Demo.git # timeout=10
+Fetching upstream changes from https://github.com/jcranfie/BW6Demo.git
+ > git --version # timeout=10
+using GIT_ASKPASS to set credentials 
+ > git fetch --tags --progress https://github.com/jcranfie/BW6Demo.git +refs/heads/*:refs/remotes/origin/*
+ > git rev-parse refs/remotes/origin/master^{commit} # timeout=10
+ > git rev-parse refs/remotes/origin/origin/master^{commit} # timeout=10
+Checking out Revision 2e85fa43ab049ecd8d90759916e87a072bafd0b3 (refs/remotes/origin/master)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 2e85fa43ab049ecd8d90759916e87a072bafd0b3
+Commit message: "Fix POM"
+ > git rev-list --no-walk 3b879b1d0bfd14dca9e218904b7804a73f97596a # timeout=10
+[Deploy-DEV] $ /bin/sh -xe /Users/Shared/Jenkins/tmp/jenkins3906308112068578709.sh
++ echo APP_BSDemoGetData
+APP_BSDemoGetData
++ echo APP_BSDemoGetData-AppSpace
+APP_BSDemoGetData-AppSpace
++ echo BS_Domain
+BS_Domain
++ echo 2
+2
+[Jenkins] $ /Users/Shared/Jenkins/Home/tools/hudson.tasks.Ant_AntInstallation/Ant-default/bin/ant -file ant-deploy.xml -DDOMAIN=BS_Domain -DBUILD_JOB_VERSION=2 -DAPPSPACE=APP_BSDemoGetData-AppSpace -DAPPLICATION_NAME=APP_BSDemoGetData -Dbw.application.appspace=APP_BSDemoGetData-AppSpace -Dapplication.name=APP_BSDemoGetData -Dapplication.version=2 -Ddomain=BS_Domain -Denv.name=DEV deploy
+Buildfile: /Users/Shared/Jenkins/Home/workspace/Deploy-DEV/Jenkins/ant-deploy.xml
+
+[8mha:////4G4Msm6eXCh3UmxFLJYw4d6sniqLuE2f781FMntdH/s9AAAAYB+LCAAAAAAAAP9b85aBtbiIQT6jNKU4P0+vJLE4u1gvPjGvRM8xryQksSg9tcQvvyTVvqNr/s+Vl9uYGBgqihikoKqT8/OK83NS9ZwhNEghAwQwghQWAADROOumXQAAAA==[0mdeploy:
+     [echo] Uploads, Deploys and Starts one BW application...
+     [echo] 
+     [echo] EAR File: 
+     [echo] Profile File: /Users/Shared/Jenkins/Home/jobs/APP_BSDemoGetData/builds/2/archive/Jenkins/ServiceProfiles/APP_BSDemoGetData-DEV.xml
+     [echo] Creating deployment script...
+     [echo] 
+     [echo] Executing /Users/juliancranfield/TIBCO-BW642/bw/6.4/bin/bwadmin --propFile /Users/juliancranfield/TIBCO-BW642/bw/6.4/bin/bwadmin.tra -config /Users/juliancranfield/TIBCO-BW642/bw/6.4/config/bwagent-DEV.ini -f ./build/APP_BSDemoGetData/2/scripts/deploy.bwadmin
+     [echo] 
+     [exec] TIBCO ActiveMatrix BusinessWorks version 6.4.2, hotfix 3, build V51, 2018-02-22
+     [exec] Upload APP_BSDemoGetData.module.application_1.0.2.ear
+     [exec] Connecting to the BW Agent using
+     [exec]  TIBCO ActiveSpaces (Java). Enterprise Edition. Version 2.1.6.011
+     [exec]  Connected to BW Agent
+     [exec] 
+     [exec] Deploy and Start APP_BSDemoGetData.module.application_1.0.2.ear
+     [exec] TIBCO-BW-ADMIN-CLI-500433: Failed to upload archive [], <CausedBy> TIBCO-THOR-FRWK-CMN-500102: Ear file [/Users/Shared/Jenkins/Home/workspace/Deploy-DEV/Jenkins] is not valid, reason The location is a folder.
+     [exec] TIBCO-BW-ADMIN-CLI-500402: Failed to deploy application from the archive [APP_BSDemoGetData.module.application_1.0.2.ear], TIBCO-BW-ADMIN-500418: Application archive file [APP_BSDemoGetData/APP_BSDemoGetData.module.application_1.0.2.ear] not found in the domain [BS_Domain]
+     [exec] 
+     [exec] Domain: BS_Domain
+     [exec] 
+     [exec] Name                                               Version  AppSpace                       Profile                        Status          Deployment Status (Running/Total)
+     [echo] 
+     [echo] Executing /Users/juliancranfield/TIBCO-BW642/bw/6.4/bin/bwadmin --propFile /Users/juliancranfield/TIBCO-BW642/bw/6.4/bin/bwadmin.tra -config /Users/juliancranfield/TIBCO-BW642/bw/6.4/config/bwagent-DEV.ini -f ./build/APP_BSDemoGetData/2/scripts/deploy.bwadmin... Done.
+
+[8mha:////4EDLFAfJCoNexkn8UQdl60niWJVv+wnWeAPxG+8F0SaWAAAAYB+LCAAAAAAAAP9b85aBtbiIQSGjNKU4P0+vJLE4u1gvPjGvRM8xr8S/tCQ5PzfVL78ktUuDM0uMry+HiYGhoohBCqo8OT+vOD8nVc8ZQoMUMkAAI0hhAQAUXUdTXgAAAA==[0mBUILD SUCCESSFUL
+Total time: 5 seconds
+Triggering a new build of [8mha:////4DEqSwv5fDF4cTviGMHFzvRn/nU8KyueruF1LvsQm1ozAAAAmh+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAyOEgY+/az8JP2Q1OISXRfXMH0AXvaUR8MAAAA=[0mTest-DEV
+Finished: SUCCESS

@@ -1,0 +1,40 @@
+Started by upstream project "[8mha:////4JZHvAMfAU4e9OfWiba7hlfE+JsJzL9UqHfm6l2NPFKxAAAAox+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAzBEgZx/az8JH3HgID4kGCX1Nx899QSl8SSRH0A/awLo8wAAAA=[0mAPP_TSDemoGetData" build number [8mha:////4FcVm650H/0Mv1xMiUB+XrCfJYAXXCp0YauTEN12BHv8AAAApR+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAymEgZJ/az8JH3HgID4kGCX1Nx899QSl8SSRH0TCwDKnLTlzgAAAA==[0m48
+originally caused by:
+ Started by user [8mha:////4KURSn3OaMQL6bFrXuW5/3fXc55L78mMdzu6q+I/O50/AAAAlx+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAzWEgZu/dLi1CL9xJTczDwAj6GcLcAAAAA=[0madmin
+Building in workspace /Users/Shared/Jenkins/Home/workspace/Deploy-DEV
+ > git rev-parse --is-inside-work-tree # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/jcranfie/BW6Demo.git # timeout=10
+Fetching upstream changes from https://github.com/jcranfie/BW6Demo.git
+ > git --version # timeout=10
+using GIT_ASKPASS to set credentials 
+ > git fetch --tags --progress https://github.com/jcranfie/BW6Demo.git +refs/heads/*:refs/remotes/origin/*
+ > git rev-parse refs/remotes/origin/master^{commit} # timeout=10
+ > git rev-parse refs/remotes/origin/origin/master^{commit} # timeout=10
+Checking out Revision f7f0acbf8eadcd24394020c66f599bee50b7b3a0 (refs/remotes/origin/master)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f f7f0acbf8eadcd24394020c66f599bee50b7b3a0
+Commit message: "Fix"
+ > git rev-list --no-walk 14403dd68c38d7c1d82c687611c25a3507cc3305 # timeout=10
+[Deploy-DEV] $ /bin/sh -xe /Users/Shared/Jenkins/tmp/jenkins6421493822757131209.sh
++ echo APP_TSDemoGetData
+APP_TSDemoGetData
++ echo APP_TSDemoGetData-AppSpace
+APP_TSDemoGetData-AppSpace
++ echo DEMO
+DEMO
++ echo 48
+48
+[Jenkins] $ /Users/Shared/Jenkins/Home/tools/hudson.tasks.Ant_AntInstallation/Ant-default/bin/ant -file ant-deploy.xml -DDOMAIN=DEMO -DBUILD_JOB_VERSION=48 -DAPPSPACE=APP_TSDemoGetData-AppSpace -DAPPLICATION_NAME=APP_TSDemoGetData -Dbw.application.appspace=APP_TSDemoGetData-AppSpace -Dapplication.name=APP_TSDemoGetData -Dapplication.version=48 -Ddomain=DEMO -Denv.name=DEV deploy
+Buildfile: /Users/Shared/Jenkins/Home/workspace/Deploy-DEV/Jenkins/ant-deploy.xml
+
+[8mha:////4G4Msm6eXCh3UmxFLJYw4d6sniqLuE2f781FMntdH/s9AAAAYB+LCAAAAAAAAP9b85aBtbiIQT6jNKU4P0+vJLE4u1gvPjGvRM8xryQksSg9tcQvvyTVvqNr/s+Vl9uYGBgqihikoKqT8/OK83NS9ZwhNEghAwQwghQWAADROOumXQAAAA==[0mdeploy:
+     [echo] Uploads, Deploys and Starts one BW application...
+     [echo] 
+
+[8mha:////4EDLFAfJCoNexkn8UQdl60niWJVv+wnWeAPxG+8F0SaWAAAAYB+LCAAAAAAAAP9b85aBtbiIQSGjNKU4P0+vJLE4u1gvPjGvRM8xr8S/tCQ5PzfVL78ktUuDM0uMry+HiYGhoohBCqo8OT+vOD8nVc8ZQoMUMkAAI0hhAQAUXUdTXgAAAA==[0mBUILD FAILED
+/Users/Shared/Jenkins/Home/workspace/Deploy-DEV/Jenkins/ant-deploy.xml:32: /Users/Shared/Jenkins/Home/workspace/jobs/APP_TSDemoGetData/builds/48 does not exist.
+
+Total time: 0 seconds
+Build step 'Invoke Ant' marked build as failure
+Finished: FAILURE

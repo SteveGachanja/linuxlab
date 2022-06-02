@@ -1,0 +1,11 @@
+commit 67cdab7e3097f588984b746c1209b95b6b35bcd5
+tree 835b770253278d5a3ed79f392c4bada8e938a5e6
+parent 702c12e680724e2610c90953cf19438814beb234
+author Julian Cranfield <jcranfie@tibco.com> 2018-03-27 10:39:11 +0100
+committer Julian Cranfield <jcranfie@tibco.com> 2018-03-27 10:39:11 +0100
+
+    Fix
+
+
+
+:100755 100755 702cac520b961718a9d22f0416dc67939276edbc 1229aa8b9317b5d6c23f2e59cd2107135015868c M	BW/TechnicalServices/APP_TSDemoGetData.module/Processes/services/ts/demo/getdata/sub/Activator.bwp

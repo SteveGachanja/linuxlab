@@ -1,0 +1,42 @@
+[INFO] 
+[INFO] ---------< com.tibco.bw:APP_TSDemoGetData.module.application >----------
+[INFO] Building APP_TSDemoGetData.module.application 1.0.60-SNAPSHOT      [6/6]
+[INFO] -------------------------------[ bwear ]--------------------------------
+[INFO] 
+[8mha:////4EdJbZ345c+avMuiHmwJL4emB+/U6LE6AKTu+lJQls/TAAAAYB+LCAAAAAAAAP9b85aBtbiIQSmjNKU4P0+vJLE4u1gvPjexLDVPzxdEGvvmZ+X75ZekLlOVfvTjc8FPJgaGiiIGKaiG5Py84vycVD1nCA1SyAABjCCFBQCV27OjYAAAAA==[0m[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ APP_TSDemoGetData.module.application ---
+[INFO] Deleting /Users/Shared/Jenkins/Home/workspace/APP_TSDemoGetData/BW/TechnicalServices/APP_TSDemoGetData.module.application/target
+[INFO] 
+[8mha:////4EdJbZ345c+avMuiHmwJL4emB+/U6LE6AKTu+lJQls/TAAAAYB+LCAAAAAAAAP9b85aBtbiIQSmjNKU4P0+vJLE4u1gvPjexLDVPzxdEGvvmZ+X75ZekLlOVfvTjc8FPJgaGiiIGKaiG5Py84vycVD1nCA1SyAABjCCFBQCV27OjYAAAAA==[0m[INFO] --- maven-resources-plugin:3.0.2:resources (default-resources) @ APP_TSDemoGetData.module.application ---
+[8mha:////4HDV7A91tdoXcq/CuG0QYNJKlYL/ySHKkBK8e6tvgsUhAAAAYx+LCAAAAAAAAP9b85aBtbiIQSWjNKU4P0+vJLE4u1gvPjexLDVPzxdEhicW5WXmpfvll6S2fNly5fzGzauYGBgqihikoFqS8/OK83NS9ZwhNEghAwQwghQWAACwxA+XYgAAAA==[0m[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory /Users/Shared/Jenkins/Home/workspace/APP_TSDemoGetData/BW/TechnicalServices/APP_TSDemoGetData.module.application/src/main/resources
+[INFO] 
+[8mha:////4EdJbZ345c+avMuiHmwJL4emB+/U6LE6AKTu+lJQls/TAAAAYB+LCAAAAAAAAP9b85aBtbiIQSmjNKU4P0+vJLE4u1gvPjexLDVPzxdEGvvmZ+X75ZekLlOVfvTjc8FPJgaGiiIGKaiG5Py84vycVD1nCA1SyAABjCCFBQCV27OjYAAAAA==[0m[INFO] --- maven-compiler-plugin:3.7.0:compile (default-compile) @ APP_TSDemoGetData.module.application ---
+[INFO] No sources to compile
+[INFO] 
+[8mha:////4EdJbZ345c+avMuiHmwJL4emB+/U6LE6AKTu+lJQls/TAAAAYB+LCAAAAAAAAP9b85aBtbiIQSmjNKU4P0+vJLE4u1gvPjexLDVPzxdEGvvmZ+X75ZekLlOVfvTjc8FPJgaGiiIGKaiG5Py84vycVD1nCA1SyAABjCCFBQCV27OjYAAAAA==[0m[INFO] --- maven-resources-plugin:3.0.2:testResources (default-testResources) @ APP_TSDemoGetData.module.application ---
+[8mha:////4HDV7A91tdoXcq/CuG0QYNJKlYL/ySHKkBK8e6tvgsUhAAAAYx+LCAAAAAAAAP9b85aBtbiIQSWjNKU4P0+vJLE4u1gvPjexLDVPzxdEhicW5WXmpfvll6S2fNly5fzGzauYGBgqihikoFqS8/OK83NS9ZwhNEghAwQwghQWAACwxA+XYgAAAA==[0m[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory /Users/Shared/Jenkins/Home/workspace/APP_TSDemoGetData/BW/TechnicalServices/APP_TSDemoGetData.module.application/src/test/resources
+[INFO] 
+[8mha:////4EdJbZ345c+avMuiHmwJL4emB+/U6LE6AKTu+lJQls/TAAAAYB+LCAAAAAAAAP9b85aBtbiIQSmjNKU4P0+vJLE4u1gvPjexLDVPzxdEGvvmZ+X75ZekLlOVfvTjc8FPJgaGiiIGKaiG5Py84vycVD1nCA1SyAABjCCFBQCV27OjYAAAAA==[0m[INFO] --- maven-compiler-plugin:3.7.0:testCompile (default-testCompile) @ APP_TSDemoGetData.module.application ---
+[INFO] No sources to compile
+[INFO] 
+[8mha:////4EdJbZ345c+avMuiHmwJL4emB+/U6LE6AKTu+lJQls/TAAAAYB+LCAAAAAAAAP9b85aBtbiIQSmjNKU4P0+vJLE4u1gvPjexLDVPzxdEGvvmZ+X75ZekLlOVfvTjc8FPJgaGiiIGKaiG5Py84vycVD1nCA1SyAABjCCFBQCV27OjYAAAAA==[0m[INFO] --- maven-surefire-plugin:2.21.0:test (default-test) @ APP_TSDemoGetData.module.application ---
+[INFO] No tests to run.
+[JENKINS] Recording test results
+[INFO] 
+[8mha:////4EdJbZ345c+avMuiHmwJL4emB+/U6LE6AKTu+lJQls/TAAAAYB+LCAAAAAAAAP9b85aBtbiIQSmjNKU4P0+vJLE4u1gvPjexLDVPzxdEGvvmZ+X75ZekLlOVfvTjc8FPJgaGiiIGKaiG5Py84vycVD1nCA1SyAABjCCFBQCV27OjYAAAAA==[0m[INFO] --- bw6-maven-plugin:1.3.1:bwear (default-bwear) @ APP_TSDemoGetData.module.application ---
+[INFO] BWEARPackager Mojo started ...
+UpdateManifest Method in
+Update Attribute
+[INFO] Updated the Manifest version 
+[INFO] The OSGi verion is 1.0.60.201803271123 for Maven version of 1.0.60.201803271123
+[INFO] Adding Modules to the EAR file
+[INFO] Adding Module JAR with name LIB_XML_1.0.60.201803271123.jar with version 1.0.60.201803271123
+[INFO] Adding Module JAR with name LIB_TSUTIL_SystemAudit_Client_1.0.60.201803271123.jar with version 1.0.60.201803271123
+[INFO] Adding Module JAR with name LIB_TSUTIL_SystemErrorHandler_Client_1.0.60.201803271123.jar with version 1.0.60.201803271123
+[INFO] Adding Module JAR with name APP_TSDemoGetData.module_1.0.60.201803271123.jar with version 1.0.60.201803271123
+[INFO] Adding EAR Information to the EAR File
+[INFO] Manifest updated with Version 1.0.60.201803271123
+[INFO] The EAR file name for Application is /Users/Shared/Jenkins/Home/workspace/APP_TSDemoGetData/BW/TechnicalServices/APP_TSDemoGetData.module.application/target/APP_TSDemoGetData.module.application_1.0.60.ear
+[INFO] Building jar: /Users/Shared/Jenkins/Home/workspace/APP_TSDemoGetData/BW/TechnicalServices/APP_TSDemoGetData.module.application/target/APP_TSDemoGetData.module.application_1.0.60.ear
+[INFO] BWEARPackager Mojo finished execution

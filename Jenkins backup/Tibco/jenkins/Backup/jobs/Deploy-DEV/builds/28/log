@@ -1,0 +1,94 @@
+Started by upstream project "[8mha:////4JZHvAMfAU4e9OfWiba7hlfE+JsJzL9UqHfm6l2NPFKxAAAAox+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAzBEgZx/az8JH3HgID4kGCX1Nx899QSl8SSRH0A/awLo8wAAAA=[0mAPP_TSDemoGetData" build number [8mha:////4AeIsPHOg0364XJqEyvE9RC/tgwvhcRv0s1r1c3vz67vAAAApR+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAymEgZJ/az8JH3HgID4kGCX1Nx899QSl8SSRH0TcwBbgQt1zgAAAA==[0m47
+originally caused by:
+ Started by user [8mha:////4KURSn3OaMQL6bFrXuW5/3fXc55L78mMdzu6q+I/O50/AAAAlx+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAzWEgZu/dLi1CL9xJTczDwAj6GcLcAAAAA=[0madmin
+Building in workspace /Users/Shared/Jenkins/Home/workspace/Deploy-DEV
+ > git rev-parse --is-inside-work-tree # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/jcranfie/BW6Demo.git # timeout=10
+Fetching upstream changes from https://github.com/jcranfie/BW6Demo.git
+ > git --version # timeout=10
+using GIT_ASKPASS to set credentials 
+ > git fetch --tags --progress https://github.com/jcranfie/BW6Demo.git +refs/heads/*:refs/remotes/origin/*
+ > git rev-parse refs/remotes/origin/master^{commit} # timeout=10
+ > git rev-parse refs/remotes/origin/origin/master^{commit} # timeout=10
+Checking out Revision 14403dd68c38d7c1d82c687611c25a3507cc3305 (refs/remotes/origin/master)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 14403dd68c38d7c1d82c687611c25a3507cc3305
+Commit message: "Fix"
+ > git rev-list --no-walk 57b7ff8fc82e9902d1cb33276a5b896ce6df2646 # timeout=10
+[Deploy-DEV] $ /bin/sh -xe /Users/Shared/Jenkins/tmp/jenkins1033623789318658770.sh
++ echo APP_TSDemoGetData
+APP_TSDemoGetData
++ echo APP_TSDemoGetData-AppSpace
+APP_TSDemoGetData-AppSpace
++ echo TS-DOMAIN
+TS-DOMAIN
++ echo 47
+47
+[Jenkins] $ /Users/Shared/Jenkins/Home/tools/hudson.tasks.Ant_AntInstallation/Ant-default/bin/ant -file ant-deploy.xml -DDOMAIN=TS-DOMAIN -DBUILD_JOB_VERSION=47 -DAPPSPACE=APP_TSDemoGetData-AppSpace -DAPPLICATION_NAME=APP_TSDemoGetData -Dbw.application.appspace=APP_TSDemoGetData-AppSpace -Dapplication.name=APP_TSDemoGetData -Dapplication.version=47 -Ddomain=TS-DOMAIN -Denv.name=DEV deploy
+Buildfile: /Users/Shared/Jenkins/Home/workspace/Deploy-DEV/Jenkins/ant-deploy.xml
+
+[8mha:////4G4Msm6eXCh3UmxFLJYw4d6sniqLuE2f781FMntdH/s9AAAAYB+LCAAAAAAAAP9b85aBtbiIQT6jNKU4P0+vJLE4u1gvPjGvRM8xryQksSg9tcQvvyTVvqNr/s+Vl9uYGBgqihikoKqT8/OK83NS9ZwhNEghAwQwghQWAADROOumXQAAAA==[0mdeploy:
+     [echo] Uploads, Deploys and Starts one BW application...
+     [echo] 
+     [echo] EAR File: 
+     [echo] ${ECHO_PREFIX}Profile: ../jobs/APP_TSDemoGetData/builds/47/archive/Jenkins/ServiceProfiles/APP_TSDemoGetData-DEV
+     [echo] 
+     [echo] Executing /Users/juliancranfield/TIBCO-BW642/bw/6.4/bin/bwadmin --propFile /Users/juliancranfield/TIBCO-BW642/bw/6.4/bin/bwadmin.tra -config /Users/juliancranfield/TIBCO-BW642/bw/6.4/config/bwagent-DEV.ini -f ./build/APP_TSDemoGetData/47/scripts/deploy.bwadmin
+     [echo] 
+     [exec] TIBCO ActiveMatrix BusinessWorks version 6.4.2, hotfix 3, build V51, 2018-02-22
+     [exec] Upload APP_TSDemoGetData.1.0.47.ear
+     [exec] Connecting to the BW Agent using
+     [exec]  TIBCO ActiveSpaces (Java). Enterprise Edition. Version 2.1.6.011
+     [exec] The BusinessWorks Administration Console requires the BusinessWorks Agent to be running when configured for 'enterprise' mode.
+     [exec]  Deploy and Start APP_TSDemoGetData.1.0.47.ear
+     [exec] Connecting to the BW Agent using
+     [exec]  TIBCO ActiveSpaces (Java). Enterprise Edition. Version 2.1.6.011
+     [exec]  16:13:10.821 ERROR [main] c.t.b.t.m.d.u.ApplicationLifecycleCommand - TIBCO-BW-ADMIN-500001: Failed to perform operation [deploy] on [APP_TSDemoGetData.1.0.47.ear] in the Domain [TS-DOMAIN] due to an error in initializing data manager, <CausedBy> TIBCO-BW-ADMIN-PRSTNC-500001: Connection to BW Agent failed.
+     [exec] com.tibco.neo.exception.BaseException: TIBCO-BW-ADMIN-PRSTNC-500001: Connection to BW Agent failed.
+     [exec] TIBCO-BW-ADMIN-CLI-500402: Failed to deploy application from the archive [APP_TSDemoGetData.1.0.47.ear], The BusinessWorks Administration Console requires the BusinessWorks Agent to be running when configured for 'enterprise' mode.
+     [exec] 	at com.tibco.bw.thor.management.persistence.as.MetaspaceUtil.connect(MetaspaceUtil.java:82) ~[com.tibco.bw.thor.management.persistence_1.4.803.006.jar:na]
+     [exec] 	at com.tibco.bw.thor.management.persistence.as.ASConnection.init(ASConnection.java:192) ~[com.tibco.bw.thor.management.persistence_1.4.803.006.jar:na]
+     [exec] 	at com.tibco.bw.thor.management.persistence.as.ASConnection.<init>(ASConnection.java:63) ~[com.tibco.bw.thor.management.persistence_1.4.803.006.jar:na]
+     [exec] 	at com.tibco.bw.thor.management.persistence.as.BWASConnectionFactory.getInstance(BWASConnectionFactory.java:30) ~[com.tibco.bw.thor.management.persistence_1.4.803.006.jar:na]
+     [exec] 	at com.tibco.bw.thor.management.persistence.as.BWASDataManager.initConnection(BWASDataManager.java:116) ~[com.tibco.bw.thor.management.persistence_1.4.803.006.jar:na]
+     [exec] 	at com.tibco.bw.thor.management.persistence.as.BWASDataManager.<init>(BWASDataManager.java:107) ~[com.tibco.bw.thor.management.persistence_1.4.803.006.jar:na]
+     [exec] 	at com.tibco.bw.thor.management.persistence.BWAdminDataManagerFactory.getInstance(BWAdminDataManagerFactory.java:53) ~[com.tibco.bw.thor.management.persistence_1.4.803.006.jar:na]
+     [exec] 	at com.tibco.bw.thor.management.domain.utils.ApplicationLifecycleCommand.o00000(ApplicationLifecycleCommand.java:6071) [com.tibco.bw.thor.management.domain_1.4.803.006.jar:na]
+     [exec] 	at com.tibco.bw.thor.management.domain.utils.ApplicationLifecycleCommand.deployapp(ApplicationLifecycleCommand.java:3681) [com.tibco.bw.thor.management.domain_1.4.803.006.jar:na]
+     [exec] 	at com.tibco.bw.thor.management.data.providers.ApplicationProvider.deployApplication(ApplicationProvider.java:651) [com.tibco.bw.thor.management.domain_1.4.803.006.jar:na]
+     [exec] 	at com.tibco.bw.thor.admin.cli.commands.DeployCommand.doExecuteInternal(DeployCommand.java:166) [com.tibco.bw.thor.admin.cli_1.4.802.007.jar:na]
+     [exec] 	at com.tibco.bw.thor.admin.cli.commands.DeployCommand.doExecute(DeployCommand.java:90) [com.tibco.bw.thor.admin.cli_1.4.802.007.jar:na]
+     [exec] 	at com.tibco.bw.thor.management.cli.commands.AbstractCommand.execute(AbstractCommand.java:62) [com.tibco.bw.thor.management.cli_1.4.500.002.jar:na]
+     [exec] 	at org.apache.felix.gogo.commands.basic.AbstractCommand.execute(AbstractCommand.java:35) [org.apache.karaf.shell.console-2.3.1.jar:na]
+     [exec] 	at org.apache.felix.gogo.runtime.Closure.executeCmd(Closure.java:474) [org.apache.karaf.shell.console-2.3.1.jar:na]
+     [exec] 	at org.apache.felix.gogo.runtime.Closure.executeStatement(Closure.java:400) [org.apache.karaf.shell.console-2.3.1.jar:na]
+     [exec] 	at org.apache.felix.gogo.runtime.Pipe.run(Pipe.java:108) [org.apache.karaf.shell.console-2.3.1.jar:na]
+     [exec] 	at org.apache.felix.gogo.runtime.Closure.execute(Closure.java:183) [org.apache.karaf.shell.console-2.3.1.jar:na]
+     [exec] 	at org.apache.felix.gogo.runtime.Closure.execute(Closure.java:120) [org.apache.karaf.shell.console-2.3.1.jar:na]
+     [exec] 	at org.apache.felix.gogo.runtime.CommandSessionImpl.execute(CommandSessionImpl.java:89) [org.apache.karaf.shell.console-2.3.1.jar:na]
+     [exec] 	at com.tibco.bw.thor.management.cli.commands.AbstractMain.o00000(AbstractMain.java:482) [com.tibco.bw.thor.management.cli_1.4.500.002.jar:na]
+     [exec] 	at com.tibco.bw.thor.management.cli.commands.AbstractMain.o00000(AbstractMain.java:451) [com.tibco.bw.thor.management.cli_1.4.500.002.jar:na]
+     [exec] 	at com.tibco.bw.thor.management.cli.commands.AbstractMain.mainLoop(AbstractMain.java:179) [com.tibco.bw.thor.management.cli_1.4.500.002.jar:na]
+     [exec] 	at com.tibco.bw.thor.admin.cli.Main.main(Main.java:45) [com.tibco.bw.thor.admin.cli_1.4.802.007.jar:na]
+     [exec] Caused by: com.tibco.as.space.ASException: SYS_ERROR (connect_timeout - connect timeout)
+     [exec] 	at Native.process(RemoteMetaspaceActor.cpp:633) ~[na:na]
+     [exec] 	at Native.joinMetaspace(RemoteMetaspace.cpp:157) ~[na:na]
+     [exec] 	at Native.join(RemoteMetaspace.cpp:93) ~[na:na]
+     [exec] 	at Native.API_Metaspace_Connect(ApiMetaspace.cpp:49) ~[na:na]
+     [exec] 	at Native.Java_com_tibco_as_space_impl_NativeImpl_connect(MetaspaceMessage.cpp:39) ~[na:na]
+     [exec] 	at com.tibco.as.space.impl.NativeImpl.connect(Native Method) ~[as-common.jar:na]
+     [exec] 	at com.tibco.as.space.impl.ASMetaspace.<init>(ASMetaspace.java:163) ~[as-common.jar:na]
+     [exec] 	at com.tibco.bw.thor.management.persistence.as.MetaspaceUtil.connect(MetaspaceUtil.java:76) ~[com.tibco.bw.thor.management.persistence_1.4.803.006.jar:na]
+     [exec] 	... 23 common frames omitted
+     [exec] Connecting to the BW Agent using
+     [exec]  TIBCO ActiveSpaces (Java). Enterprise Edition. Version 2.1.6.011
+     [exec] TIBCO-BW-ADMIN-500008: Error in initializing data manager, <CausedBy> TIBCO-BW-ADMIN-PRSTNC-500001: Connection to BW Agent failed.
+     [exec]  
+
+[8mha:////4EDLFAfJCoNexkn8UQdl60niWJVv+wnWeAPxG+8F0SaWAAAAYB+LCAAAAAAAAP9b85aBtbiIQSGjNKU4P0+vJLE4u1gvPjGvRM8xr8S/tCQ5PzfVL78ktUuDM0uMry+HiYGhoohBCqo8OT+vOD8nVc8ZQoMUMkAAI0hhAQAUXUdTXgAAAA==[0mBUILD FAILED
+/Users/Shared/Jenkins/Home/workspace/Deploy-DEV/Jenkins/ant-deploy.xml:51: exec returned: 1
+
+Total time: 3 minutes 2 seconds
+Build step 'Invoke Ant' marked build as failure
+Finished: FAILURE

@@ -1,0 +1,135 @@
+<?xml version="1.0"?>
+<project name="preservice-build" >
+
+	<!-- TIBCO applications properties -->
+	<property name="bw.home.path" value= "/tibco/app/bw/6.4" />
+	<property name="bw.admin" value= "${bw.home.path}/bin/bwadmin" />
+	<property name="bw.admin.config.dir" value="${bw.home.path}/config"/>
+	<property name="bw.admin.tra" value= "${bw.home.path}/bin/bwadmin.tra" />
+
+	<target name="deploy" description="Uploads, Deploys and Starts one application">
+
+		<property name="base.dir" value="."/>
+		<property name="env.name" value="world"/>
+		<property name="application.name" value="world"/>
+		<property name="application.version" value="world"/>
+		<property name="build.jenkins.user" value="world"/>
+		<property name="build.jenkins.timestamp" value="world"/>
+		<property name="bw.application.appspace" value="world"/>
+		<property name="domain" value="world"/>
+
+		<property name="script.file" value="${base.dir}/build/${application.name}/${application.version}/scripts/deploy.bwadmin"/>
+		<property name="ear.name" value="${application.name}.module.application_1.0.${application.version}.ear"/>
+		<property name="description" value="Jenkins Deployment - Pipeline#${application.version} - Deployedby #${build.jenkins.user} - ${build.jenkins.timestamp}"/>
+		<property name="bw.agent" value="bwagent-${env.name}.ini"/>
+
+		<echo message="Uploads, Deploys and Starts one BW application..."/>
+		<echo message=""/>
+		
+				
+           <!-- Find the archieve root -->
+           <dirset id="folder.path" dir="../../../jobs/" includes="**/${application.name}/builds/${application.version}" />
+           <pathconvert pathsep="${line.separator}" property="dir.name" refid="folder.path"> 
+                <mapper type="identity" />
+           </pathconvert>    
+           <echo message="Archieve Root Directory: ${dir.name}"/>
+
+           <!-- Find EAR file -->
+           <first id="ear.path">
+                <fileset dir="${dir.name}" includes="**/${application.name}*_1.0.${application.version}.ear" />
+           </first>
+           <echo message="EAR File: ${toString:ear.path}"/>
+           
+           <!-- Find Profile file -->
+           <first id="profile.path">
+                <fileset dir="${dir.name}" includes="**/${application.name}-${env.name}.xml" />
+           </first>
+           <echo message="Profile File: ${toString:profile.path}"/>
+
+
+		<!-- Deletes the BWAdmin script file if it exists -->
+		<delete file="${script.file}" failonerror="false"/>
+		
+		<!-- Writes the bwadmin script file -->
+		<echo message="Creating deployment script..."/>
+		<echo message=""/>
+		
+		<echo file="${script.file}" append="true">echo "Upload ${ear.name}"${line.separator}</echo>
+		<echo file="${script.file}" append="true">upload -path ${application.name} -replace -domain ${domain} "${toString:ear.path}"${line.separator}</echo>
+		<echo file="${script.file}" append="true">echo "Deploy and Start ${ear.name}"${line.separator}</echo>
+		<echo file="${script.file}" append="true">deploy -domain  ${domain} -appspace ${bw.application.appspace} -description "${description}" -profilefile "${toString:profile.path}" -replace -startondeploy "${application.name}/${ear.name}"${line.separator}</echo>
+		<echo file="${script.file}" append="true">show -domain ${domain} -appspace ${bw.application.appspace} applications ${application.name}.application${line.separator}</echo>
+
+		<!-- Executes the bwadmin script file -->
+		<echo message="Executing ${bw.admin} --propFile ${bw.admin.tra} -config ${bw.admin.config.dir}/${bw.agent} -f ${script.file}"/>
+		<echo message=""/>
+		<exec executable="${bw.admin}" resultproperty="bw.admin.export.state" failonerror="true">
+			<arg value='--propFile'/>
+			<arg path="${bw.admin.tra}"/>
+			<arg value='-config'/>
+			<arg path='${bw.admin.config.dir}/${bw.agent}'/>
+			<arg value='-f'/>
+			<arg path='${script.file}'/>
+		</exec>
+		<echo message=""/>
+		<echo message="Executing ${bw.admin} --propFile ${bw.admin.tra} -config ${bw.admin.config.dir}/${bw.agent} -f ${script.file}... Done."/>
+	</target>
+
+<target name="profile-create">
+
+		<property name="env.name" value="world"/>
+		<property name="service.name" value="world"/>
+
+		<!-- Find EAR file -->
+		<first id="profile.path">
+			<fileset dir="../BW" includes="**/${service.name}.module.application/META-INF/default.substvar" />
+		</first>
+		<first id="app.config.path">
+			<fileset dir="./ServiceProfiles" includes="**/${service.name}.xml" />
+		</first>
+		<echo message="Service Name: ${service.name}"/>
+		<echo message="App Config File: ${toString:app.config.path}"/>
+		<echo message="Profile File: ${toString:profile.path}"/>
+
+			<property name="default.profile" value="${toString:app.config.path}"/>
+			<property name="global.profile" value="ServiceProfiles/bw6-globalConfig.xml"/>
+
+	                <echo message="Source ${default.profile}..."/>
+	                <echo message="Using ${global.profile}..."/>
+	                <xslt in="${toString:profile.path}" out="./ServiceProfiles/${service.name}-${env.name}.xml" style="config.xsl" failonerror="true" force="true">
+	                        <outputproperty name="method" value="xml" />
+	                        <outputproperty name="standalone" value="yes" />
+	                        <outputproperty name="indent" value="yes" />
+	                        <param name="app-config" expression="${default.profile}" />
+							<param name="global-config" expression="${global.profile}" />
+							<param name="environmentName" expression="${env.name}" />
+							<param name="default-environmentName" expression="DEFAULT" />
+	                </xslt>
+</target>
+
+<target name="profile-build">
+
+	<property name="service.name" value="world"/>
+
+	<!-- Find EAR file -->
+	<first id="profile.path">
+		<fileset dir="../BW" includes="**/${service.name}.module.application/META-INF/default.substvar" />
+	</first>
+	<echo message="Service Name: **/${service.name}.module.application/META-INF/default.substvar"/>
+	<echo message="Service Name: ${service.name}"/>
+	<echo message="Profile File: ${toString:profile.path}"/>
+
+		<property name="default.profile" value="${toString:profile.path}"/>
+		<property name="global.profile" value="ServiceProfiles/${service.name}.xml"/>
+
+                <echo message="Source ${default.profile}..."/>
+                <echo message="Using ${global.profile}..."/>
+                <xslt in="${default.profile}" out="${global.profile}" style="createAppconfig.xsl" failonerror="true" force="true">
+                        <outputproperty name="method" value="xml" />
+                        <outputproperty name="standalone" value="yes" />
+                        <outputproperty name="indent" value="yes" />
+                        <param name="Globals" expression="${global.profile}" />
+                </xslt>
+</target>
+
+</project>

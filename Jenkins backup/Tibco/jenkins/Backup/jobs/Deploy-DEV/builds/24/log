@@ -1,0 +1,75 @@
+Started by upstream project "[8mha:////4JZHvAMfAU4e9OfWiba7hlfE+JsJzL9UqHfm6l2NPFKxAAAAox+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAzBEgZx/az8JH3HgID4kGCX1Nx899QSl8SSRH0A/awLo8wAAAA=[0mAPP_TSDemoGetData" build number [8mha:////4GZoKw1+svA8qiDvAgSZARQbKYhM8skRKodwwgTSG4rCAAAApR+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAymEgZJ/az8JH3HgID4kGCX1Nx899QSl8SSRH0TMwDNsQwCzgAAAA==[0m46
+originally caused by:
+ Started by user [8mha:////4KURSn3OaMQL6bFrXuW5/3fXc55L78mMdzu6q+I/O50/AAAAlx+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAzWEgZu/dLi1CL9xJTczDwAj6GcLcAAAAA=[0madmin
+Building in workspace /Users/Shared/Jenkins/Home/workspace/Deploy-DEV
+ > git rev-parse --is-inside-work-tree # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/jcranfie/BW6Demo.git # timeout=10
+Fetching upstream changes from https://github.com/jcranfie/BW6Demo.git
+ > git --version # timeout=10
+using GIT_ASKPASS to set credentials 
+ > git fetch --tags --progress https://github.com/jcranfie/BW6Demo.git +refs/heads/*:refs/remotes/origin/*
+ > git rev-parse refs/remotes/origin/master^{commit} # timeout=10
+ > git rev-parse refs/remotes/origin/origin/master^{commit} # timeout=10
+Checking out Revision 5470f249da9368955daa74e553b3c5af93ad7425 (refs/remotes/origin/master)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 5470f249da9368955daa74e553b3c5af93ad7425
+Commit message: "Fix"
+ > git rev-list --no-walk 9be20307736cb053ebb53dc6cc4a95585794e0e4 # timeout=10
+[Deploy-DEV] $ /bin/sh -xe /Users/Shared/Jenkins/tmp/jenkins5825340308176308471.sh
++ echo APP_TSDemoGetData
+APP_TSDemoGetData
++ echo APP_TSDemoGetData-AppSpace
+APP_TSDemoGetData-AppSpace
++ echo TS-DOMAIN
+TS-DOMAIN
++ echo 46
+46
+[Jenkins] $ /Users/Shared/Jenkins/Home/tools/hudson.tasks.Ant_AntInstallation/Ant-default/bin/ant -file ant-deploy.xml -DDOMAIN=TS-DOMAIN -DBUILD_JOB_VERSION=46 -DAPPSPACE=APP_TSDemoGetData-AppSpace -DAPPLICATION_NAME=APP_TSDemoGetData -Dapplication.name=APP_TSDemoGetData -Dapplication.version=46 -Denv.name=DEV deploy
+Buildfile: /Users/Shared/Jenkins/Home/workspace/Deploy-DEV/Jenkins/ant-deploy.xml
+
+[8mha:////4G4Msm6eXCh3UmxFLJYw4d6sniqLuE2f781FMntdH/s9AAAAYB+LCAAAAAAAAP9b85aBtbiIQT6jNKU4P0+vJLE4u1gvPjGvRM8xryQksSg9tcQvvyTVvqNr/s+Vl9uYGBgqihikoKqT8/OK83NS9ZwhNEghAwQwghQWAADROOumXQAAAA==[0mdeploy:
+     [echo] ${ECHO_PREFIX}Uploads, Deploys and Starts one BW application...
+     [echo] 
+     [echo] EAR File: 
+     [echo] ${ECHO_PREFIX}Profile: ../jobs/APP_TSDemoGetData/builds/46/archive/Jenkins/ServiceProfiles/APP_TSDemoGetData-DEV
+     [echo] 
+     [echo] ${ECHO_PREFIX}Executing /Users/JulianCranfield/TIBCO-BW642/bw/6.4/bin/bwadmin --propFile ${base.dir}/config/bwadmin.tra -config ${base.dir}/config/bwagent-DEV.ini -f ./build/APP_TSDemoGetData/46/scripts/deploy.bwadmin...
+     [echo] 
+
+[8mha:////4EDLFAfJCoNexkn8UQdl60niWJVv+wnWeAPxG+8F0SaWAAAAYB+LCAAAAAAAAP9b85aBtbiIQSGjNKU4P0+vJLE4u1gvPjGvRM8xr8S/tCQ5PzfVL78ktUuDM0uMry+HiYGhoohBCqo8OT+vOD8nVc8ZQoMUMkAAI0hhAQAUXUdTXgAAAA==[0mBUILD FAILED
+/Users/Shared/Jenkins/Home/workspace/Deploy-DEV/Jenkins/ant-deploy.xml:49: Execute failed: java.io.IOException: Cannot run program "/Users/JulianCranfield/TIBCO-BW642/bw/6.4/bin/bwadmin" (in directory "/Users/Shared/Jenkins/Home/workspace/Deploy-DEV/Jenkins"): error=13, Permission denied
+	at java.lang.ProcessBuilder.start(ProcessBuilder.java:1048)
+	at java.lang.Runtime.exec(Runtime.java:620)
+	at org.apache.tools.ant.taskdefs.launcher.Java13CommandLauncher.exec(Java13CommandLauncher.java:58)
+	at org.apache.tools.ant.taskdefs.Execute.launch(Execute.java:428)
+	at org.apache.tools.ant.taskdefs.Execute.execute(Execute.java:442)
+	at org.apache.tools.ant.taskdefs.ExecTask.runExecute(ExecTask.java:631)
+	at org.apache.tools.ant.taskdefs.ExecTask.runExec(ExecTask.java:670)
+	at org.apache.tools.ant.taskdefs.ExecTask.execute(ExecTask.java:498)
+	at org.apache.tools.ant.UnknownElement.execute(UnknownElement.java:292)
+	at sun.reflect.GeneratedMethodAccessor4.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.apache.tools.ant.dispatch.DispatchUtils.execute(DispatchUtils.java:106)
+	at org.apache.tools.ant.Task.perform(Task.java:346)
+	at org.apache.tools.ant.Target.execute(Target.java:448)
+	at org.apache.tools.ant.Target.performTasks(Target.java:469)
+	at org.apache.tools.ant.Project.executeSortedTargets(Project.java:1399)
+	at org.apache.tools.ant.Project.executeTarget(Project.java:1370)
+	at org.apache.tools.ant.helper.DefaultExecutor.executeTargets(DefaultExecutor.java:41)
+	at org.apache.tools.ant.Project.executeTargets(Project.java:1260)
+	at org.apache.tools.ant.Main.runBuild(Main.java:849)
+	at org.apache.tools.ant.Main.startAnt(Main.java:228)
+	at org.apache.tools.ant.launch.Launcher.run(Launcher.java:283)
+	at org.apache.tools.ant.launch.Launcher.main(Launcher.java:101)
+Caused by: java.io.IOException: error=13, Permission denied
+	at java.lang.UNIXProcess.forkAndExec(Native Method)
+	at java.lang.UNIXProcess.<init>(UNIXProcess.java:247)
+	at java.lang.ProcessImpl.start(ProcessImpl.java:134)
+	at java.lang.ProcessBuilder.start(ProcessBuilder.java:1029)
+	... 23 more
+
+Total time: 0 seconds
+Build step 'Invoke Ant' marked build as failure
+Finished: FAILURE

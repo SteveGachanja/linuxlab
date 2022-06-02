@@ -1,0 +1,55 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<hudson.maven.MavenBuild plugin="maven-plugin@3.1">
+  <actions>
+    <org.jfrog.hudson.MavenDependenciesRecord plugin="artifactory@2.15.0">
+      <build reference="../../.."/>
+      <dependencies/>
+    </org.jfrog.hudson.MavenDependenciesRecord>
+    <hudson.tasks.Fingerprinter_-FingerprintAction>
+      <record>
+        <entry>
+          <string>com.tibco.bw:APP_TSDemoGetData.module.application.parent:APP_TSDemoGetData.xml</string>
+          <string>05174cdd3387747338885fb98c89dbd3</string>
+        </entry>
+      </record>
+    </hudson.tasks.Fingerprinter_-FingerprintAction>
+    <hudson.maven.reporters.MavenArtifactRecord>
+      <records/>
+      <parent reference="../../.."/>
+      <pomArtifact>
+        <groupId>com.tibco.bw</groupId>
+        <artifactId>APP_TSDemoGetData.module.application.parent</artifactId>
+        <version>1.0.63-SNAPSHOT</version>
+        <type>pom</type>
+        <fileName>APP_TSDemoGetData.xml</fileName>
+        <canonicalName>APP_TSDemoGetData.module.application.parent-1.0.63-SNAPSHOT.pom</canonicalName>
+        <md5sum>05174cdd3387747338885fb98c89dbd3</md5sum>
+      </pomArtifact>
+      <mainArtifact reference="../pomArtifact"/>
+      <attachedArtifacts/>
+    </hudson.maven.reporters.MavenArtifactRecord>
+    <org.jfrog.hudson.MavenDependenciesRecord plugin="artifactory@2.15.0">
+      <build reference="../../.."/>
+      <dependencies/>
+    </org.jfrog.hudson.MavenDependenciesRecord>
+  </actions>
+  <queueId>-1</queueId>
+  <timestamp>1522223529450</timestamp>
+  <startTime>1522223534448</startTime>
+  <result>SUCCESS</result>
+  <duration>26</duration>
+  <keepLog>false</keepLog>
+  <builtOn></builtOn>
+  <workspace>/Users/Shared/Jenkins/Home/workspace/APP_TSDemoGetData/BW/POM</workspace>
+  <executedMojos class="java.util.concurrent.CopyOnWriteArrayList">
+    <hudson.maven.ExecutedMojo>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-clean-plugin</artifactId>
+      <version>2.5</version>
+      <goal>clean</goal>
+      <executionId>default-clean</executionId>
+      <duration>17</duration>
+      <digest>9a18e4d3f6e6495ed92b7d4694b41e66</digest>
+    </hudson.maven.ExecutedMojo>
+  </executedMojos>
+</hudson.maven.MavenBuild>

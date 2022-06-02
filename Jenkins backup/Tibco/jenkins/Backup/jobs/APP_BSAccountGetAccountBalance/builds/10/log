@@ -1,0 +1,9 @@
+Started by user [8mha:////4KURSn3OaMQL6bFrXuW5/3fXc55L78mMdzu6q+I/O50/AAAAlx+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAzWEgZu/dLi1CL9xJTczDwAj6GcLcAAAAA=[0madmin
+Building in workspace /Users/Shared/Jenkins/Home/workspace/APP_BSAccountGetAccountBalance
+[APP_BSAccountGetAccountBalance] $ /bin/sh -xe /Users/Shared/Jenkins/tmp/jenkins1165755156833901252.sh
++ echo BSAccountGetAccountBalance
+BSAccountGetAccountBalance
++ echo BSAccountGetAccountBalance-AppSpace
+BSAccountGetAccountBalance-AppSpace
+Triggering a new build of [8mha:////4L1xI9w3237liXa9c2Yxs9sK55UIPqC2fS0DCLkI3ME5AAAAnB+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAyuEgYB/az8JH2X1IKc/EpdF9cwfQCp7fOvxQAAAA==[0mDeploy-DEV
+Finished: SUCCESS

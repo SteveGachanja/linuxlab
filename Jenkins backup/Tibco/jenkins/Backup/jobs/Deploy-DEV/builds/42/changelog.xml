@@ -1,0 +1,50 @@
+commit 702c12e680724e2610c90953cf19438814beb234
+tree c7ccfa17f1ed2ec0d6694676ccbbc86af5eebd4a
+parent bd62958e5114331f6bb9df646fd79dc1b0f3682f
+author Julian Cranfield <jcranfie@tibco.com> 2018-03-27 10:31:32 +0100
+committer Julian Cranfield <jcranfie@tibco.com> 2018-03-27 10:31:32 +0100
+
+    Fix
+
+
+
+:100644 100644 e700dcee2345fde1a1626810d7830db9764ae4c3 32dce941e4353b0f593ac2b1048ab66b3a300c81 M	Jenkins/ServiceProfiles/APP_TSDemoGetData.xml
+commit bd62958e5114331f6bb9df646fd79dc1b0f3682f
+tree 35ec2ff3cd6244528f000d27c0b2f189031f7fe0
+parent 6ace6ce1a858e19d79cf67be8a363492bd26ed55
+author Julian Cranfield <jcranfie@tibco.com> 2018-03-27 10:28:23 +0100
+committer Julian Cranfield <jcranfie@tibco.com> 2018-03-27 10:28:23 +0100
+
+    New XML
+
+
+
+:100644 000000 a8ac6683ca44adf91630fc07d8f3a87a46a4a993 0000000000000000000000000000000000000000 D	Jenkins/ServiceProfiles/APP_TSDemoGetData-DEV.xml
+:100644 100644 5714aecb1790b0ede5423c4c746bb28bb8eb0f67 e700dcee2345fde1a1626810d7830db9764ae4c3 M	Jenkins/ServiceProfiles/APP_TSDemoGetData.xml
+:100644 100755 1273323df767f79eea37510757c3134d07140706 1273323df767f79eea37510757c3134d07140706 M	Jenkins/createAppconfig.sh
+commit 6ace6ce1a858e19d79cf67be8a363492bd26ed55
+tree 8a519716c3506386f8eb0f221e5256f528657677
+parent 2a5acd7b14457696f42a9e52af913431731c63cd
+author Julian Cranfield <jcranfie@tibco.com> 2018-03-27 10:24:19 +0100
+committer Julian Cranfield <jcranfie@tibco.com> 2018-03-27 10:24:19 +0100
+
+    Fixed module properties
+
+
+
+:100644 100644 de04284023de4578c2855b1c9b52ac4242905533 f47b0b277aa1c12249dd0c4f81b75bbb1653b0ab M	BW/TechnicalServices/APP_TSDemoGetData.module.application/META-INF/DEPLOYMENT.substvar
+:100755 100755 b940fe09a3ca450d8def151d99cfb8f17736097d b3d72166d11d552a0a85514a63d996b78d7a1268 M	BW/TechnicalServices/APP_TSDemoGetData.module.application/META-INF/TIBCO.xml
+:100755 100755 2a6ee619f201cdf3c68af6c3e3b91c6a143c5555 e022b2bbbc5c00fe98091364fd5c87a2c37e52c1 M	BW/TechnicalServices/APP_TSDemoGetData.module.application/META-INF/default.substvar
+:100755 100755 3d9bc72292f739c35e27a77105db553b9e55d0fb 7561db2f5ba561389e31d907f6e1f685d2db7d48 M	BW/TechnicalServices/APP_TSDemoGetData.module/.project
+:100755 100755 3455cd3deafffee57f483ed2b139b183d1ecc4c6 43a6fdba7a07f3c1b35e3507d32eaeb0bdf11191 M	BW/TechnicalServices/APP_TSDemoGetData.module/META-INF/MANIFEST.MF
+:100755 100755 b8dc6343f1738b5f0e0ad54aef56905cda21ce3d 2a0acf2f3101845d7adbebd73d1b271e2c7dd7c8 M	BW/TechnicalServices/APP_TSDemoGetData.module/META-INF/default.substvar
+:100755 100755 93b2184ad3501201e849d1fc4314615decc6a25a 0acfca2560512835675acf01f36e97d584c1f6f6 M	BW/TechnicalServices/APP_TSDemoGetData.module/META-INF/module.bwm
+:100755 100755 8bb690dab8f2c7ee20b293816403df90793f464f 702cac520b961718a9d22f0416dc67939276edbc M	BW/TechnicalServices/APP_TSDemoGetData.module/Processes/services/ts/demo/getdata/sub/Activator.bwp
+:100755 000000 6fada937919395ec73f95ebc2ad514b419098b82 0000000000000000000000000000000000000000 D	BW/TechnicalServices/APP_TSDemoGetData.module/Resources/services/ts/demo/getdata/Client-Account-jdbc.jdbcResource
+:100755 000000 2ac16551ed4cf5e12dcd7fe71ccdcc7d503f1d64 0000000000000000000000000000000000000000 D	BW/TechnicalServices/APP_TSDemoGetData.module/Resources/services/ts/demo/getdata/Client-BACKEND-http.httpClientResource
+:100755 100755 3b8609f6d489b5cacfdcdd75ce91afe2ab6d945d e6fedaafcefcd90788093a7b1dd2d4edf2735c08 M	BW/TechnicalServices/APP_TSDemoGetData.module/Resources/services/ts/demo/getdata/JMSClient-ESB01.jmsConnResource
+:100755 100755 953b3d6277bcdf75d92a2c8b68f9f360cd9a6f06 11012942d0916d1d2ece40a2dab67cdd37ef6f43 M	BW/TechnicalServices/LIB_TSUTIL_SystemErrorHandler_Client/META-INF/MANIFEST.MF
+:100755 100755 72432dbcf4530652819c38c4e219fb145b4e60b5 edf7fd27cb515b932a5a876186d389dd14640f97 M	BW/TechnicalServices/LIB_TSUTIL_SystemErrorHandler_Client/META-INF/default.substvar
+:100755 100755 518593d37cb40dd0d38126778118a4bc24436dbc 43278353d2e5c00bb4e53573abebae49d9f8395b M	BW/TechnicalServices/LIB_TSUTIL_SystemErrorHandler_Client/META-INF/module.bwm
+:100755 100755 d4474a124bb777260ba35af9a0a27ea4ea3a74c3 cd7040e74ec21c6d13c476fb03f1d276155ced80 M	BW/TechnicalServices/LIB_TSUTIL_SystemErrorHandler_Client/Resources/services/ts/util/systemerrorhandler/JMSClientResource.jmsConnResource
+:100755 100755 14824400a10d4831a52242e2aeee4718dfe2bd1d b2f7b1ff0e7fdf6e8375297b2fea260fb8385e26 M	BW/TechnicalServices/LIB_TSUTIL_SystemErrorHandler_Client/Resources/services/ts/util/systemerrorhandler/JNDIClientResource-Audit.jndiConfigResource

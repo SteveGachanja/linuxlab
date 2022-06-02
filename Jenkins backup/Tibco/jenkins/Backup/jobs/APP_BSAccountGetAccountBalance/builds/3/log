@@ -1,0 +1,8 @@
+Started by user [8mha:////4KURSn3OaMQL6bFrXuW5/3fXc55L78mMdzu6q+I/O50/AAAAlx+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAzWEgZu/dLi1CL9xJTczDwAj6GcLcAAAAA=[0madmin
+Building in workspace /Users/Shared/Jenkins/Home/workspace/TESTANT
+[TESTANT] $ /bin/sh -xe /Users/Shared/Jenkins/tmp/jenkins2367950173715903031.sh
++ echo TESTANT
+TESTANT
+Returning node parameter for master
+Triggering a new build of [8mha:////4A7u+H3f+8VgYXuJ/yM5w7BGrqaSMHyqHR7oyTrA1EU3AAAAmh+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAyOEgY+/az8JP0Q1+AQR78QI30AbrX5WcMAAAA=[0mTESTANT2
+Finished: SUCCESS

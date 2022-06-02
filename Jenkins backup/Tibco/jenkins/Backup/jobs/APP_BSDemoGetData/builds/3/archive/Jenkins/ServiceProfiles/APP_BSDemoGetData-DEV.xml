@@ -1,0 +1,773 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<repository xmlns="http://www.tibco.com/xmlns/repo/types/2002" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<globalVariables>
+<globalVariable>
+			<name>//APP_BSDemoGetData.module//BW.DEPLOYMENTUNIT.NAME</name>
+			<value/>
+			<deploymentSettable>false</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<isOverride>false</isOverride>
+		</globalVariable>
+<globalVariable>
+			<name>//APP_BSDemoGetData.module//BW.HOST.NAME</name>
+			<value>localhost</value>
+			<deploymentSettable>false</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<isOverride>false</isOverride>
+		</globalVariable>
+<globalVariable>
+			<name>//APP_BSDemoGetData.module//BW.APPSPACE.NAME</name>
+			<value/>
+			<deploymentSettable>false</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<isOverride>false</isOverride>
+		</globalVariable>
+<globalVariable>
+			<name>//APP_BSDemoGetData.module//BW.DEPLOYMENTUNIT.TYPE</name>
+			<value/>
+			<deploymentSettable>false</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<isOverride>false</isOverride>
+		</globalVariable>
+<globalVariable>
+			<name>//APP_BSDemoGetData.module//BW.APPNODE.NAME</name>
+			<value/>
+			<deploymentSettable>false</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<isOverride>false</isOverride>
+		</globalVariable>
+<globalVariable>
+			<name>//APP_BSDemoGetData.module//BW.DOMAIN.NAME</name>
+			<value/>
+			<deploymentSettable>false</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<isOverride>false</isOverride>
+		</globalVariable>
+<globalVariable>
+			<name>//APP_BSDemoGetData.module//BW.MODULE.VERSION</name>
+			<value/>
+			<deploymentSettable>false</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<isOverride>false</isOverride>
+		</globalVariable>
+<globalVariable>
+			<name>//APP_BSDemoGetData.module//BW.DEPLOYMENTUNIT.VERSION</name>
+			<value/>
+			<deploymentSettable>false</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<isOverride>false</isOverride>
+		</globalVariable>
+<globalVariable>
+			<name>//APP_BSDemoGetData.module//BW.MODULE.NAME</name>
+			<value/>
+			<deploymentSettable>false</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<isOverride>false</isOverride>
+		</globalVariable>
+<globalVariable>
+<name>//APP_BSDemoGetData.module///services.bs.demo.getdata/OPERATION/log.audit.remotefile.enable</name>
+<value>true</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>Boolean</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//APP_BSDemoGetData.module///services.bs.demo.getdata/OPERATION/exception.audit.remotefile.enable</name>
+<value>true</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>Boolean</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//APP_BSDemoGetData.module///services.bs.demo.getdata/OPERATION/log.audit.payload.enable</name>
+<value>true</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>Boolean</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//APP_BSDemoGetData.module///services.bs.demo.getdata/OPERATION/exception.audit.remotedb.enable</name>
+<value>true</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>Boolean</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//APP_BSDemoGetData.module///services.bs.demo.getdata/OPERATION/jms.queue</name>
+<value/>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>String</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//APP_BSDemoGetData.module///services.bs.demo.getdata/OPERATION/log.audit.enable</name>
+<value>true</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>Boolean</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//APP_BSDemoGetData.module///services.bs.demo.getdata/OPERATION/log.audit.remotedb.enable</name>
+<value>true</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>Boolean</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//APP_BSDemoGetData.module///services.bs.demo.getdata/OPERATION/log.audit.local.enable</name>
+<value>true</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>Boolean</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//APP_BSDemoGetData.module///services.bs.demo.getdata/OPERATION/exception.audit.enable</name>
+<value>true</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>Boolean</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//APP_BSDemoGetData.module///services.bs.demo.getdata/OPERATION/exception.audit.local.enable</name>
+<value>true</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>Boolean</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//APP_BSDemoGetData.module///services.bs.demo.getdata/OPERATION/exception.audit.payload.enable</name>
+<value>true</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>Boolean</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//APP_BSDemoGetData.module///resources/services.bs.demo.getdata/Client-ESB01/queue.connection.factory</name>
+<value>QueueConnectionFactory</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>String</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//APP_BSDemoGetData.module///resources/services.bs.demo.getdata/Client-ESB01/password</name>
+<value>#!8IBGQ5doYGq6PlbasTXFVA==</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>Password</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//APP_BSDemoGetData.module///resources/services.bs.demo.getdata/Client-ESB01/topic.connection.factory</name>
+<value>TopicConnectionFactory</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>String</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//APP_BSDemoGetData.module///resources/services.bs.demo.getdata/Client-ESB01/jndi.username</name>
+<value>bw</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>String</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//APP_BSDemoGetData.module///resources/services.bs.demo.getdata/Client-ESB01/jndi.password</name>
+<value>#!5z/33+2VlX5VWxDecv0Wtw==</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>Password</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//APP_BSDemoGetData.module///resources/services.bs.demo.getdata/Client-ESB01/jndi.url</name>
+<value>tibjmsnaming://ec2-35-178-63-212.eu-west-2.compute.amazonaws.com:7222,tibjmsnaming://ec2-35-178-63-212.eu-west-2.compute.amazonaws.com:7222</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>String</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//APP_BSDemoGetData.module///resources/services.bs.demo.getdata/Client-ESB01/username</name>
+<value>bw</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>String</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//APP_BSDemoGetData.module///resources/services.bs.demo.getdata/Client-ESB01/jndi.context.factory</name>
+<value>com.tibco.tibjms.naming.TibjmsInitialContextFactory</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>String</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//APP_BSDemoGetData.module///resources/services.bs.demo.getdata/Server-BW01/accept.queue.size</name>
+<value>-1</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>Integer</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//APP_BSDemoGetData.module///resources/services.bs.demo.getdata/Server-BW01/hostname</name>
+<value>0.0.0.0</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>String</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//APP_BSDemoGetData.module///resources/services.bs.demo.getdata/Server-BW01/port</name>
+<value>17001</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>Integer</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//APP_BSDemoGetData.module///resources/services.bs.demo.getdata/Server-BW01/acceptor.threads</name>
+<value>1</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>Integer</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//APP_BSDemoGetData.module///resources/services.bs.demo.getdata/Server-BW01/advanced/request.buffer.size</name>
+<value>8192</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>Integer</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//APP_BSDemoGetData.module///resources/services.bs.demo.getdata/Server-BW01/advanced/reverse.proxy.port</name>
+<value>0</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>Integer</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//APP_BSDemoGetData.module///resources/services.bs.demo.getdata/Server-BW01/advanced/response.buffer.size</name>
+<value>24576</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>Integer</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//APP_BSDemoGetData.module///resources/services.bs.demo.getdata/Server-BW01/advanced/max.idle.time.ms</name>
+<value>200000</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>Integer</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//APP_BSDemoGetData.module///resources/services.bs.demo.getdata/Server-BW01/advanced/low.resource.max.idle.time.ms</name>
+<value>0</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>Integer</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//APP_BSDemoGetData.module///resources/services.bs.demo.getdata/Server-BW01/advanced/compression</name>
+<value>false</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>Boolean</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//APP_BSDemoGetData.module///resources/services.bs.demo.getdata/Server-BW01/advanced/max.save.post.size</name>
+<value>4096</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>Integer</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//APP_BSDemoGetData.module///resources/services.bs.demo.getdata/Server-BW01/advanced/enable.dns.lookups</name>
+<value>false</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>Boolean</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//APP_BSDemoGetData.module///resources/services.bs.demo.getdata/Server-BW01/advanced/uri.encoding</name>
+<value/>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>String</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//APP_BSDemoGetData.module///resources/services.bs.demo.getdata/Server-BW01/advanced/use.non.blocking.io.sockets</name>
+<value>true</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>Boolean</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//APP_BSDemoGetData.module///resources/services.bs.demo.getdata/Server-BW01/advanced/use.direct.buffers</name>
+<value>true</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>Boolean</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//APP_BSDemoGetData.module///resources/services.bs.demo.getdata/Server-BW01/advanced/header.buffer.size</name>
+<value>4096</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>Integer</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//APP_BSDemoGetData.module///resources/services.bs.demo.getdata/Server-BW01/advanced/max.post.size</name>
+<value>2097152</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>Integer</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//APP_BSDemoGetData.module///resources/services.bs.demo.getdata/Server-BW01/advanced/max.qtp.threads</name>
+<value>75</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>Integer</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//APP_BSDemoGetData.module///resources/services.bs.demo.getdata/Server-BW01/advanced/compressible.mime.types</name>
+<value>text/html,text/xml,text/plain</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>String</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//APP_BSDemoGetData.module///resources/services.bs.demo.getdata/Server-BW01/advanced/min.qtp.threads</name>
+<value>10</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>Integer</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//APP_BSDemoGetData.module///resources/services.bs.demo.getdata/Server-BW01/advanced/reverse.proxy.host</name>
+<value/>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>String</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//APP_BSDemoGetData.module///resources/services.bs.demo.getdata/Server-BW01/advanced/linger.time.ms</name>
+<value>0</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>Integer</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+			<name>//LIB_XML//BW.DEPLOYMENTUNIT.TYPE</name>
+			<value/>
+			<deploymentSettable>false</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<isOverride>false</isOverride>
+		</globalVariable>
+<globalVariable>
+			<name>//LIB_XML//BW.APPNODE.NAME</name>
+			<value/>
+			<deploymentSettable>false</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<isOverride>false</isOverride>
+		</globalVariable>
+<globalVariable>
+			<name>//LIB_XML//BW.DEPLOYMENTUNIT.NAME</name>
+			<value/>
+			<deploymentSettable>false</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<isOverride>false</isOverride>
+		</globalVariable>
+<globalVariable>
+			<name>//LIB_XML//BW.HOST.NAME</name>
+			<value>localhost</value>
+			<deploymentSettable>false</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<isOverride>false</isOverride>
+		</globalVariable>
+<globalVariable>
+			<name>//LIB_XML//BW.DOMAIN.NAME</name>
+			<value/>
+			<deploymentSettable>false</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<isOverride>false</isOverride>
+		</globalVariable>
+<globalVariable>
+			<name>//LIB_XML//BW.DEPLOYMENTUNIT.VERSION</name>
+			<value/>
+			<deploymentSettable>false</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<isOverride>false</isOverride>
+		</globalVariable>
+<globalVariable>
+			<name>//LIB_XML//BW.APPSPACE.NAME</name>
+			<value/>
+			<deploymentSettable>false</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<isOverride>false</isOverride>
+		</globalVariable>
+<globalVariable>
+			<name>//LIB_XML//BW.MODULE.VERSION</name>
+			<value/>
+			<deploymentSettable>false</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<isOverride>false</isOverride>
+		</globalVariable>
+<globalVariable>
+			<name>//LIB_XML//BW.MODULE.NAME</name>
+			<value/>
+			<deploymentSettable>false</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<isOverride>false</isOverride>
+		</globalVariable>
+<globalVariable>
+			<name>//LIB_TSUTIL_SystemErrorHandler_Client//BW.DEPLOYMENTUNIT.TYPE</name>
+			<value/>
+			<deploymentSettable>false</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<isOverride>false</isOverride>
+		</globalVariable>
+<globalVariable>
+			<name>//LIB_TSUTIL_SystemErrorHandler_Client//BW.APPNODE.NAME</name>
+			<value/>
+			<deploymentSettable>false</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<isOverride>false</isOverride>
+		</globalVariable>
+<globalVariable>
+			<name>//LIB_TSUTIL_SystemErrorHandler_Client//BW.HOST.NAME</name>
+			<value>localhost</value>
+			<deploymentSettable>false</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<isOverride>false</isOverride>
+		</globalVariable>
+<globalVariable>
+			<name>//LIB_TSUTIL_SystemErrorHandler_Client//BW.DOMAIN.NAME</name>
+			<value/>
+			<deploymentSettable>false</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<isOverride>false</isOverride>
+		</globalVariable>
+<globalVariable>
+			<name>//LIB_TSUTIL_SystemErrorHandler_Client//BW.APPSPACE.NAME</name>
+			<value/>
+			<deploymentSettable>false</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<isOverride>false</isOverride>
+		</globalVariable>
+<globalVariable>
+			<name>//LIB_TSUTIL_SystemErrorHandler_Client//BW.MODULE.VERSION</name>
+			<value/>
+			<deploymentSettable>false</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<isOverride>false</isOverride>
+		</globalVariable>
+<globalVariable>
+			<name>//LIB_TSUTIL_SystemErrorHandler_Client//BW.DEPLOYMENTUNIT.NAME</name>
+			<value/>
+			<deploymentSettable>false</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<isOverride>false</isOverride>
+		</globalVariable>
+<globalVariable>
+			<name>//LIB_TSUTIL_SystemErrorHandler_Client//BW.DEPLOYMENTUNIT.VERSION</name>
+			<value/>
+			<deploymentSettable>false</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<isOverride>false</isOverride>
+		</globalVariable>
+<globalVariable>
+			<name>//LIB_TSUTIL_SystemErrorHandler_Client//BW.MODULE.NAME</name>
+			<value/>
+			<deploymentSettable>false</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<isOverride>false</isOverride>
+		</globalVariable>
+<globalVariable>
+<name>//LIB_TSUTIL_SystemErrorHandler_Client///resources/services.ts.util.system.audit/client-ERROR/queue.connection.factory</name>
+<value>QueueConnectionFactory</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>String</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//LIB_TSUTIL_SystemErrorHandler_Client///resources/services.ts.util.system.audit/client-ERROR/jndi.context.factory</name>
+<value>com.tibco.tibjms.naming.TibjmsInitialContextFactory</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>String</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//LIB_TSUTIL_SystemErrorHandler_Client///resources/services.ts.util.system.audit/client-ERROR/password</name>
+<value>#!kxax7yQdFc0NGAXD57t0/A==</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>Password</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//LIB_TSUTIL_SystemErrorHandler_Client///resources/services.ts.util.system.audit/client-ERROR/logger.queue</name>
+<value>bw.util.systemerrorhandler.logger.q</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>String</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//LIB_TSUTIL_SystemErrorHandler_Client///resources/services.ts.util.system.audit/client-ERROR/topic.connection.factory</name>
+<value>TopicConnectionFactory</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>String</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//LIB_TSUTIL_SystemErrorHandler_Client///resources/services.ts.util.system.audit/client-ERROR/jndi.url</name>
+<value>tibjmsnaming://ec2-35-178-63-212.eu-west-2.compute.amazonaws.com:7222</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>String</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//LIB_TSUTIL_SystemErrorHandler_Client///resources/services.ts.util.system.audit/client-ERROR/jndi.password</name>
+<value>#!sjOW4Z3ldh/UBRIu3GKkNw==</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>Password</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//LIB_TSUTIL_SystemErrorHandler_Client///resources/services.ts.util.system.audit/client-ERROR/jndi.username</name>
+<value>bw</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>String</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//LIB_TSUTIL_SystemErrorHandler_Client///resources/services.ts.util.system.audit/client-ERROR/username</name>
+<value>bw</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>String</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//LIB_TSUTIL_SystemErrorHandler_Client///data/services/area.short.names</name>
+<value>,customer:CI,TSYS:TSYS,general:GEN,utility:UTIL</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>String</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+			<name>//LIB_TSUTIL_SystemAudit_Client//BW.DEPLOYMENTUNIT.TYPE</name>
+			<value/>
+			<deploymentSettable>false</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<isOverride>false</isOverride>
+		</globalVariable>
+<globalVariable>
+			<name>//LIB_TSUTIL_SystemAudit_Client//BW.APPNODE.NAME</name>
+			<value/>
+			<deploymentSettable>false</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<isOverride>false</isOverride>
+		</globalVariable>
+<globalVariable>
+			<name>//LIB_TSUTIL_SystemAudit_Client//BW.HOST.NAME</name>
+			<value>localhost</value>
+			<deploymentSettable>false</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<isOverride>false</isOverride>
+		</globalVariable>
+<globalVariable>
+			<name>//LIB_TSUTIL_SystemAudit_Client//BW.DOMAIN.NAME</name>
+			<value/>
+			<deploymentSettable>false</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<isOverride>false</isOverride>
+		</globalVariable>
+<globalVariable>
+			<name>//LIB_TSUTIL_SystemAudit_Client//BW.APPSPACE.NAME</name>
+			<value/>
+			<deploymentSettable>false</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<isOverride>false</isOverride>
+		</globalVariable>
+<globalVariable>
+			<name>//LIB_TSUTIL_SystemAudit_Client//BW.MODULE.VERSION</name>
+			<value/>
+			<deploymentSettable>false</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<isOverride>false</isOverride>
+		</globalVariable>
+<globalVariable>
+			<name>//LIB_TSUTIL_SystemAudit_Client//BW.DEPLOYMENTUNIT.NAME</name>
+			<value/>
+			<deploymentSettable>false</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<isOverride>false</isOverride>
+		</globalVariable>
+<globalVariable>
+			<name>//LIB_TSUTIL_SystemAudit_Client//BW.DEPLOYMENTUNIT.VERSION</name>
+			<value/>
+			<deploymentSettable>false</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<isOverride>false</isOverride>
+		</globalVariable>
+<globalVariable>
+			<name>//LIB_TSUTIL_SystemAudit_Client//BW.MODULE.NAME</name>
+			<value/>
+			<deploymentSettable>false</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<isOverride>false</isOverride>
+		</globalVariable>
+<globalVariable>
+<name>//LIB_TSUTIL_SystemAudit_Client///resources/services.ts.util.system.audit/Client-AUDIT/password</name>
+<value>#!TBI1GWOElUv6jDLPlRVNog==</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>Password</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//LIB_TSUTIL_SystemAudit_Client///resources/services.ts.util.system.audit/Client-AUDIT/jndi.context.factory</name>
+<value>com.tibco.tibjms.naming.TibjmsInitialContextFactory</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>String</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//LIB_TSUTIL_SystemAudit_Client///resources/services.ts.util.system.audit/Client-AUDIT/queue.connection.factory</name>
+<value>QueueConnectionFactory</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>String</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//LIB_TSUTIL_SystemAudit_Client///resources/services.ts.util.system.audit/Client-AUDIT/logger.queue</name>
+<value>bw.util.systemaudit.logger.q</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>String</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//LIB_TSUTIL_SystemAudit_Client///resources/services.ts.util.system.audit/Client-AUDIT/jndi.username</name>
+<value>bw</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>String</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//LIB_TSUTIL_SystemAudit_Client///resources/services.ts.util.system.audit/Client-AUDIT/jndi.url</name>
+<value>tibjmsnaming://ec2-35-178-63-212.eu-west-2.compute.amazonaws.com:7222</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>String</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//LIB_TSUTIL_SystemAudit_Client///resources/services.ts.util.system.audit/Client-AUDIT/jndi.password</name>
+<value>#!m1AIsjYoKb7+8Y7I6OW6AA==</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>Password</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//LIB_TSUTIL_SystemAudit_Client///resources/services.ts.util.system.audit/Client-AUDIT/topic.connection.factory</name>
+<value>TopicConnectionFactory</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>String</type>
+<isOverride>false</isOverride>
+</globalVariable>
+<globalVariable>
+<name>//LIB_TSUTIL_SystemAudit_Client///resources/services.ts.util.system.audit/Client-AUDIT/username</name>
+<value>bw</value>
+<deploymentSettable>false</deploymentSettable>
+<serviceSettable>false</serviceSettable>
+<type>String</type>
+<isOverride>false</isOverride>
+</globalVariable>
+</globalVariables>
+</repository>

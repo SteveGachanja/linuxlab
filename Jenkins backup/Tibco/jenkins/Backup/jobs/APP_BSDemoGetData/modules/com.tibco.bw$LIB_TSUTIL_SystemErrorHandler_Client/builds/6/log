@@ -1,0 +1,38 @@
+[INFO] 
+[INFO] ---------< com.tibco.bw:LIB_TSUTIL_SystemErrorHandler_Client >----------
+[INFO] Building LIB_TSUTIL_SystemErrorHandler_Client 1.0.6-SNAPSHOT       [3/6]
+[INFO] ------------------------------[ bwmodule ]------------------------------
+[INFO] 
+[8mha:////4EdJbZ345c+avMuiHmwJL4emB+/U6LE6AKTu+lJQls/TAAAAYB+LCAAAAAAAAP9b85aBtbiIQSmjNKU4P0+vJLE4u1gvPjexLDVPzxdEGvvmZ+X75ZekLlOVfvTjc8FPJgaGiiIGKaiG5Py84vycVD1nCA1SyAABjCCFBQCV27OjYAAAAA==[0m[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ LIB_TSUTIL_SystemErrorHandler_Client ---
+[INFO] Deleting /Users/Shared/Jenkins/Home/workspace/APP_BSDemoGetData/BW/TechnicalServices/LIB_TSUTIL_SystemErrorHandler_Client/target
+[INFO] 
+[8mha:////4EdJbZ345c+avMuiHmwJL4emB+/U6LE6AKTu+lJQls/TAAAAYB+LCAAAAAAAAP9b85aBtbiIQSmjNKU4P0+vJLE4u1gvPjexLDVPzxdEGvvmZ+X75ZekLlOVfvTjc8FPJgaGiiIGKaiG5Py84vycVD1nCA1SyAABjCCFBQCV27OjYAAAAA==[0m[INFO] --- maven-resources-plugin:3.0.2:resources (default-resources) @ LIB_TSUTIL_SystemErrorHandler_Client ---
+[8mha:////4HDV7A91tdoXcq/CuG0QYNJKlYL/ySHKkBK8e6tvgsUhAAAAYx+LCAAAAAAAAP9b85aBtbiIQSWjNKU4P0+vJLE4u1gvPjexLDVPzxdEhicW5WXmpfvll6S2fNly5fzGzauYGBgqihikoFqS8/OK83NS9ZwhNEghAwQwghQWAACwxA+XYgAAAA==[0m[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory /Users/Shared/Jenkins/Home/workspace/APP_BSDemoGetData/BW/TechnicalServices/LIB_TSUTIL_SystemErrorHandler_Client/src/main/resources
+[INFO] 
+[8mha:////4EdJbZ345c+avMuiHmwJL4emB+/U6LE6AKTu+lJQls/TAAAAYB+LCAAAAAAAAP9b85aBtbiIQSmjNKU4P0+vJLE4u1gvPjexLDVPzxdEGvvmZ+X75ZekLlOVfvTjc8FPJgaGiiIGKaiG5Py84vycVD1nCA1SyAABjCCFBQCV27OjYAAAAA==[0m[INFO] --- maven-compiler-plugin:3.7.0:compile (default-compile) @ LIB_TSUTIL_SystemErrorHandler_Client ---
+[INFO] No sources to compile
+[INFO] 
+[8mha:////4EdJbZ345c+avMuiHmwJL4emB+/U6LE6AKTu+lJQls/TAAAAYB+LCAAAAAAAAP9b85aBtbiIQSmjNKU4P0+vJLE4u1gvPjexLDVPzxdEGvvmZ+X75ZekLlOVfvTjc8FPJgaGiiIGKaiG5Py84vycVD1nCA1SyAABjCCFBQCV27OjYAAAAA==[0m[INFO] --- maven-resources-plugin:3.0.2:testResources (default-testResources) @ LIB_TSUTIL_SystemErrorHandler_Client ---
+[8mha:////4HDV7A91tdoXcq/CuG0QYNJKlYL/ySHKkBK8e6tvgsUhAAAAYx+LCAAAAAAAAP9b85aBtbiIQSWjNKU4P0+vJLE4u1gvPjexLDVPzxdEhicW5WXmpfvll6S2fNly5fzGzauYGBgqihikoFqS8/OK83NS9ZwhNEghAwQwghQWAACwxA+XYgAAAA==[0m[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory /Users/Shared/Jenkins/Home/workspace/APP_BSDemoGetData/BW/TechnicalServices/LIB_TSUTIL_SystemErrorHandler_Client/src/test/resources
+[INFO] 
+[8mha:////4EdJbZ345c+avMuiHmwJL4emB+/U6LE6AKTu+lJQls/TAAAAYB+LCAAAAAAAAP9b85aBtbiIQSmjNKU4P0+vJLE4u1gvPjexLDVPzxdEGvvmZ+X75ZekLlOVfvTjc8FPJgaGiiIGKaiG5Py84vycVD1nCA1SyAABjCCFBQCV27OjYAAAAA==[0m[INFO] --- maven-compiler-plugin:3.7.0:testCompile (default-testCompile) @ LIB_TSUTIL_SystemErrorHandler_Client ---
+[INFO] No sources to compile
+[INFO] 
+[8mha:////4EdJbZ345c+avMuiHmwJL4emB+/U6LE6AKTu+lJQls/TAAAAYB+LCAAAAAAAAP9b85aBtbiIQSmjNKU4P0+vJLE4u1gvPjexLDVPzxdEGvvmZ+X75ZekLlOVfvTjc8FPJgaGiiIGKaiG5Py84vycVD1nCA1SyAABjCCFBQCV27OjYAAAAA==[0m[INFO] --- maven-surefire-plugin:2.21.0:test (default-test) @ LIB_TSUTIL_SystemErrorHandler_Client ---
+[INFO] No tests to run.
+[JENKINS] Recording test results
+[INFO] 
+[8mha:////4EdJbZ345c+avMuiHmwJL4emB+/U6LE6AKTu+lJQls/TAAAAYB+LCAAAAAAAAP9b85aBtbiIQSmjNKU4P0+vJLE4u1gvPjexLDVPzxdEGvvmZ+X75ZekLlOVfvTjc8FPJgaGiiIGKaiG5Py84vycVD1nCA1SyAABjCCFBQCV27OjYAAAAA==[0m[INFO] --- bw6-maven-plugin:1.3.1:bwmodule (default-bwmodule) @ LIB_TSUTIL_SystemErrorHandler_Client ---
+[INFO] Module Packager Mojo started for Module LIB_TSUTIL_SystemErrorHandler_Client ...
+[INFO] Updated the Manifest version 
+UpdateManifest Method in
+Update Attribute
+[INFO] The OSGi verion is 1.0.6.201803280850 for Maven version of 1.0.6.201803280850
+[INFO] Removing the externals entries if any. 
+[INFO] Created Plugin JAR with name /Users/Shared/Jenkins/Home/workspace/APP_BSDemoGetData/BW/TechnicalServices/LIB_TSUTIL_SystemErrorHandler_Client/target/LIB_TSUTIL_SystemErrorHandler_Client_1.0.6.201803280850.jar
+[INFO] Adding Maven Dependencies to the Plugin JAR file
+[INFO] Creating the Plugin JAR file
+[INFO] Building jar: /Users/Shared/Jenkins/Home/workspace/APP_BSDemoGetData/BW/TechnicalServices/LIB_TSUTIL_SystemErrorHandler_Client/target/LIB_TSUTIL_SystemErrorHandler_Client_1.0.6.201803280850.jar
+[INFO] BW Module Packager Mojo finished execution.
