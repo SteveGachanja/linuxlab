@@ -1,0 +1,66 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.plugins.jira.JiraProjectProperty plugin="jira@3.7"/>
+    <com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty plugin="gitlab-plugin@1.5.35">
+      <gitLabConnection>Digital_Factory</gitLabConnection>
+      <jobCredentialId></jobCredentialId>
+      <useAlternativeCredential>false</useAlternativeCredential>
+    </com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty>
+  </properties>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <jdk>(System)</jdk>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>set +x
+echo BUILD_ID $BUILD_ID
+echo BUILD_CAUSE $BUILD_CAUSE
+echo BUILD_TIMESTAMP $BUILD_TIMESTAMP</command>
+      <configuredLocalRules/>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>set +x
+echo &quot;&quot;
+JENKINS_USER=&quot;sngachanja&quot;
+JENKINS_TOKEN=&quot;1109dd5770ade8db4a55e735433f7f95e3&quot;
+JENKINS_AUTH=&quot;$JENKINS_USER:$JENKINS_TOKEN&quot;
+JENKINS_URL=&quot;http://172.16.209.71:9090&quot;
+JOB_URL=&quot;OmniBuilds-CoreBankingIntegration/job/Maintenance_Scheduled_Jobs/job/test&quot;
+
+echo &quot;another process is using port&quot; &gt; nohup.out
+
+cd $WORKSPACE
+for x in $(cat nohup.out | grep &quot;another process is using port&quot; | wc -l) ; do
+if [ $x -gt 0 ]; 
+then
+echo &quot;--trigger RESTARTS_ALL_APPSERVERS job&quot;
+CHECK_TO_RESTART_ALL=true; 
+echo CHECK_TO_RESTART_ALL $CHECK_TO_RESTART_ALL
+curl -X POST --user $JENKINS_AUTH $JENKINS_URL/job/$JOB_URL/build
+
+else
+echo &quot;--normal run&quot;
+CHECK_TO_RESTART_ALL=false;
+echo CHECK_TO_RESTART_ALL $CHECK_TO_RESTART_ALL
+fi
+done
+
+
+echo &quot;==========================================================================================&quot;
+
+</command>
+      <configuredLocalRules/>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers/>
+  <buildWrappers/>
+</project>
