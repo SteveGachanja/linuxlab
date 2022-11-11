@@ -1,6 +1,6 @@
 #!/bin/sh
 #*************************************************************************************
-# APPLICATION VERSION 1.0
+# APPLICATION VERSION 1.2
 # CREATED by NEO TECH -- dated Friday 11th November 2022
 # REFERENCES
 #https://myopswork.com/when-shell-scripts-meets-jenkins-61594f576e96
