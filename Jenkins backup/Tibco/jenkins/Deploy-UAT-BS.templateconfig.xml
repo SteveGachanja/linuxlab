@@ -1,0 +1,145 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description>Deploy-UAT-BS</description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>APPLICATION_NAME</name>
+          <description></description>
+          <defaultValue></defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>APPSPACE</name>
+          <description></description>
+          <defaultValue></defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>DOMAIN</name>
+          <description></description>
+          <defaultValue></defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>BUILD_JOB_VERSION</name>
+          <description></description>
+          <defaultValue></defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>ENVIRONMENT</name>
+          <description></description>
+          <defaultValue>UAT</defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>APPFOLDER</name>
+          <description></description>
+          <defaultValue></defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+  </properties>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <jdk>(System)</jdk>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>set +x
+
+echo &quot;------------------------------------------------&quot;
+echo &quot;Confirming existence of SIT BS BUILD PROJECT&quot;
+echo &quot;------------------------------------------------&quot;
+
+export APPLICATION_NAME=${APPLICATION_NAME}
+export BUILD_JOB_VERSION=${BUILD_JOB_VERSION}
+
+echo &quot;APPLICATION_NAME :: ${APPLICATION_NAME}&quot;
+echo &quot;BUILD_JOB_VERSION :: ${BUILD_JOB_VERSION}&quot;
+echo &quot;APPFOLDER :: ${APPFOLDER}&quot;
+echo &quot;CURRENT WORKSPACE :: ${WORKSPACE}&quot;
+echo &quot;BUILD_TIMESTAMP&quot;::$BUILD_TIMESTAMP
+
+echo &quot;------------------------------------------------&quot;
+
+ls -l /var/lib/jenkins/workspace/Deploy-Dev-BS/Jenkins/build/${APPLICATION_NAME}/${BUILD_JOB_VERSION}/scripts/deploy.bwadmin
+ls -l /var/lib/jenkins/workspace/Deploy-SIT-BS/Jenkins/build/${APPLICATION_NAME}/${BUILD_JOB_VERSION}/scripts/deploy.bwadmin
+
+
+echo &quot;------------------------------------------------&quot;
+
+rsync -avzhq /var/lib/jenkins/workspace/Deploy-Dev-BS/Jenkins .
+rsync -avzhq /var/lib/jenkins/workspace/Deploy-Dev-BS/TEST .
+
+find /var/lib/jenkins/workspace/ -name ${APPLICATION_NAME}-UAT.xml 2&gt;/dev/null
+
+echo &quot;------------------------------------------------&quot;
+echo &quot;Changing profile to version BW 6.7&quot;
+
+cd /var/lib/jenkins/workspace/Deploy-UAT-BS/Jenkins
+sed -i &apos;s#/tibco/app/bw/6.4#/tibco/app/bw/6.7#g&apos; ant-deploy.xml
+
+echo &quot;------------------------------------------------&quot;</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Ant plugin="ant@1.9">
+      <targets>deploy</targets>
+      <antName>tibco-ant</antName>
+      <buildFile>./Jenkins/ant-deploy.xml</buildFile>
+      <properties>env.name=UAT
+application.name=${APPLICATION_NAME}
+application.version=${BUILD_JOB_VERSION}
+domain=${DOMAIN}
+bw.application.appspace=${APPSPACE}
+build.jenkins.user=${BUILD_USER}
+build.jenkins.timestamp=${BUILD_TIMESTAMP}</properties>
+    </hudson.tasks.Ant>
+    <hudson.tasks.Shell>
+      <command>set +x
+#ls -l ./Jenkins/Apix/$APPLICATION_NAME.properties
+/tibco/scripts/starters/asg/updateconfig.sh &quot;$ENVIRONMENT&quot; ./Jenkins/Apix/$APPLICATION_NAME.properties</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers>
+    <org.jenkinsci.plugins.discardbuild.DiscardBuildPublisher plugin="discard-old-build@1.05">
+      <daysToKeep>100</daysToKeep>
+      <numToKeep>100</numToKeep>
+      <resultsToDiscard/>
+      <minLogFileSize>-1</minLogFileSize>
+      <maxLogFileSize>-1</maxLogFileSize>
+      <intervalDaysToKeep>100</intervalDaysToKeep>
+      <intervalNumToKeep>100</intervalNumToKeep>
+      <regexp></regexp>
+    </org.jenkinsci.plugins.discardbuild.DiscardBuildPublisher>
+    <hudson.tasks.Mailer plugin="mailer@1.23">
+      <recipients>sngachanja@co-opbank.co.ke</recipients>
+      <dontNotifyEveryUnstableBuild>false</dontNotifyEveryUnstableBuild>
+      <sendToIndividuals>true</sendToIndividuals>
+    </hudson.tasks.Mailer>
+    <hudson.plugins.parameterizedtrigger.BuildTrigger plugin="parameterized-trigger@2.35.2">
+      <configs>
+        <hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
+          <configs>
+            <hudson.plugins.parameterizedtrigger.CurrentBuildParameters/>
+          </configs>
+          <projects>Stage-BS-Preprod</projects>
+          <condition>SUCCESS</condition>
+          <triggerWithNoParameters>false</triggerWithNoParameters>
+          <triggerFromChildProjects>false</triggerFromChildProjects>
+        </hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
+      </configs>
+    </hudson.plugins.parameterizedtrigger.BuildTrigger>
+  </publishers>
+  <buildWrappers>
+    <org.jenkinsci.plugins.builduser.BuildUser plugin="build-user-vars-plugin@1.5"/>
+  </buildWrappers>
+</project>

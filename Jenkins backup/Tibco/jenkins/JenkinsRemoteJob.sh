@@ -21,6 +21,7 @@ sleep 2
 #Build Job Item
 JOB_URL="OmniBuilds-CoreBankingIntegration/job/Maintenance_Scheduled_Jobs/job/TESTJobName1"
 curl -X POST --user $JENKINS_AUTH $JENKINS_URL/job/$JOB_URL/build
+#curl -X POST --user $JENKINS_AUTH $JENKINS_URL/job/$JOB_URL/buildWithParameters?myparam=myparam_value
 sleep 10
 
 #Delete Job Item

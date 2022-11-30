@@ -1,0 +1,89 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: duka-bnpl
+  labels:
+    app.kubernetes.io/instance: duka-bnpl
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: duka-bnpl
+      version: 'v1'
+  template:
+    metadata:
+      labels:
+        app: duka-bnpl
+        version: 'v1'
+      annotations:
+        "cluster-autoscaler.kubernetes.io/safe-to-evict": "true"
+    spec:
+      tolerations:
+        - key: "podType"
+          operator: "Equal"
+          value: "isFrontend"
+          effect: "NoSchedule"
+      containers:
+        - name: duka-bnpl
+          imagePullPolicy: Always
+          image: eu.gcr.io/kyosk-images/duka-bnpl:a2ed2f16
+          resources:
+            requests:
+              memory: '200Mi'
+              cpu: '200m'
+            limits:
+              memory: '500Mi'
+              cpu: '500m'
+          ports:
+            - name: http
+              containerPort: 80
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 20
+            periodSeconds: 30
+            failureThreshold: 2
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 120
+            periodSeconds: 30
+            failureThreshold: 2
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: duka-bnpl-np
+  annotations:
+    cloud.google.com/neg: '{"ingress": false}'
+  labels:
+    app.kubernetes.io/instance: duka-bnpl
+spec:
+  selector:
+    app: duka-bnpl
+  type: NodePort
+  ports:
+    - port: 80
+      targetPort: 80
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: duka-bnpl
+  annotations:
+    cloud.google.com/neg: '{"ingress": false}'
+  labels:
+    app: duka-bnpl
+    app.kubernetes.io/instance: duka-bnpl
+spec:
+  selector:
+    app: duka-bnpl
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 80

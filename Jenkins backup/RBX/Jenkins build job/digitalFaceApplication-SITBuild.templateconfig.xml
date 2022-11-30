@@ -1,0 +1,1450 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description>digitalFaceApplication-SITBuild</description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.plugins.jira.JiraProjectProperty plugin="jira@3.7"/>
+    <com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty plugin="gitlab-plugin@1.5.35">
+      <gitLabConnection>Digital_Factory</gitLabConnection>
+      <jobCredentialId></jobCredentialId>
+      <useAlternativeCredential>false</useAlternativeCredential>
+    </com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.BooleanParameterDefinition>
+          <name>K1_CHANGE_APPROVALS</name>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>CSS_CHANGE_APPROVALS</name>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>ACCEPT_PRELOGIN_CHANGES</name>
+          <description>================================================
+ROLLBACK STRATEGIES
+================================================</description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <alex.jenkins.plugins.FileSystemListParameterDefinition plugin="filesystem-list-parameter-plugin@0.0.7">
+          <name>SIT_K1_BACKUP_VERSION</name>
+          <nodeName>master</nodeName>
+          <path>/appData/jenkins/archive-workspace/OmniBuilds-CoreBankingIntegration/K1_EAR/OmniBuilds/SIT/</path>
+          <selectedType>FILE</selectedType>
+          <formSelectType>SINGLE_SELECT</formSelectType>
+          <sortByLastModified>false</sortByLastModified>
+          <sortReverseOrder>false</sortReverseOrder>
+          <selectedEnumType>FILE</selectedEnumType>
+          <regexIncludePattern></regexIncludePattern>
+          <regexExcludePattern>digitalFaceApplication_IBMB_18.2.0.0.ear</regexExcludePattern>
+        </alex.jenkins.plugins.FileSystemListParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>ROLLBACK_K1_CHANGES</name>
+          <description>------------------------------------------------------------------------------------</description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <alex.jenkins.plugins.FileSystemListParameterDefinition plugin="filesystem-list-parameter-plugin@0.0.7">
+          <name>CHERRYPICK_CSS_BACKUP</name>
+          <nodeName>master</nodeName>
+          <path>/var/lib/jenkins/workspace/OmniBuilds/changelog-SIT/CSS-Changes</path>
+          <selectedType>DIRECTORY</selectedType>
+          <formSelectType>SINGLE_SELECT</formSelectType>
+          <sortByLastModified>true</sortByLastModified>
+          <sortReverseOrder>true</sortReverseOrder>
+          <selectedEnumType>DIRECTORY</selectedEnumType>
+          <regexIncludePattern></regexIncludePattern>
+          <regexExcludePattern></regexExcludePattern>
+        </alex.jenkins.plugins.FileSystemListParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>ROLLBACK_CSS_CHANGES</name>
+          <description>------------------------------------------------------------------------------------</description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>ROLLBACK_COMMIT_ID</name>
+          <description>Provide a ROLLBACK_COMMIT_ID</description>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>ROLLBACK_SIT_WITH_COMMIT_ID</name>
+          <description>------------------------------------------------------------------------------------</description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>EXCEPTION_BUILD</name>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+  </properties>
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@4.12.1">
+    <configVersion>2</configVersion>
+    <userRemoteConfigs>
+      <hudson.plugins.git.UserRemoteConfig>
+        <url>http://172.16.206.56:8080/tfs/CoOp_Collection/Omni-CBI-Integration/_git/RBX-CBI</url>
+        <credentialsId>55f97809-0207-42ed-a850-5a5a49fdc98d</credentialsId>
+      </hudson.plugins.git.UserRemoteConfig>
+    </userRemoteConfigs>
+    <branches>
+      <hudson.plugins.git.BranchSpec>
+        <name>*/${SIT_GIT_BRANCH}</name>
+      </hudson.plugins.git.BranchSpec>
+    </branches>
+    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+    <gitTool>OMNI-JENKINS-GITCLIENT</gitTool>
+    <submoduleCfg class="empty-list"/>
+    <extensions/>
+  </scm>
+  <assignedNode>master</assignedNode>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <jdk>(System)</jdk>
+  <triggers>
+    <hudson.triggers.SCMTrigger>
+      <spec>* * * * *</spec>
+      <ignorePostCommitHooks>true</ignorePostCommitHooks>
+    </hudson.triggers.SCMTrigger>
+  </triggers>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <org.jenkinsci.plugins.conditionalbuildstep.ConditionalBuilder plugin="conditional-buildstep@1.4.1">
+      <runner class="org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail" plugin="run-condition@1.5"/>
+      <runCondition class="org.jenkins_ci.plugins.run_condition.core.AlwaysRun" plugin="run-condition@1.5"/>
+      <conditionalbuilders>
+        <hudson.tasks.Shell>
+          <command>set +x
+export TARGET=Omni.SIT
+MATRIXPATH=/var/lib/jenkins/workspace/ROLE_PERMISSIONS_MATRIX
+$MATRIXPATH/ROLE_PERMISSIONS_MATRIX.sh
+CAPABILITIES_FILE=$MATRIXPATH/$TARGET/$BUILD_USER_ID.CAPABILITIES
+
+FUNCTION=ENV_AUTHORIZATION_SIT
+cat $CAPABILITIES_FILE || echo &quot;ERROR :: CAPABILITIES file not available&quot;
+CAPABILITIES=`cat $CAPABILITIES_FILE | grep $FUNCTION` || echo &quot;WARNING :: FUNCTION $FUNCTION not available for $BUILD_USER_ID&quot;
+echo &quot;BUILD_USER CAPABILITIES&quot;::$CAPABILITIES
+
+PROPERTY_FILE=SIT_MODULE_01_variables.property
+echo &quot;CAPABILITIES_FILE=$CAPABILITIES_FILE&quot; &gt;&gt; $PROPERTY_FILE
+
+#---------------------------------------------------------------------------------------------
+
+if [ &quot;$BUILD_USER_ID&quot; = &quot;scmChange&quot; ] || [ &quot;$CAPABILITIES&quot; = &quot;$FUNCTION&quot; ] ;
+then
+
+echo &quot; &quot;
+echo &quot;=====================================================================&quot;
+echo &quot;Build user $BUILD_USER Authorized to Promote to SIT &quot;
+echo &quot;=====================================================================&quot;
+echo &quot; &quot;
+exit 0
+
+else
+echo &quot; &quot;
+echo &quot;=====================================================================&quot;
+echo &quot;ERROR :: Build user $BUILD_USER not Authorized to Promote to SIT &quot;
+echo &quot;=====================================================================&quot;
+echo &quot; &quot;
+exit 1
+
+fi
+
+echo &quot;-------------------------------------------------------------------&quot;
+echo &quot;======================================================================&quot;
+seconds=$(($(date +&apos;%s&apos;) - $start))
+minutes=$(echo `expr $seconds / 60`)
+echo &quot;It took approx. $minutes minute(s)/ exactly ($seconds seconds) to fetch $BUILD_TAG&quot;
+echo &quot;====================================================================&quot;</command>
+          <configuredLocalRules/>
+        </hudson.tasks.Shell>
+        <hudson.tasks.Shell>
+          <command>set +x
+
+#------------------------------------------------------------------------------------------------------
+export TARGET=Omni.SIT
+MATRIXPATH=/var/lib/jenkins/workspace/ROLE_PERMISSIONS_MATRIX
+CAPABILITIES_FILE=$MATRIXPATH/$TARGET/$BUILD_USER_ID.CAPABILITIES
+
+FUNCTION1=ROLLBACK_WITH_COMMIT_IDs
+CAPABILITIES1=`cat $CAPABILITIES_FILE | grep $FUNCTION1` || echo &quot;WARNING :: FUNCTION $FUNCTION1 not available for $BUILD_USER_ID&quot;
+
+FUNCTION2=ROLLBACK_BUILD_TAGS
+CAPABILITIES2=`cat $CAPABILITIES_FILE | grep $FUNCTION2` || echo &quot;WARNING :: FUNCTION $FUNCTION2 not available for $BUILD_USER_ID&quot;
+
+#------------------------------------------------------------------------------------------------------
+
+if [[ &quot;$ROLLBACK_SIT_WITH_COMMIT_ID&quot; = &quot;true&quot; ]]  &amp;&amp; [[ &quot;$CAPABILITIES1&quot; = &quot;$FUNCTION1&quot; ]] &amp;&amp; [[ $COMMIT_ID != &quot; &quot; ]] ;
+then
+
+echo &quot; &quot;
+echo &quot;=============================================================================================&quot;
+echo &quot;Conditions are TRUE, AND Build user $BUILD_USER with CAPABILITIES to ROLLBACK_WITH_COMMIT_IDs..&quot;
+echo &quot;---------------------------------------------------------------------------------------------&quot;
+
+COMMIT_ID=`echo $ROLLBACK_COMMIT_ID | tr -d &quot;[:blank:]&quot;`
+echo &quot;ROLLBACK_COMMIT_ID entered is &lt;$COMMIT_ID&gt;&quot;
+
+git fetch origin $SIT_GIT_BRANCH:$SIT_GIT_BRANCH
+git checkout $SIT_GIT_BRANCH
+git branch
+git tag -l | xargs git tag -d
+
+echo &quot;--------------------------------------------------------&quot;
+echo &quot;Confirming last commit ...&quot;
+git log -1 --merges
+echo &quot;--------------------------------------------------------&quot;
+git log -25 --oneline
+echo &quot;--------------------------------------------------------&quot;
+git reset --hard $COMMIT_ID
+git push origin :$SIT_GIT_BRANCH
+git push -f origin $SIT_GIT_BRANCH
+echo &quot;--------------------------------------------------------&quot;
+echo &quot;Confirming changes made by Rollback ...&quot;
+git log -15 --oneline
+echo &quot;-------------------------------------------------------------------------------------------------&quot;
+echo &quot;SUCCESSFUL ROLLBACK OF SIT. EXITING THE BUILD .. IGNORE THE FAILED BUILD AND WAIT FOR THE NEXT BUILD TO COMPLETE THE ROLLBACK&quot;
+echo &quot;=================================================================================================&quot;
+exit 1
+
+elif [[ &quot;$ROLLBACK_SIT_BUILD_TAGS&quot; = &quot;true&quot; ]] &amp;&amp; [[ &quot;$CAPABILITIES2&quot; = &quot;$FUNCTION2&quot; ]] &amp;&amp; [[ $PREVIOUS_DEPLOYED_SIT_BUILD_TAGS != &quot; &quot; ]] ;
+then
+
+echo &quot; &quot;
+echo &quot;=============================================================================================&quot;
+echo &quot;Conditions are TRUE, AND Build user $BUILD_USER with CAPABILITIES to ROLLBACK_SIT_BUILD_TAGS..&quot;
+echo &quot;---------------------------------------------------------------------------------------------&quot;
+
+PICK_SIT_TAG=`echo $PREVIOUS_DEPLOYED_SIT_BUILD_TAGS | tr -d &quot;[:blank:]&quot;`
+echo &quot;PREVIOUS_DEPLOYED_SIT_BUILD_TAGS entered is &lt;$PICK_SIT_TAG&gt;&quot;
+
+git fetch origin $SIT_GIT_BRANCH:$SIT_GIT_BRANCH
+git checkout $SIT_GIT_BRANCH
+git branch
+git tag -l | xargs git tag -d
+echo &quot;--------------------------------------------------------&quot;
+echo &quot;Confirming last commit ...&quot;
+git log -1 --merges
+echo &quot;--------------------------------------------------------&quot;
+git log -25 --oneline
+echo &quot;--------------------------------------------------------&quot;
+echo &quot;Fetching all remote tags ... &quot;
+git ls-remote | grep tags | awk &apos;(NR%2)&apos;
+git fetch --all --tags
+echo &quot;--------------------------------------------------------&quot;
+echo &quot;PROCEDURE NOTES::&quot;
+echo &quot;1. Create a new branch from tag&quot;
+echo &quot;2. Fetch and Build SIT with &lt;&quot;feature-$PICK_SIT_TAG&quot;&gt; instead of &lt;$SIT_GIT_BRANCH&gt;&quot;
+echo &quot;--------------------------------------------------------&quot;
+
+#Create a new branch from tag
+git checkout -b &quot;feature-$PICK_SIT_TAG&quot; &quot;$PICK_SIT_TAG&quot;
+git branch
+
+#Backup, delete and push time-stamped SIT-system-branch
+git checkout $SIT_GIT_BRANCH
+git branch -m &quot;$SIT_GIT_BRANCH-backup-$BUILD_TIMESTAMP&quot;
+git push origin &quot;$SIT_GIT_BRANCH-backup-$BUILD_TIMESTAMP&quot;
+
+echo &quot;--------------------------------------------------------&quot;
+
+#1. Delete local SIT branch
+#2. Checkout to new branch from tag
+#3. REname to form new SIT-system-branch
+
+git checkout &quot;feature-$PICK_SIT_TAG&quot;
+git branch -D $SIT_GIT_BRANCH || echo &quot;skip if SIT_GIT_BRANCH does not exist&quot;
+git branch
+git branch -m $SIT_GIT_BRANCH
+git push origin :$SIT_GIT_BRANCH
+git push -f origin $SIT_GIT_BRANCH
+
+echo &quot;--------------------------------------------------------&quot;
+echo &quot;Confirming changes made by Rollback ...&quot;
+git log -15 --oneline
+echo &quot;-------------------------------------------------------------------------------------------------&quot;
+echo &quot;SUCCESSFUL ROLLBACK OF SIT. EXITING THE BUILD .. IGNORE THE FAILED BUILD AND WAIT FOR THE NEXT BUILD TO COMPLETE THE ROLLBACK&quot;
+echo &quot;=================================================================================================&quot;
+exit 1
+
+
+else
+echo &quot;--------------------------------------------------------------&quot;
+echo &quot;Continue Build as Normal, NO ROLLBACKS INITIATED... &quot;
+echo &quot;--------------------------------------------------------------&quot;
+echo &quot; &quot;
+exit 0
+fi</command>
+          <configuredLocalRules/>
+        </hudson.tasks.Shell>
+        <hudson.tasks.Shell>
+          <command>set +x
+echo &quot;=================================================================&quot;
+echo &quot;SET SIT VARIABLES ...&quot;
+echo &quot;=================================================================&quot;
+echo &quot;&quot;
+
+git pull origin $SIT_GIT_BRANCH
+git checkout -b $SIT_GIT_BRANCH
+git tag -l | xargs git tag -d 2&gt;&amp;1 &gt;/dev/null
+git branch
+
+#---------------------------------------------------------------------------------------------
+#SET VARIABLES
+
+git log -1 --merges
+#---------------------------------------------------------------------------------------------
+
+if [ ! -z &quot;$(git diff --diff-filter=ACMR --name-only HEAD~1 HEAD~0 | grep MH_HOME/EAR)&quot; ] ;
+then
+SIT_AUTHOR=$(git log -1 Source/ | grep Author | awk -F &apos;[:&lt;]&apos; &apos;{print $2}&apos; | tr -dc &apos;[:alnum:]\n\r&apos; | awk -F &quot;DigitalBanking&quot; &apos;{print $1}&apos; | tr -d &quot;[:blank:]&quot;)
+
+elif [ ! -z &quot;$K1_BUILD_USER_ID&quot; ] ;
+then
+SIT_AUTHOR=$K1_BUILD_USER_ID
+
+else
+SIT_AUTHOR=$(git log -1 | grep Author | awk -F &apos;[:&lt;]&apos; &apos;{print $2}&apos; | tr -dc &apos;[:alnum:]\n\r&apos; | awk -F &quot;DigitalBanking&quot; &apos;{print $1}&apos; | tr -d &quot;[:blank:]&quot;)
+fi
+
+#---------------------------------------------------------------------------------------------
+
+PULL_REQUEST_ID=`git log -1 --merges | grep PR | head -n 1`
+BRANCH_COMMIT_ID=`git log -1 --merges| grep Merge: | awk &apos;{print $3}&apos;`
+echo &quot;Feature branch commit ID: $BRANCH_COMMIT_ID&quot;
+echo &quot;=================================================================&quot;
+git log --oneline -20
+echo &quot;=================================================================&quot;
+
+UNFORMATTED_MERGED_FEATURE=`git name-rev --name-only $BRANCH_COMMIT_ID`
+MERGED_FEATURE=`echo $UNFORMATTED_MERGED_FEATURE |  awk -F&apos;remotes/origin/&apos; &apos;{ print $2 }&apos; |  awk -F&apos;[~^]&apos; &apos;{ print $1 }&apos;`
+
+#-----------------------------------------------------------------------------------------------
+IS_DIT_MERGED=`git branch -r --merged origin/$DEV_GIT_BRANCH | grep $MERGED_FEATURE 2&gt;/dev/null | wc -l`
+IS_SIT_MERGED=`git branch -r --merged origin/$SIT_GIT_BRANCH | grep $MERGED_FEATURE 2&gt;/dev/null | wc -l`
+IS_UAT_MERGED=`git branch -r --merged origin/$UAT_GIT_BRANCH | grep $MERGED_FEATURE 2&gt;/dev/null | wc -l`
+IS_PREPROD_MERGED=`git branch -r --merged origin/$PREPROD_GIT_BRANCH | grep $MERGED_FEATURE 2&gt;/dev/null | wc -l`
+IS_COMMIT_EMPTY=`git diff --diff-filter=ACMR --name-only HEAD~1 HEAD~0 | wc -l`
+
+#-----------------------------------------------------------------------------------------------
+#FIND OLD REMOTE_COMMIT_ID&apos;s
+
+DEV_LOCAL_COMMIT_ID=`cat ${ARCHIVE_WORKSPACE}/changelog-DEV/DEV_REMOTE_COMMIT_ID.log | grep $BRANCH_COMMIT_ID | tail -n 1 | awk -F &quot;refs/heads/&quot; &apos;{print $01}&apos; | tr -d &quot;[:blank:]&quot;`
+SIT_LOCAL_COMMIT_ID=`cat ${ARCHIVE_WORKSPACE}/changelog-SIT/SIT_REMOTE_COMMIT_ID.log | grep $BRANCH_COMMIT_ID | tail -n 1 | awk -F &quot;refs/heads/&quot; &apos;{print $01}&apos; | tr -d &quot;[:blank:]&quot;`
+UAT_LOCAL_COMMIT_ID=`cat ${ARCHIVE_WORKSPACE}/changelog-UAT/UAT_REMOTE_COMMIT_ID.log | grep $BRANCH_COMMIT_ID | tail -n 1 | awk -F &quot;refs/heads/&quot; &apos;{print $01}&apos; | tr -d &quot;[:blank:]&quot;`
+PREPROD_LOCAL_COMMIT_ID=`cat ${ARCHIVE_WORKSPACE}/changelog-PREPROD/PREPROD_REMOTE_COMMIT_ID.log | grep $BRANCH_COMMIT_ID | tail -n 1 | awk -F &quot;refs/heads/&quot; &apos;{print $01}&apos; | tr -d &quot;[:blank:]&quot;`
+
+#-----------------------------------------------------------------------------------------------
+#COUNT REMOTE_COMMIT_ID&apos;s
+count_commit_id_dev=`cat ${ARCHIVE_WORKSPACE}/changelog-DEV/DEV_REMOTE_COMMIT_ID.log | grep $BRANCH_COMMIT_ID | wc -l`
+count_commit_id_sit=`cat ${ARCHIVE_WORKSPACE}/changelog-SIT/SIT_REMOTE_COMMIT_ID.log | grep $BRANCH_COMMIT_ID | wc -l`
+count_commit_id_uat=`cat ${ARCHIVE_WORKSPACE}/changelog-UAT/UAT_REMOTE_COMMIT_ID.log | grep $BRANCH_COMMIT_ID | wc -l`
+count_commit_id_preprod=`cat ${ARCHIVE_WORKSPACE}/changelog-PREPROD/PREPROD_REMOTE_COMMIT_ID.log | grep $BRANCH_COMMIT_ID | wc -l`
+
+#-----------------------------------------------------------------------------------------------
+for (( ; ; ))
+do
+
+case &quot;$count_commit_id_dev&quot; in
+
+0)
+echo &quot;count_commit_id_dev::$count_commit_id_dev&quot;
+echo &quot;DEV_LOCAL_COMMIT_ID is empty, loop to find in DevBuild&quot;
+
+cd /var/lib/jenkins/workspace/OmniBuilds-CoreBankingIntegration/digitalFaceApplication-DevBuild   || echo &quot;If error -- Skip&quot;
+DEV_LOCAL_COMMIT_ID=`git log | grep $BRANCH_COMMIT_ID | grep commit | awk -F&quot;commit&quot; &apos;{print $NF}&apos; | tr -d &quot;[:blank:]&quot;`
+cd $WORKSPACE
+
+if [[ $DEV_LOCAL_COMMIT_ID = &quot;&quot; ]];
+then
+echo &quot;--------------------------------------------------------------------------------------&quot;
+echo &quot;*** SERIOUS ALERT :: DEV_LOCAL_COMMIT_ID does not exist in the DevBuild.  ***&quot;
+echo &quot;--------------------------------------------------------------------------------------&quot;
+else
+echo &quot;DEV_LOCAL_COMMIT_ID found in DevBuild &lt;$DEV_LOCAL_COMMIT_ID&gt;&quot;
+{ echo -n `git ls-remote | grep heads | grep $BRANCH_COMMIT_ID`; echo &quot; $BUILD_TIMESTAMP&quot;; } &gt;&gt; ${ARCHIVE_WORKSPACE}/changelog-DEV/DEV_REMOTE_COMMIT_ID.log || echo &quot;Warning :: BRANCH_COMMIT_ID is empty&quot;
+fi
+
+break
+;;
+
+1)
+echo &quot;count_commit_id_dev::$count_commit_id_dev&quot;
+echo &quot;Found DEV_LOCAL_COMMIT_ID..read from changelog-DEV &lt;$DEV_LOCAL_COMMIT_ID&gt;&quot;
+break
+;;
+
+*)
+echo &quot;count_commit_id_dev::$count_commit_id_dev&quot;
+echo &quot;Review this count_commit_id_dev ...Found an Invalid count_result $count_commit_id_dev input&quot;
+break
+;;
+
+esac
+done
+#-----------------------------------------------------------------------------------------------
+#WRITE NEW SIT_REMOTE_COMMIT_ID
+
+if [ $count_commit_id_sit = 0 ];
+then
+echo &quot;count_commit_id_sit :: $count_commit_id_sit&quot;
+{ echo -n `git ls-remote | grep heads | grep $BRANCH_COMMIT_ID`; echo &quot; $BUILD_TIMESTAMP&quot;; }  &gt;&gt; ${ARCHIVE_WORKSPACE}/changelog-SIT/SIT_REMOTE_COMMIT_ID.log || echo &quot;Warning :: BRANCH_COMMIT_ID is empty&quot;
+SIT_REMOTE_COMMIT_ID=`cat ${ARCHIVE_WORKSPACE}/changelog-SIT/SIT_REMOTE_COMMIT_ID.log | grep $BRANCH_COMMIT_ID | tail -n 1 | awk -F &quot;refs/heads/&quot; &apos;{print $01}&apos; | tr -d &quot;[:blank:]&quot;`
+else
+echo &quot;count_commit_id_sit :: $count_commit_id_sit&quot;
+SIT_REMOTE_COMMIT_ID=$SIT_LOCAL_COMMIT_ID
+echo &quot;SIT_LOCAL_COMMIT_ID::$SIT_LOCAL_COMMIT_ID&quot;
+fi
+
+#-----------------------------------------------------------------------------------------------
+#Set DB_Migration Variables
+TOPMOST_SIT_COMMIT_ID=$(git log -1 --oneline | awk &apos;{print $01}&apos; | tr -d &quot;[:blank:]&quot;)
+LAST_SIT_COMMIT_ID=122f6a
+#-----------------------------------------------------------------------------------------------
+PROPERTY_FILE=SIT_MODULE_01_variables.property
+#-----------------------------------------------------------------------------------------------
+export TARGET=Omni.SIT
+MATRIXPATH=/var/lib/jenkins/workspace/ROLE_PERMISSIONS_MATRIX
+CAPABILITIES_FILE=$MATRIXPATH/$TARGET/$BUILD_USER_ID.CAPABILITIES
+
+echo &quot;CAPABILITIES_FILE=$CAPABILITIES_FILE&quot; &gt;&gt; $PROPERTY_FILE
+#-----------------------------------------------------------------------------------------------
+
+echo &quot;BUILD_ID=$BUILD_ID&quot; &gt;&gt; $PROPERTY_FILE
+echo &quot;BUILD_TAG=$BUILD_TAG&quot; &gt;&gt; $PROPERTY_FILE
+
+echo &quot;BUILD_USER_ID=$BUILD_USER_ID&quot;  &gt;&gt; $PROPERTY_FILE
+echo &quot;BUILD_USER=$BUILD_USER&quot; &gt;&gt; $PROPERTY_FILE
+echo &quot;BUILD_TIMESTAMP=$BUILD_TIMESTAMP&quot; &gt;&gt; $PROPERTY_FILE
+echo &quot;SIT_GIT_BRANCH=$SIT_GIT_BRANCH&quot; &gt;&gt; $PROPERTY_FILE
+
+echo &quot;K1_BUILD_USER_ID=$K1_BUILD_USER_ID&quot; &gt;&gt; $PROPERTY_FILE
+echo &quot;K1_CHANGE_APPROVALS=$K1_CHANGE_APPROVALS&quot; &gt;&gt; $PROPERTY_FILE
+echo &quot;ROLLBACK_K1_CHANGES=$ROLLBACK_K1_CHANGES&quot; &gt;&gt; $PROPERTY_FILE
+echo &quot;SIT_K1_BACKUP_VERSION=$SIT_K1_BACKUP_VERSION&quot; &gt;&gt; $PROPERTY_FILE
+
+echo &quot;CSS_CHANGE_APPROVALS=$CSS_CHANGE_APPROVALS&quot; &gt;&gt; $PROPERTY_FILE
+echo &quot;ROLLBACK_CSS_CHANGES=$ROLLBACK_CSS_CHANGES&quot; &gt;&gt; $PROPERTY_FILE
+echo &quot;CHERRYPICK_CSS_BACKUP=$CHERRYPICK_CSS_BACKUP&quot; &gt;&gt; $PROPERTY_FILE
+
+echo &quot;ACCEPT_PRELOGIN_CHANGES=$ACCEPT_PRELOGIN_CHANGES&quot; &gt;&gt; $PROPERTY_FILE
+echo &quot;TAG_SIT_BUILD=$TAG_SIT_BUILD&quot;  &gt;&gt; $PROPERTY_FILE
+
+echo &quot;SIT_AUTHOR=$SIT_AUTHOR&quot; &gt;&gt; $PROPERTY_FILE
+echo &quot;BRANCH_COMMIT_ID=$BRANCH_COMMIT_ID&quot; &gt;&gt; $PROPERTY_FILE
+echo &quot;MERGED_FEATURE=$MERGED_FEATURE&quot; &gt;&gt; $PROPERTY_FILE
+echo &quot;PULL_REQUEST_ID=$PULL_REQUEST_ID&quot; &gt;&gt; $PROPERTY_FILE
+echo &quot;SIT_REMOTE_COMMIT_ID=$SIT_REMOTE_COMMIT_ID&quot; &gt;&gt; $PROPERTY_FILE
+
+echo &quot;IS_DIT_MERGED=$IS_DIT_MERGED&quot; &gt;&gt; $PROPERTY_FILE
+echo &quot;IS_SIT_MERGED=$IS_SIT_MERGED&quot; &gt;&gt; $PROPERTY_FILE
+echo &quot;IS_UAT_MERGED=$IS_UAT_MERGED&quot; &gt;&gt; $PROPERTY_FILE
+echo &quot;IS_PREPROD_MERGED=$IS_PREPROD_MERGED&quot; &gt;&gt; $PROPERTY_FILE
+
+echo &quot;count_commit_id_dev=$count_commit_id_dev&quot; &gt;&gt; $PROPERTY_FILE
+echo &quot;count_commit_id_sit=$count_commit_id_sit&quot; &gt;&gt; $PROPERTY_FILE
+echo &quot;count_commit_id_uat=$count_commit_id_uat&quot; &gt;&gt; $PROPERTY_FILE
+echo &quot;count_commit_id_preprod=$count_commit_id_preprod&quot; &gt;&gt; $PROPERTY_FILE
+
+echo &quot;DEV_LOCAL_COMMIT_ID=$DEV_LOCAL_COMMIT_ID&quot; &gt;&gt; $PROPERTY_FILE
+echo &quot;SIT_LOCAL_COMMIT_ID=$SIT_LOCAL_COMMIT_ID&quot; &gt;&gt; $PROPERTY_FILE
+echo &quot;UAT_LOCAL_COMMIT_ID=$UAT_LOCAL_COMMIT_ID&quot; &gt;&gt; $PROPERTY_FILE
+echo &quot;PREPROD_LOCAL_COMMIT_ID=$PREPROD_LOCAL_COMMIT_ID&quot; &gt;&gt; $PROPERTY_FILE
+
+echo &quot;IS_COMMIT_EMPTY=$IS_COMMIT_EMPTY&quot; &gt;&gt; $PROPERTY_FILE
+echo &quot;EXCEPTION_BUILD=$EXCEPTION_BUILD&quot; &gt;&gt; $PROPERTY_FILE
+
+echo &quot;TOPMOST_SIT_COMMIT_ID=$TOPMOST_SIT_COMMIT_ID&quot; &gt;&gt; $PROPERTY_FILE
+echo &quot;LAST_SIT_COMMIT_ID=$LAST_SIT_COMMIT_ID&quot; &gt;&gt; $PROPERTY_FILE
+echo &quot;&quot;
+
+#-----------------------------------------------------------------------------------------------
+</command>
+          <configuredLocalRules/>
+        </hudson.tasks.Shell>
+        <EnvInjectBuilder plugin="envinject@2.4.0">
+          <info>
+            <propertiesFilePath>SIT_MODULE_01_variables.property</propertiesFilePath>
+          </info>
+        </EnvInjectBuilder>
+        <hudson.tasks.Shell>
+          <command>set +x
+echo &quot;===============================================================================================&quot;
+echo &quot;MERGED_FEATURE &lt; $MERGED_FEATURE &gt; points to BRANCH_COMMIT_ID &lt; $BRANCH_COMMIT_ID &gt; verify on TFS.&quot;
+echo &quot;===============================================================================================&quot;
+echo &quot;RECORDED VARIABLES OF BUILD :: $BUILD_TAG&quot;
+echo &quot;===============================================================================================&quot;
+
+echo &quot;&quot;
+echo &quot;SIT_GIT_BRANCH::$SIT_GIT_BRANCH&quot;
+echo &quot;BUILD_TIMESTAMP::$BUILD_TIMESTAMP&quot;
+echo &quot;BUILD_ID::$BUILD_ID&quot;
+echo &quot;BUILD_TAG::$BUILD_TAG&quot;
+echo &quot;&quot;
+echo &quot;BUILD_USER::$BUILD_USER&quot;
+echo &quot;BUILD_USER_ID::$BUILD_USER_ID&quot;
+cat $CAPABILITIES_FILE || echo &quot;ERROR :: CAPABILITIES file not available&quot;
+echo &quot;&quot;
+echo &quot;K1_BUILD_USER_ID::$K1_BUILD_USER_ID&quot;
+echo &quot;K1_CHANGE_APPROVALS::$K1_CHANGE_APPROVALS&quot;
+echo &quot;ROLLBACK_K1_CHANGES::$ROLLBACK_K1_CHANGES&quot;
+echo &quot;SIT_K1_BACKUP_VERSION::$SIT_K1_BACKUP_VERSION&quot;
+echo &quot;&quot;
+echo &quot;CSS_CHANGE_APPROVALS::$CSS_CHANGE_APPROVALS&quot;
+echo &quot;ROLLBACK_CSS_CHANGES::$ROLLBACK_CSS_CHANGES&quot;
+echo &quot;CHERRYPICK_CSS_BACKUP::$CHERRYPICK_CSS_BACKUP&quot;
+echo &quot;&quot;
+echo &quot;ACCEPT_PRELOGIN_CHANGES::$ACCEPT_PRELOGIN_CHANGES&quot;
+echo &quot;TAG_SIT_BUILD::$TAG_SIT_BUILD&quot;
+echo &quot;&quot;
+echo &quot;SIT_AUTHOR::$SIT_AUTHOR&quot;
+echo &quot;BRANCH_COMMIT_ID::$BRANCH_COMMIT_ID&quot;
+echo &quot;MERGED_FEATURE::$MERGED_FEATURE&quot;
+echo &quot;PULL_REQUEST_ID::$PULL_REQUEST_ID&quot;
+echo &quot;SIT_REMOTE_COMMIT_ID::$SIT_REMOTE_COMMIT_ID&quot;
+echo &quot;&quot;
+echo &quot;$DEV_GIT_BRANCH merged status $IS_DIT_MERGED&quot;
+echo &quot;$SIT_GIT_BRANCH merged status $IS_SIT_MERGED&quot;
+echo &quot;$UAT_GIT_BRANCH merged status $IS_UAT_MERGED&quot;
+echo &quot;$PREPROD_GIT_BRANCH merged status $IS_PREPROD_MERGED&quot;
+echo &quot;&quot;
+echo &quot;count_commit_id_dev::$count_commit_id_dev&quot;
+echo &quot;count_commit_id_sit::$count_commit_id_sit&quot;
+echo &quot;count_commit_id_uat::$count_commit_id_uat&quot;
+echo &quot;count_commit_id_preprod::$count_commit_id_preprod&quot;
+echo &quot;&quot;
+if [[ $DEV_LOCAL_COMMIT_ID = &quot;&quot; ]]; then echo &quot;Feature $MERGED_FEATURE is NOT BUILT into DEV&quot; ; else echo &quot;Feature $MERGED_FEATURE is BUILT into DEV:: DEV_COMMIT_ID :: $DEV_LOCAL_COMMIT_ID&quot; ; fi
+if [[ $SIT_LOCAL_COMMIT_ID = &quot;&quot; ]]; then echo &quot;Feature $MERGED_FEATURE is NOT BUILT into SIT&quot; ; else echo &quot;Feature $MERGED_FEATURE is BUILT into SIT:: SIT_COMMIT_ID :: $SIT_LOCAL_COMMIT_ID&quot; ; fi
+if [[ $UAT_LOCAL_COMMIT_ID = &quot;&quot; ]]; then echo &quot;Feature $MERGED_FEATURE is NOT BUILT into UAT&quot; ; else echo &quot;Feature $MERGED_FEATURE is BUILT into UAT:: UAT_COMMIT_ID :: $UAT_LOCAL_COMMIT_ID&quot; ; fi
+if [[ $PREPROD_LOCAL_COMMIT_ID = &quot;&quot; ]]; then echo &quot;Feature $MERGED_FEATURE is NOT BUILT into PREPROD&quot; ; else echo &quot;Feature $MERGED_FEATURE is BUILT into PREPROD:: PREPROD_COMMIT_ID :: $PREPROD_LOCAL_COMMIT_ID&quot; ; fi
+echo &quot;&quot;
+echo &quot;GIT COMMIT DIFFERENCES status $IS_COMMIT_EMPTY&quot;
+echo &quot;EXCEPTION_BUILD::$EXCEPTION_BUILD&quot;
+echo &quot;&quot;
+
+echo &quot;===============================================================================================&quot;
+echo &quot;:: CHANGES MADE ON THIS COMMIT ::&quot;
+echo &quot;-----------------------------------------------------------------------------------------------&quot;
+git diff --diff-filter=ACMR --name-only HEAD~1 HEAD~0
+echo &quot;===============================================================================================&quot;</command>
+          <configuredLocalRules/>
+        </hudson.tasks.Shell>
+        <hudson.tasks.Shell>
+          <command>set +x
+echo &quot;&quot;
+echo &quot;==================================================================&quot;
+echo &quot;MODULE 01:: VERIFY PREVIOUS BUILD COMMITS on $DEV_GIT_BRANCH&quot;
+echo &quot;==================================================================&quot;
+echo &quot;&quot;
+
+if [[ $CSS_CHANGE_APPROVALS = &quot;true&quot; || $ROLLBACK_CSS_CHANGES = &quot;true&quot; || $ACCEPT_PRELOGIN_CHANGES = &quot;true&quot; ]];
+then
+EXCEPTION_BUILD=true
+echo &quot;Changed_EXCEPTION_BUILD to::$EXCEPTION_BUILD&quot;
+else
+echo &quot;EXCEPTION_BUILD::$EXCEPTION_BUILD&quot;
+fi
+
+#-----------------------------------------------------------------------------------------------
+#EXCEPTION_BUILD_parameters
+
+FUNCTION=EXCEPTION_BUILD
+CAPABILITIES=`cat $CAPABILITIES_FILE | grep $FUNCTION` || echo &quot;WARNING :: FUNCTION $FUNCTION not available for $BUILD_USER_ID&quot;
+echo &quot;BUILD_USER CAPABILITIES&quot;::$CAPABILITIES
+
+if [[ $EXCEPTION_BUILD = &quot;true&quot; ]] &amp;&amp; [[ &quot;$CAPABILITIES&quot; = &quot;$FUNCTION&quot; ]];
+then
+exit_status=0
+echo &quot;Unrestricted build exit_status=($exit_status) , change all exit status=(1) to status=(0)&quot;
+
+else
+exit_status=1
+echo &quot;Make build as usual with restrictions exit_status=($exit_status) ..&quot;
+fi
+
+#CONDITIONS TO CONFIRM THAT COMMIT EXISTS IN $DEV_GIT_BRANCH  
+#-----------------------------------------------------------------------------------------------
+#CONDITION 1 - FEATURE BRANCH COMMIT DOES NOT EXIST ON DIT 
+
+if [[ $IS_DIT_MERGED = 0 || $IS_DIT_MERGED &gt; 0 ]] &amp;&amp; [[ $IS_COMMIT_EMPTY = 0 ]];
+then
+echo &quot;&quot; &amp;&amp; echo &quot; *** Allow Pass -- Nothing has changed and the Feature branch is Empty *** &quot; &amp;&amp; echo &quot;&quot;
+exit 0
+
+#-----------------------------------------------------------------------------------------------
+#CONDITION 2 - CONFLICT CHECKS
+
+elif [[ $MERGED_FEATURE == *CONFLICT_* ]] || [[ $MERGED_FEATURE == *CONFLICT-* ]] || [[ $MERGED_FEATURE == *Conflict_* ]] || [[ $MERGED_FEATURE == *Conflict-* ]];
+then
+echo &quot;&quot; &amp;&amp; echo &quot;MERGED_FEATURE :: $MERGED_FEATURE *** Mark this as a CONFLICT branch ... *** &quot; &amp;&amp; echo &quot;&quot;
+exit 0
+
+elif [[ $MERGED_FEATURE = &quot;&quot; ]];
+then
+echo &quot;&quot;
+echo &quot;--------------------------------------------------------------------------------------------&quot;
+echo &quot; *** Fail Build, -- MERGED_FEATURE is empty, Looks like a Conflict was Resolving  *** &quot;
+echo &quot;--------------------------------------------------------------------------------------------&quot;
+echo &quot;&quot;
+exit $exit_status
+exit 1
+
+#----------------------------------------------------------------------------------------------
+#CONDITION 3 - COMMIT DOES NOT MATCH DETAILS IN DEV
+
+elif [[ $IS_DIT_MERGED &lt; 1 ]];
+then
+echo &quot;&quot;
+echo &quot;--------------------------------------------------------------------------------------------&quot;
+echo &quot; *** Fail Build, This Feature_branch &lt;$MERGED_FEATURE&gt; has not been merged into $DEV_GIT_BRANCH *** &quot;
+echo &quot;--------------------------------------------------------------------------------------------&quot;
+echo &quot;&quot;
+exit $exit_status
+exit 1
+
+elif [[ $IS_DIT_MERGED &lt; 1 ]] &amp;&amp; [[ $SIT_REMOTE_COMMIT_ID != $DEV_LOCAL_COMMIT_ID ]];
+then
+echo &quot;&quot;
+echo &quot;-------------------------------------------------------------------------------&quot;
+echo &quot; *** COMMIT_ID $BRANCH_COMMIT_ID DOES NOT MATCH DETAILS IN $DEV_GIT_BRANCH branch *** &quot;
+echo &quot;-------------------------------------------------------------------------------&quot;
+echo &quot;&quot;
+exit $exit_status
+exit 1
+
+elif [[ $IS_DIT_MERGED = 0 ]] &amp;&amp; [[ $IS_COMMIT_EMPTY &gt; 0 ]];
+then
+echo &quot;&quot;
+echo &quot;-------------------------------------------------------------------------------&quot;
+echo &quot; *** Fail Build, -- Looks like a Conflict was Resolving , please check on TFS *** &quot;
+echo &quot;-------------------------------------------------------------------------------&quot;
+echo &quot;&quot;
+exit $exit_status
+exit 1
+
+#----------------------------------------------------------------------------------------------
+#CONDITION 4 - FURTHER CHECKS
+
+elif [[ $SIT_REMOTE_COMMIT_ID != $DEV_LOCAL_COMMIT_ID ]];
+then
+echo &quot;&quot;
+echo &quot;-------------------------------------------------------------------------------&quot;
+echo &quot; *** This Feature_branch &lt;$MERGED_FEATURE&gt; is not BUILT in DIT *** &quot;
+echo &quot;-------------------------------------------------------------------------------&quot;
+echo &quot;&quot;
+exit $exit_status
+exit 1
+
+#---------------------------------------------------------------------------------------------
+#CONDITION 5 - COMMIT MATCHES DETAILS IN DEV
+
+elif [[ $IS_DIT_MERGED &gt; 0 ]] &amp;&amp; [[ $SIT_REMOTE_COMMIT_ID = $DEV_LOCAL_COMMIT_ID ]];
+then
+echo &quot;&quot;
+echo &quot;------------------------------------------------------------------------------------------------------------------------------&quot;
+echo &quot; *** Jenkins confirmed COMMIT_ID $BRANCH_COMMIT_ID of Feature_branch &lt;$MERGED_FEATURE&gt; exists in $DEV_GIT_BRANCH branch  *** &quot;
+echo &quot;------------------------------------------------------------------------------------------------------------------------------&quot;
+echo &quot;&quot;
+
+else
+echo &quot;&quot;
+echo &quot;-------------------------------------------------------------------------&quot;
+echo &quot;Build continuing as normal...&quot;
+echo &quot;-------------------------------------------------------------------------&quot;
+echo &quot;&quot;
+fi</command>
+          <configuredLocalRules/>
+        </hudson.tasks.Shell>
+        <hudson.tasks.Shell>
+          <command>set +x
+git checkout $SIT_GIT_BRANCH
+git pull origin $SIT_GIT_BRANCH
+git branch
+echo &quot;-------------------------------------------------------------------&quot;
+echo &quot;Creating change release log for $SIT_GIT_BRANCH BRANCH ... &quot;
+
+mkdir -p ${ARCHIVE_WORKSPACE}/changelog-SIT/logdir-DF-&quot;$BUILD_ID&quot;
+git diff --diff-filter=ACMR --name-only HEAD~1 HEAD~0 &gt; ${ARCHIVE_WORKSPACE}/changelog-SIT/logdir-DF-&quot;$BUILD_ID&quot;/changedfiles-&quot;$BUILD_ID&quot;.log
+ls -1drt ${ARCHIVE_WORKSPACE}/changelog-SIT/*logdir-DF* | head -n -4 | awk -F / &apos;{print $NF}&apos; | while read files; do rm -rf ${ARCHIVE_WORKSPACE}/changelog-SIT/&quot;$files&quot;; done
+
+cat ${ARCHIVE_WORKSPACE}/changelog-SIT/logdir-DF-&quot;$BUILD_ID&quot;/changedfiles-&quot;$BUILD_ID&quot;.log | while read files; do
+rsync -avzhq --relative --ignore-missing-args ./$files ${ARCHIVE_WORKSPACE}/changelog-SIT/logdir-DF-&quot;$BUILD_ID&quot;/
+done
+echo &quot;-------------------------------------------------------------------&quot;
+
+viewchangelog_file=${ARCHIVE_WORKSPACE}/changelog-SIT/logdir-DF-&quot;$BUILD_ID&quot;/changedfiles-&quot;$BUILD_ID&quot;.log
+echo $viewchangelog_file &amp;&amp; cat $viewchangelog_file
+echo &quot;-------------------------------------------------------------------&quot;
+echo &quot;Creating change release log for Resource bin files&quot;
+
+git diff --diff-filter=ACMR --name-only $LAST_SIT_COMMIT_ID $TOPMOST_DEV_COMMIT_ID | grep Source/Resources/bin &gt; ${BUILD_ARCHIVE_WORKSPACE}/Cummulative-Resource-bin-files/Resource-bin-files.log || echo &quot;No changes..Empty log..&quot;
+cat ${BUILD_ARCHIVE_WORKSPACE}/Cummulative-Resource-bin-files/Resource-bin-files.log | while read files; do
+rsync -avzhq --relative --ignore-missing-args ./$files ${BUILD_ARCHIVE_WORKSPACE}/Cummulative-Resource-bin-files/
+done
+echo &quot;-------------------------------------------------------------------&quot;
+echo &quot;Sending Resource bin files&quot;
+cat ${BUILD_ARCHIVE_WORKSPACE}/Cummulative-Resource-bin-files/Resource-bin-files.log
+scp -r ${BUILD_ARCHIVE_WORKSPACE}/Cummulative-Resource-bin-files $SSH_ENVIRONMENT:$TARGET_REMOTE_WEBLOGIC
+scp -r ${ARCHIVE_WORKSPACE}/changelog-SIT/logdir-DF-&quot;$BUILD_ID&quot; $SSH_ENVIRONMENT:$TARGET_REMOTE_WEBLOGIC
+
+echo &quot;-----------------------------------------------------------------------------------&quot;
+echo &quot;Creating change release log for DBMigration Scripts ... &quot;
+
+echo [DBMigration_CT Scripts ...]
+git diff --diff-filter=ACMR --name-only $LAST_SIT_COMMIT_ID $TOPMOST_SIT_COMMIT_ID | grep DBMigration_CT &gt; ${BUILD_ARCHIVE_WORKSPACE}/SIT-DBmigrate-CT/DBMigration-CT-&quot;$BUILD_ID&quot;.log || echo &quot;No changes....Empty log ...&quot;
+cat ${BUILD_ARCHIVE_WORKSPACE}/SIT-DBmigrate-CT/DBMigration-CT-&quot;$BUILD_ID&quot;.log | while read files; do
+rsync -avzhq --ignore-missing-args ./$files ${BUILD_ARCHIVE_WORKSPACE}/SIT-DBmigrate-CT/RENAMED_SCRIPTS/&quot;$(echo &quot;$files&quot; | awk -F &quot;/&quot; &apos;{print $NF}&apos; | sed -e &apos;s#CT-COOP#R__CT-COOP#g&apos;)&quot;
+done
+echo &quot;-------------------------------------------------------------------&quot;
+cat ${BUILD_ARCHIVE_WORKSPACE}/SIT-DBmigrate-CT/DBMigration-CT-&quot;$BUILD_ID&quot;.log
+ls -rt ${BUILD_ARCHIVE_WORKSPACE}/SIT-DBmigrate-CT/*.log | head -n -1 | while read files; do rm $files; done
+echo &quot;-------------------------------------------------------------------&quot;
+
+echo [DBMigration_DF Scripts ...]
+git diff --diff-filter=ACMR --name-only $LAST_SIT_COMMIT_ID $TOPMOST_SIT_COMMIT_ID | grep DBMigration_DF &gt; ${BUILD_ARCHIVE_WORKSPACE}/SIT-DBmigrate-DF/DBMigration-DF-&quot;$BUILD_ID&quot;.log || echo &quot;No changes....Empty log ...&quot;
+cat ${BUILD_ARCHIVE_WORKSPACE}/SIT-DBmigrate-DF/DBMigration-DF-&quot;$BUILD_ID&quot;.log | while read files; do
+rsync -avzhq --ignore-missing-args ./$files ${BUILD_ARCHIVE_WORKSPACE}/SIT-DBmigrate-DF/RENAMED_SCRIPTS/&quot;$(echo &quot;$files&quot; | awk -F &quot;/&quot; &apos;{print $NF}&apos; | sed -e &apos;s#DF-COOP#R__DF-COOP#g&apos;)&quot;
+done
+echo &quot;-------------------------------------------------------------------&quot;
+cat ${BUILD_ARCHIVE_WORKSPACE}/SIT-DBmigrate-DF/DBMigration-DF-&quot;$BUILD_ID&quot;.log
+ls -rt ${BUILD_ARCHIVE_WORKSPACE}/SIT-DBmigrate-DF/*.log | head -n -1 | while read files; do rm $files; done
+echo &quot;-------------------------------------------------------------------&quot;
+
+echo [DBMigration_MH Scripts ...]
+git diff --diff-filter=ACMR --name-only $LAST_SIT_COMMIT_ID $TOPMOST_SIT_COMMIT_ID | grep DBMigration_MH &gt; ${BUILD_ARCHIVE_WORKSPACE}/SIT-DBmigrate-MH/DBMigration-MH-&quot;$BUILD_ID&quot;.log || echo &quot;No changes....Empty log ...&quot;
+cat ${BUILD_ARCHIVE_WORKSPACE}/SIT-DBmigrate-MH/DBMigration-MH-&quot;$BUILD_ID&quot;.log | while read files; do
+rsync -avzhq --ignore-missing-args ./$files ${BUILD_ARCHIVE_WORKSPACE}/SIT-DBmigrate-MH/RENAMED_SCRIPTS/&quot;$(echo &quot;$files&quot; | awk -F &quot;/&quot; &apos;{print $NF}&apos; | sed -e &apos;s#MH_COOP#R__MH-COOP#g&apos;)&quot;
+rsync -avzhq --ignore-missing-args ./$files ${BUILD_ARCHIVE_WORKSPACE}/SIT-DBmigrate-MH/RENAMED_SCRIPTS/&quot;$(echo &quot;$files&quot; | awk -F &quot;/&quot; &apos;{print $NF}&apos; | sed -e &apos;s#MH-COOP#R__MH-COOP#g&apos;)&quot;
+done
+echo &quot;-------------------------------------------------------------------&quot;
+cat ${BUILD_ARCHIVE_WORKSPACE}/SIT-DBmigrate-MH/DBMigration-MH-&quot;$BUILD_ID&quot;.log
+ls -rt ${BUILD_ARCHIVE_WORKSPACE}/SIT-DBmigrate-MH/*.log | head -n -1 | while read files; do rm $files; done
+echo &quot;-------------------------------------------------------------------&quot;
+
+echo &quot;[ Creating cummulative log for DBMigration files ]&quot;
+
+git diff --diff-filter=ACMR --name-only $LAST_SIT_COMMIT_ID $TOPMOST_DEV_COMMIT_ID | grep DBMigration &gt; ${BUILD_ARCHIVE_WORKSPACE}/Cummulative-DBMigration-scripts/DBMigration.log || echo &quot;No changes..Empty log..&quot;
+cat ${BUILD_ARCHIVE_WORKSPACE}/Cummulative-DBMigration-scripts/DBMigration.log | while read files; do
+rsync -avzhq --relative --ignore-missing-args ./$files ${BUILD_ARCHIVE_WORKSPACE}/Cummulative-DBMigration-scripts/
+done
+echo &quot;-------------------------------------------------------------------&quot;
+echo &quot;Sending DBMigration files&quot;
+scp -r ${BUILD_ARCHIVE_WORKSPACE}/Cummulative-DBMigration-scripts $SSH_ENVIRONMENT:$TARGET_REMOTE_WEBLOGIC
+scp ${BUILD_ARCHIVE_WORKSPACE}/Cummulative-DBMigration-scripts/DBMigration.log $SSH_ENVIRONMENT:$TARGET_REMOTE_WEBLOGIC
+
+echo &quot;-----------------------------------------------------------------------------------&quot;
+</command>
+          <configuredLocalRules/>
+        </hudson.tasks.Shell>
+      </conditionalbuilders>
+    </org.jenkinsci.plugins.conditionalbuildstep.ConditionalBuilder>
+    <hudson.tasks.Shell>
+      <command>set +x
+echo &quot;==============================================================================&quot;
+echo &quot;CHECK TO APPLY K1_CHANGE_APPROVALS ...  status:$K1_CHANGE_APPROVALS&quot;
+echo &quot;------------------------------------------------------------------------------&quot;
+echo &quot;SET VARIABLES&quot;
+echo &quot;------------------------------------------------------------------------------&quot;
+
+echo &quot;K1_CHANGE_APPROVALS&quot;::$K1_CHANGE_APPROVALS
+echo &quot;BUILD_USER_ID&quot;::$BUILD_USER_ID
+FUNCTION=K1_CHANGE_APPROVALS
+CAPABILITIES=`cat $CAPABILITIES_FILE | grep $FUNCTION` || echo &quot;WARNING :: FUNCTION $FUNCTION not available for $BUILD_USER_ID&quot;
+echo &quot;BUILD_USER CAPABILITIES&quot;::$CAPABILITIES
+
+sed -i &apos;s#../../K1_EAR/OmniBuilds/K1_OUTPUT#&apos;&quot;$ARCHIVE_WORKSPACE&quot;&apos;/K1_EAR/OmniBuilds/SIT#g&apos; bank.properties
+cat bank.properties | grep K1_LOCATION
+K1_EAR_PATH=$ARCHIVE_WORKSPACE/K1_EAR/OmniBuilds
+
+echo &quot;------------------------------------------------------------------------------&quot;
+
+if [[ $K1_CHANGE_APPROVALS = &quot;true&quot; ]] &amp;&amp; [[ &quot;$CAPABILITIES&quot; = &quot;$FUNCTION&quot; ]];
+then
+
+echo &quot;==================================================================================&quot;
+echo &quot;Conditions are true:: $BUILD_USER_ID APPLYING K1_CHANGES in SIT ...&quot;
+echo &quot;----------------------------------------------------------------------------------&quot;
+
+rsync -avzh $K1_EAR_PATH/DEV/digitalFaceApplication_IBMB_18.2.0.0.ear $K1_EAR_PATH/SIT/
+
+cp -p $K1_EAR_PATH/SIT/digitalFaceApplication_IBMB_18.2.0.0.ear $K1_EAR_PATH/SIT/Omni.K1.SIT_Backup.BUILD.0$BUILD_ID.$BUILD_TIMESTAMP
+
+echo &quot;-----------------------------------------------------------------------------------&quot;
+echo &quot;SUCCESSFULL BUILD OF SIT K1 EAR FILE based on release changes :: $BUILD_TIMESTAMP&quot;
+echo &quot;===================================================================================&quot;
+
+ls -rt $K1_EAR_PATH/SIT | cut -d &quot;.&quot; -f 6-7 | sort | uniq -d &gt; $K1_EAR_PATH/SIT/unique.SIT.K1_log.output
+
+for filename in `cat $K1_EAR_PATH/SIT/unique.SIT.K1_log.output`
+do
+ls -rt $K1_EAR_PATH/SIT/ | grep &quot;$filename&quot; | head -n -1 | while read files ; do rm -rf $K1_EAR_PATH/SIT/&quot;$files&quot; ; done
+done
+
+ls $K1_EAR_PATH/SIT/Omni.K1.SIT_Backup.BUILD* | head -n -5 | while read files ; do rm -rf $files; done
+
+rm -rf $K1_EAR_PATH/SIT/unique.SIT.K1_log.output || echo &quot;skip if file does not exist&quot;
+
+ls -lrt $K1_EAR_PATH/SIT/
+
+else
+echo &quot;------------------------------------------------------------------------&quot;
+echo &quot;No K1_CHANGE APPROVED, Continue build as normal ...&quot;
+ls -lrt $K1_EAR_PATH/SIT/
+echo &quot;------------------------------------------------------------------------&quot;
+fi
+
+
+
+echo &quot;----------------------------------------------------------------------------------&quot;
+echo &quot;ROLLBACK_SIT_K1 status is :: $ROLLBACK_SIT_K1&quot;
+echo &quot;----------------------------------------------------------------------------------&quot;
+
+if [[ $ROLLBACK_K1_CHANGES = &quot;true&quot; ]] &amp;&amp; [[ &quot;$CAPABILITIES&quot; = &quot;$FUNCTION&quot; ]];
+then
+
+echo &quot;==================================================================================&quot;
+echo &quot;Conditions are true :: Initiating Omni.K1.SIT Rollback to $SIT_K1_BACKUP_VERSION  &quot;
+echo &quot;==================================================================================&quot;
+
+cd $K1_EAR_PATH/K1_EAR/OmniBuilds/SIT/
+ls -lrt $SIT_K1_BACKUP_VERSION | grep -v &quot;digitalFaceApplication_IBMB_18.2.0.0.ear&quot;
+rsync -avzh $SIT_K1_BACKUP_VERSION digitalFaceApplication_IBMB_18.2.0.0.ear
+
+else
+echo &quot;----------------------------------------------------------------------------------&quot;
+echo &quot;Continue as normal :: ROLLBACK_SIT_K1 status is :: $ROLLBACK_SIT_K1&quot;
+echo &quot;----------------------------------------------------------------------------------&quot;
+fi</command>
+      <configuredLocalRules/>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>set +x
+echo &quot;==========================================================================&quot;
+echo &quot;CHECK TO APPLY SIT-Staging CSS STYLES ...  status:$CSS_CHANGE_APPROVALS&quot; 
+echo &quot;==========================================================================&quot;
+
+sit_css_changes_path=../../OmniBuilds/changelog-SIT/CSS-Changes
+sit_css_last_changes=`ls -rt $sit_css_changes_path/ | grep -v dfbase-jqtbs-ltr.css | grep -v jqtbs-dfbase-app.css | grep -v unique.CSS.Backup.output | tail -n 1`
+iportal_css_path=./Source/iportalweb/WebContent/iportal/css/style/dfbase/jqtbs
+css_backup_path=$sit_css_changes_path/Omni.CSS.SIT_Backup.BUILD.0$BUILD_ID.$BUILD_TIMESTAMP
+
+FUNCTION=CSS_CHANGE_APPROVALS
+CAPABILITIES=`cat $CAPABILITIES_FILE | grep $FUNCTION` || echo &quot;WARNING :: FUNCTION $FUNCTION not available for $BUILD_USER_ID&quot;
+echo &quot;BUILD_USER CAPABILITIES&quot;::$CAPABILITIES
+
+if [[ $CSS_CHANGE_APPROVALS = &quot;true&quot; ]] &amp;&amp; [[ &quot;$CAPABILITIES&quot; = &quot;$FUNCTION&quot; ]];
+then
+
+echo &quot;--------------------------------------------------------------------------&quot;
+echo &quot;Conditions are true:: $BUILD_USER_ID Executing an APPROVED CSS_CHANGE in SIT ...&quot;
+echo &quot;--------------------------------------------------------------------------&quot;
+
+echo &quot;Clean up backup CSS before sync ...&quot;
+
+for filename in `ls -rt $sit_css_changes_path | grep Omni.CSS.SIT_Backup`
+do ls -rt $sit_css_changes_path | grep Omni.CSS.SIT_Backup | head -n -7 | while read files; do rm -rf $sit_css_changes_path/&quot;$files&quot;; done
+done
+
+ls -rt $sit_css_changes_path | grep Omni.CSS.SIT_Backup
+ls -rt $sit_css_changes_path | grep Omni.CSS.SIT_Backup | wc -l
+
+
+echo &quot;=========================================================================&quot;
+rsync -avzh $sit_css_changes_path/dfbase-jqtbs-ltr.css $iportal_css_path/dfbase-jqtbs-ltr.css
+rsync -avzh $sit_css_changes_path/jqtbs-dfbase-app.css $iportal_css_path/jqtbs-dfbase-app.css
+
+ls -lrt $iportal_css_path/dfbase-jqtbs-ltr.css
+ls -lrt $iportal_css_path/jqtbs-dfbase-app.css
+
+echo &quot;Backup CSS after sync ...&quot;
+
+mkdir -p $css_backup_path
+cp $sit_css_changes_path/dfbase-jqtbs-ltr.css $css_backup_path/dfbase-jqtbs-ltr.css
+cp $sit_css_changes_path/jqtbs-dfbase-app.css $css_backup_path/jqtbs-dfbase-app.css
+
+echo &quot;SUCCESSFULL APPLIED CSS_CHANGES :: $BUILD_TIMESTAMP&quot;
+echo &quot;=========================================================================&quot;
+echo &quot;Maintain only unique CSS Backup ...&quot;
+
+ls -rt $sit_css_changes_path | grep Omni.CSS.SIT_Backup | cut -d &quot;.&quot; -f 6-7 | sort | uniq -d &gt; $sit_css_changes_path/unique.CSS.Backup.output
+for filename in `cat $sit_css_changes_path/unique.CSS.Backup.output`
+do ls -rt $sit_css_changes_path | grep &quot;$filename&quot; | head -n -1 | while read files; do rm -rf $sit_css_changes_path/&quot;$files&quot;; done
+rm -rf $sit_css_changes_path/unique.CSS.Backup.output || echo &quot;skip if file does not exist&quot;
+done
+
+echo &quot;--------------------------------------------------------------------------&quot;
+
+else
+echo &quot;--------------------------------------------------------------------------&quot;
+echo &quot;No CSS_CHANGE APPROVED, Continue build with sit_css_last_changes ...&quot;
+echo &quot;--------------------------------------------------------------------------&quot;
+echo &quot;sit_css_last_changes :: $sit_css_last_changes&quot;
+ls -lrt $sit_css_changes_path/$sit_css_last_changes
+rsync -avzh $sit_css_changes_path/$sit_css_last_changes/dfbase-jqtbs-ltr.css $iportal_css_path/dfbase-jqtbs-ltr.css
+rsync -avzh $sit_css_changes_path/$sit_css_last_changes/jqtbs-dfbase-app.css $iportal_css_path/jqtbs-dfbase-app.css
+
+echo &quot;-------------------------------------------------------------------------&quot;
+fi
+
+
+#ROLLBACK CSS CHANGES
+echo &quot;==========================================================================&quot;
+echo &quot;CHECK TO ROLLBACK_CSS_CHANGES::$ROLLBACK_CSS_CHANGES&quot;
+echo &quot;==========================================================================&quot;
+
+FUNCTION=ROLLBACK_CSS_CHANGES
+CAPABILITIES=`cat $CAPABILITIES_FILE | grep $FUNCTION` || echo &quot;WARNING :: FUNCTION $FUNCTION not available for $BUILD_USER_ID&quot;
+echo &quot;BUILD_USER CAPABILITIES&quot;::$CAPABILITIES
+
+if [[ $ROLLBACK_CSS_CHANGES = &quot;true&quot; ]] &amp;&amp; [[ &quot;$CAPABILITIES&quot; = &quot;$FUNCTION&quot; ]];
+then
+
+echo &quot;-------------------------------------------------------------------------&quot;
+echo &quot;Conditions are true:: $BUILD_USER_ID Executing an APPROVED CSS_ROllback ...&quot;
+echo &quot;CHERRYPICK_CSS_BACKUP::$CHERRYPICK_CSS_BACKUP&quot;
+echo &quot;-------------------------------------------------------------------------&quot;
+
+rsync -avzh $sit_css_changes_path/$CHERRYPICK_CSS_BACKUP/dfbase-jqtbs-ltr.css $sit_css_changes_path/dfbase-jqtbs-ltr.css
+rsync -avzh $sit_css_changes_path/$CHERRYPICK_CSS_BACKUP/jqtbs-dfbase-app.css $sit_css_changes_path/jqtbs-dfbase-app.css
+
+cp $sit_css_changes_path/dfbase-jqtbs-ltr.css $iportal_css_path/dfbase-jqtbs-ltr.css
+cp $sit_css_changes_path/jqtbs-dfbase-app.css $iportal_css_path/jqtbs-dfbase-app.css
+
+echo &quot;=========================================================================&quot;
+echo &quot;SUCCESSFULL APPLIED CSS_ROllback to $CHERRYPICK_CSS_BACKUP :: $BUILD_TIMESTAMP&quot;
+echo &quot;=========================================================================&quot;
+
+else
+echo &quot;------------------------------------------------------------------------&quot;
+echo &quot;No ROLLBACK_CSS_CHANGES APPROVED, Continue build as normal ...&quot;
+echo &quot;------------------------------------------------------------------------&quot;
+fi</command>
+      <configuredLocalRules/>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>set +x
+StagingBuild_AngularProject=../../OmniBuilds-CSS_and_Prelogin/Omni-Prelogin-SITBuild/dist/AngularProject/
+SITBuild_Angular_path=../../OmniBuilds-CSS_and_Prelogin/SITBuild-AngularProject/
+Current_AngularProject_path=./Source/iportalweb/WebContent/AngularProject/
+
+FUNCTION=ACCEPT_PRELOGIN_CHANGES
+CAPABILITIES=`cat $CAPABILITIES_FILE | grep $FUNCTION` || echo &quot;WARNING :: FUNCTION $FUNCTION not available for $BUILD_USER_ID&quot;
+echo &quot;BUILD_USER CAPABILITIES&quot;::$CAPABILITIES
+
+if [[ $ACCEPT_PRELOGIN_CHANGES = &quot;true&quot; ]] &amp;&amp; [[ &quot;$CAPABILITIES&quot; = &quot;$FUNCTION&quot; ]];
+then
+
+rm -rf $SITBuild_Angular_path
+rsync -avzhq $StagingBuild_AngularProject $SITBuild_Angular_path
+
+rm -rf $Current_AngularProject_path
+rsync -avzhq $SITBuild_Angular_path $Current_AngularProject_path
+
+echo &quot;=========================================================================&quot;
+echo &quot;SUCCESSFULL APPLIED ANGULAR PRELOGIN CHANGES&quot;
+echo &quot;=========================================================================&quot;
+
+else
+
+echo &quot;-------------------------------------------------------------------------&quot;
+echo &quot;NO NEW ANGULAR PRELOGIN CHANGES&quot;
+echo &quot;-------------------------------------------------------------------------&quot;
+
+rm -rf $Current_AngularProject_path
+rsync -avzhq $SITBuild_Angular_path $Current_AngularProject_path
+
+echo &quot;-------------------------------------------------------------------------&quot;
+
+fi</command>
+      <configuredLocalRules/>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>set +x
+echo &quot;------------------------------------------------------------------------------&quot;
+echo &quot;BUILD SIT EAR FILE based on release changes :: $BUILD_TIMESTAMP&quot;
+echo &quot;------------------------------------------------------------------------------&quot;</command>
+      <configuredLocalRules/>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Ant plugin="ant@1.13">
+      <targets></targets>
+      <antName>Ant</antName>
+    </hudson.tasks.Ant>
+    <hudson.tasks.Shell>
+      <command>set +x
+echo &quot; &quot;
+echo &quot;&lt;--------------------  VERSION EAR FILE  ----------------------------------&gt;&quot;
+SIT_APPLICATION_NAME=CBI.DF.${SIT_AUTHOR}.SITBUILD_ID.0$BUILD_ID.timestamp.$BUILD_TIMESTAMP
+
+ls OUTPUT/digital*ear | awk -F/ &apos;{print $NF}&apos; | while read filename
+do mv OUTPUT/&quot;$filename&quot; OUTPUT/&quot;$(echo &quot;$filename&quot; | sed -e &apos;s#digitalFaceApplication_IBMB_18.2.0.0#&apos;&quot;$SIT_APPLICATION_NAME&quot;&apos;#g&apos;)&quot;
+done
+ls OUTPUT/$SIT_APPLICATION_NAME*ear
+
+echo &quot;&lt;----------- PUSHOVER-SSH ARTIFACTS TO THE WEBLOGIC SERVER  ---------------&gt;&quot;
+
+#Clean Target location
+rm -rf $BUILD_ARCHIVE_WORKSPACE/OUTPUT/CBI.DF*.ear
+ssh $SSH_ENVIRONMENT rm -rf $TARGET_REMOTE_WEBLOGIC/CBI.DF*.ear || echo &quot;No such file ...&quot;
+
+mv OUTPUT/$SIT_APPLICATION_NAME.ear $BUILD_ARCHIVE_WORKSPACE/OUTPUT/
+sleep 2
+scp $BUILD_ARCHIVE_WORKSPACE/OUTPUT/$SIT_APPLICATION_NAME.ear $SSH_ENVIRONMENT:$TARGET_REMOTE_WEBLOGIC
+
+echo &quot;-----------------------------------------------------------------&quot;</command>
+      <configuredLocalRules/>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>set +x
+echo &quot;&quot;
+echo &quot;=======================================================================&quot;
+echo &quot; FEATURE BRANCH RENAMING | $SIT_GIT_BRANCH&quot;
+echo &quot;=======================================================================&quot;
+echo &quot;&quot;
+
+git checkout $SIT_GIT_BRANCH
+git reset --hard
+git branch
+
+if [[ $CSS_CHANGE_APPROVALS = &quot;true&quot; || $ROLLBACK_CSS_CHANGES = &quot;true&quot; || $ACCEPT_PRELOGIN_CHANGES = &quot;true&quot; ]];
+then
+EXCEPTION_BUILD=true
+echo &quot;Changed_EXCEPTION_BUILD to::$EXCEPTION_BUILD&quot;
+else
+echo &quot;EXCEPTION_BUILD::$EXCEPTION_BUILD&quot;
+fi
+
+#-----------------------------------------------------------------------------------------------
+#EXCEPTION_BUILD_parameters
+
+FUNCTION=EXCEPTION_BUILD
+CAPABILITIES=`cat $CAPABILITIES_FILE | grep $FUNCTION` || echo &quot;WARNING :: FUNCTION $FUNCTION not available for $BUILD_USER_ID&quot;
+echo &quot;BUILD_USER CAPABILITIES&quot;::$CAPABILITIES
+
+if [[ $EXCEPTION_BUILD = &quot;true&quot; ]] &amp;&amp; [[ &quot;$CAPABILITIES&quot; = &quot;$FUNCTION&quot; ]];
+then
+exit_status=0
+echo &quot;Unrestricted build exit_status=($exit_status) , change all exit status (1) to status (0)&quot;
+
+else
+exit_status=1
+echo &quot;Make build as usual with restrictions exit_status=($exit_status) ..&quot;
+fi
+
+echo &quot;-----------------------------------------------------------------------------------------------------&quot;
+echo &quot;Fetching $MERGED_FEATURE ...&quot;
+git fetch origin $MERGED_FEATURE:$MERGED_FEATURE
+git checkout $MERGED_FEATURE
+echo &quot;&quot;
+
+echo &quot;------------------------------------------------------------------------------------------------------&quot;
+#FAIL BUILD IF FEATURE BRANCH IS EMPTY OR IS EQUAL TO A SYSTEM BRANCH
+
+if [[ $MERGED_FEATURE = &quot;&quot; ]] || [[ $MERGED_FEATURE == *$DEV_GIT_BRANCH* ]] || [[ $MERGED_FEATURE == *$SIT_GIT_BRANCH* ]] || [[ $MERGED_FEATURE == *$UAT_GIT_BRANCH* ]] || [[ $MERGED_FEATURE == *$PREPROD_GIT_BRANCH* ]] || [[ $MERGED_FEATURE == *$PROD_GIT_BRANCH* ]];
+then
+echo &quot; &quot;
+echo &quot;------  WARNING :: Branch-Renaming failed because MERGED feature branch is EMPTY OR a SYSTEM RELEASE BRANCH ==&gt; $MERGED_FEATURE ------&quot;
+echo &quot; &quot;
+exit 0
+
+#-------------------------------------------------------------------------------------------------------
+#REMOVE CONFLICT BRANCH, FIND AND RENAME ORIGINAL DEV_FEATURE_BRANCH
+
+elif [[ $MERGED_FEATURE == *CONFLICT_* ]] || [[ $MERGED_FEATURE == *CONFLICT-* ]] || [[ $MERGED_FEATURE == *Conflict_* ]] || [[ $MERGED_FEATURE == *Conflict-* ]];
+then
+
+echo &quot;MERGED_FEATURE :: $MERGED_FEATURE *** This as a Conflict_feature_branch *** &quot; &amp;&amp; echo &quot;&quot;
+echo &quot;Attempting to retrieve ORIGINAL_FEATURE_BRANCH ...&quot;
+
+#---------------------------------------------------------------------------------
+
+for x in $(git ls-remote | grep $MERGED_FEATURE | awk -F &quot;Conflict-&quot; &apos;{print $NF}&apos; | awk -F &quot;Conflict_&quot; &apos;{print $NF}&apos; | awk -F &quot;Conflict-&quot; &apos;{print $NF}&apos; | awk -F &quot;Conflict_&quot; &apos;{print $NF}&apos; || echo &quot;WARNING :: Did not find the conflicted feature branch..&quot;);
+
+do
+DEV_FEATURE_BRANCH=$x
+
+#CONFIRM_FEATURE_BRANCH
+count=$(git ls-remote | grep heads | grep -v $MERGED_FEATURE | grep $DEV_FEATURE_BRANCH | wc -l)
+if [ $count -eq 1 ] ; then echo Bingo! Found FEATURE_BRANCH $DEV_FEATURE_BRANCH; else echo &quot;** WARNING *** FEATURE_BRANCH $DEV_FEATURE_BRANCH NOT FOUND!&quot; &amp;&amp; exit 0; fi
+
+done
+
+
+echo &quot;---------------------------------------------------------------&quot;
+echo &quot;ALLOCATE LOCAL VARIABLES in FEATURE_BRANCH $DEV_FEATURE_BRANCH&quot;
+echo &quot;---------------------------------------------------------------&quot;
+
+BRANCH_REMOTE_COMMIT_ID=`git ls-remote | grep heads | grep -v $CONFLICT_BRANCH | grep -w $DEV_FEATURE_BRANCH | awk -F &quot;refs/heads/&quot; &apos;{print $01}&apos; | tr -d &quot;[:blank:]&quot;` || echo &quot;Error:: Could not find the DEV_FEATURE_BRANCH&quot;
+echo &quot;BRANCH_REMOTE_COMMIT_ID::$BRANCH_REMOTE_COMMIT_ID&quot;
+
+IS_DIT_MERGED=`git branch -r --merged origin/$DEV_GIT_BRANCH | grep $DEV_FEATURE_BRANCH 2&gt;/dev/null | wc -l`
+echo &quot;$DEV_GIT_BRANCH merged status $IS_DIT_MERGED&quot;
+
+DEV_LOCAL_COMMIT_ID=`cat ../changelog-DEV/DEV_REMOTE_COMMIT_ID.log | grep $BRANCH_REMOTE_COMMIT_ID | tail -n 1 | awk -F &quot;refs/heads/&quot; &apos;{print $01}&apos; | tr -d &quot;[:blank:]&quot;`
+echo &quot;DEV_LOCAL_COMMIT_ID::$DEV_LOCAL_COMMIT_ID&quot;
+
+echo &quot;---------------------------------------------------------------&quot;
+
+if [[ $DEV_LOCAL_COMMIT_ID == &quot;&quot; ]];
+then
+echo &quot;DEV_LOCAL_COMMIT_ID is empty .. find in DevBuild&quot;
+cd /var/lib/jenkins/workspace/OmniBuilds/digitalFaceApplication-DevBuild
+DEV_LOCAL_COMMIT_ID=`git log | grep $BRANCH_REMOTE_COMMIT_ID | grep commit | awk -F&quot;commit&quot; &apos;{print $NF}&apos; | tr -d &quot;[:blank:]&quot;`
+{ echo -n `git ls-remote | grep heads | grep $BRANCH_REMOTE_COMMIT_ID`; echo &quot; $BUILD_TIMESTAMP&quot;; } &gt;&gt; ../changelog-DEV/DEV_REMOTE_COMMIT_ID.log || echo &quot;Warning :: BRANCH_COMMIT_ID is empty&quot;
+echo &quot;DEV_LOCAL_COMMIT_ID found in DevBuild &lt;$DEV_LOCAL_COMMIT_ID&gt;&quot;
+cd $WORKSPACE
+else
+echo &quot;*** ALL is OK ***&quot;
+fi
+
+#----------------------------------------------------------------------------
+#Check if FEATURE_BRANCH is merged and built into DIT
+
+if [[ $BRANCH_REMOTE_COMMIT_ID == $DEV_LOCAL_COMMIT_ID ]];
+then
+echo &quot;&quot;
+echo &quot;----------------------------------------------------------&quot;
+echo &quot;FEATURE_BRANCH &lt;$DEV_FEATURE_BRANCH&gt; is built into DIT&quot;
+echo &quot;----------------------------------------------------------&quot;
+echo &quot;&quot;
+
+elif [[ $IS_DIT_MERGED &lt; 1 ]];
+then
+echo &quot;&quot;
+echo &quot;---------------------------------------------------------------&quot;
+echo &quot;FEATURE_BRANCH &lt;$DEV_FEATURE_BRANCH&gt; is not merged into develop&quot;
+echo &quot;---------------------------------------------------------------&quot;
+echo &quot;&quot;
+exit $exit_status
+exit 1
+
+elif [[ $BRANCH_REMOTE_COMMIT_ID != $DEV_LOCAL_COMMIT_ID ]];
+then
+echo &quot;&quot;
+echo &quot;----------------------------------------------------------&quot;
+echo &quot;FEATURE_BRANCH &lt;$DEV_FEATURE_BRANCH&gt; is not built into DIT&quot;
+echo &quot;----------------------------------------------------------&quot;
+echo &quot;&quot;
+exit $exit_status
+exit 1
+
+elif [[ $IS_DIT_MERGED &gt; 0 ]] &amp;&amp; [[ $BRANCH_REMOTE_COMMIT_ID = $DEV_LOCAL_COMMIT_ID ]];
+then
+echo &quot;&quot;
+echo &quot;-----------------------------------------------------------------------------------&quot;
+echo &quot;FEATURE_BRANCH &lt;$DEV_FEATURE_BRANCH&gt; is merged into develop, continue the build ...&quot;
+echo &quot;-----------------------------------------------------------------------------------&quot;
+echo &quot;&quot;
+
+else
+echo &quot;&quot;
+echo &quot;----------------------------------------------------------&quot;
+echo &quot; *** WARNING :: Could not resolve the Conflict &lt; $CONFLICT_BRANCH &gt; *** &quot;
+echo &quot;----------------------------------------------------------&quot;
+echo &quot;&quot;
+exit $exit_status
+exit 1
+fi
+
+#----------------------------------------------------------------------------
+
+echo &quot;&quot;
+echo &quot;Fetching DEV_FEATURE_BRANCH &lt;$DEV_FEATURE_BRANCH&gt; ...&quot;
+git fetch origin $DEV_FEATURE_BRANCH:$DEV_FEATURE_BRANCH
+git checkout $DEV_FEATURE_BRANCH
+echo &quot;&quot;
+
+#----------------------------------------------------------------------------
+#Final clean up before renaming
+DEV_FEATURE_BRANCH=`echo $DEV_FEATURE_BRANCH | awk -F&apos;SIT_&apos; &apos;{ print $NF }&apos;| awk -F&apos;UAT_&apos; &apos;{ print $NF }&apos; | awk -F&apos;PREPROD_&apos; &apos;{ print $NF }&apos;`
+echo &quot;DEV_FEATURE_BRANCH&quot;::$DEV_FEATURE_BRANCH
+
+SIT_FEATURE_BRANCH=SIT_$DEV_FEATURE_BRANCH
+git branch -m $SIT_FEATURE_BRANCH
+
+#Delete all similar existing upstream branches
+git ls-remote | grep heads | grep $DEV_FEATURE_BRANCH | awk -F &quot; &quot; &apos;{print $2}&apos; &gt; feature_list.log
+
+echo &quot;&quot; &amp;&amp; echo &quot;----------------------------------------------&quot;
+echo &quot;check_if_similar_branches_exists ...&quot;
+ls -lrt feature_list.log &amp;&amp; cat feature_list.log 
+echo &quot;----------------------------------------------&quot; &amp;&amp; echo &quot;&quot;
+
+cat feature_list.log | while read feature_list;
+do `git push origin :&quot;$feature_list&quot;`
+done
+echo &quot;&quot;
+
+#Push and record new feature of out CONFLICT zone SIT_FEATURE_BRANCH
+git push origin $SIT_FEATURE_BRANCH
+{ echo -n `git ls-remote | grep heads | grep $SIT_FEATURE_BRANCH`; echo &quot; $BUILD_TIMESTAMP&quot;; } &gt;&gt; ../changelog-SIT/SIT_REMOTE_COMMIT_ID.log
+echo &quot; &quot;
+exit 0
+
+#-------------------------------------------------------------------------------------------------------
+
+#AVOIDS THE RENAMING OF FUTURE BRANCHES COMMITTED IN SIT-SYSTEM BRANCH
+
+elif [[ $MERGED_FEATURE == *SIT_* ]] &amp;&amp; [[ $SIT_REMOTE_COMMIT_ID == $DEV_LOCAL_COMMIT_ID ]] ;
+then
+echo &quot;$MERGED_FEATURE :: This SIT_ feature is already BUILT into DEV environment&quot;
+git ls-remote | grep $MERGED_FEATURE
+echo &quot;&quot;
+
+elif [[ $MERGED_FEATURE == *UAT_* ]] &amp;&amp; [[ $SIT_REMOTE_COMMIT_ID == $UAT_LOCAL_COMMIT_ID ]] ;
+then
+echo &quot;$MERGED_FEATURE :: This UAT_ feature is already BUILT into UAT environment&quot;
+git ls-remote | grep $MERGED_FEATURE
+echo &quot;&quot;
+
+elif [[ $MERGED_FEATURE == *PREPROD_* ]] &amp;&amp; [[ $SIT_REMOTE_COMMIT_ID == $PREPROD_LOCAL_COMMIT_ID ]] ;
+then
+echo &quot;$MERGED_FEATURE :: This PREPROD_ feature is already BUILT into PREPROD environment&quot;
+git ls-remote | grep $MERGED_FEATURE
+echo &quot;&quot;
+
+#-------------------------------------------------------------------------------------------------------
+ 
+elif [[ $MERGED_FEATURE == *SIT_* || $MERGED_FEATURE == *UAT_* || $MERGED_FEATURE == *PREPROD_* ]] &amp;&amp; [[ $IS_COMMIT_EMPTY &gt; 0 ]] ;
+then
+echo &quot;$MERGED_FEATURE :: This is a modified SIT_/UAT_/PREPROD_ feature branch with GIT COMMIT DIFFERENCES &quot;
+RAW_MERGED_FEATURE=`echo $MERGED_FEATURE | awk -F&apos;SIT_&apos; &apos;{ print $NF }&apos;| awk -F&apos;UAT_&apos; &apos;{ print $NF }&apos; | awk -F&apos;PREPROD_&apos; &apos;{ print $NF }&apos;`
+SIT_FEATURE_BRANCH=SIT_$RAW_MERGED_FEATURE
+git branch -m $SIT_FEATURE_BRANCH
+
+#Delete all similar existing upstream branches
+git ls-remote | grep heads | grep $RAW_MERGED_FEATURE | awk -F &quot; &quot; &apos;{print $2}&apos; &gt; feature_list.log
+
+echo &quot;&quot; &amp;&amp; echo &quot;----------------------------------------------&quot;
+echo &quot;check_if_similar_branches_exists ...&quot;
+ls -lrt feature_list.log &amp;&amp; cat feature_list.log 
+echo &quot;----------------------------------------------&quot; &amp;&amp; echo &quot;&quot;
+
+cat feature_list.log | while read feature_list;
+do `git push origin :&quot;$feature_list&quot;`
+done
+echo &quot;&quot;
+
+#Push new SIT_feature_branch
+git push origin $SIT_FEATURE_BRANCH
+git ls-remote | grep $SIT_FEATURE_BRANCH
+echo &quot; &quot;
+
+else
+#--------------------------------------------------------------------------------------------------------------
+echo &quot;&quot;
+echo &quot;$MERGED_FEATURE :: Rename to SIT_: This is a develop feature branch&quot;
+RAW_MERGED_FEATURE=`echo $MERGED_FEATURE | awk -F&apos;SIT_&apos; &apos;{ print $NF }&apos;| awk -F&apos;UAT_&apos; &apos;{ print $NF }&apos; | awk -F&apos;PREPROD_&apos; &apos;{ print $NF }&apos;`
+SIT_FEATURE_BRANCH=SIT_$RAW_MERGED_FEATURE
+git branch -m $SIT_FEATURE_BRANCH
+
+#Delete all similar existing upstream branches
+git ls-remote | grep heads | grep $RAW_MERGED_FEATURE | awk -F &quot; &quot; &apos;{print $2}&apos; &gt; feature_list.log
+
+echo &quot;-----------------------------------&quot;
+echo &quot;check_if_similar_branches_exists ...&quot;
+ls -lrt feature_list.log &amp;&amp; cat feature_list.log 
+echo &quot;-----------------------------------&quot;
+
+cat feature_list.log | while read feature_list;
+do `git push origin :&quot;$feature_list&quot;`
+done
+echo &quot;&quot;
+
+#Push new SIT_FEATURE_BRANCH
+git push origin $SIT_FEATURE_BRANCH
+git ls-remote | grep $SIT_FEATURE_BRANCH
+echo &quot;&quot;
+
+fi
+#-------------------------------------------------------------------------------------------------------#</command>
+      <configuredLocalRules/>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>set +x
+echo &quot;================================================================&quot;
+echo &quot;COPY Master-clean-system-branch FROM SIT-system-branch&quot;
+
+echo develop-system-branch :: $DEV_GIT_BRANCH
+echo SIT-system-branch :: $SIT_GIT_BRANCH
+echo MASTER-clean-system-branch :: $PROD_GIT_BRANCH
+
+#git clean --dry-run -n
+#git stash --all
+git clean -df
+git reset --hard
+git branch -D $PROD_GIT_BRANCH || echo &quot;Skip if &apos;MASTER-clean-system-branch&apos; does not exist ...&quot;
+git checkout $SIT_GIT_BRANCH
+git checkout -b $PROD_GIT_BRANCH
+git push origin :$PROD_GIT_BRANCH
+git push origin $PROD_GIT_BRANCH
+sleep 2
+echo &quot;&quot;
+
+echo &quot;================================================================&quot;
+echo &quot;AUTO UPDATE develop-system-branch WITH MASTER ...&quot;
+git fetch origin $DEV_GIT_BRANCH:$DEV_GIT_BRANCH
+sleep 2
+git checkout $DEV_GIT_BRANCH
+git branch 
+git merge --strategy=ours $PROD_GIT_BRANCH -m &quot;sync MASTER-clean-system-branch with develop&quot; || echo &quot;if errors, skip merge and continue to build...&quot;
+git push -f origin $DEV_GIT_BRANCH
+sleep 2
+echo &quot;================================================================&quot;
+echo &quot;AUTO UPDATE SIT-system-branch WITH MASTER ...&quot;
+
+git checkout $SIT_GIT_BRANCH
+git branch 
+git merge --strategy=ours $PROD_GIT_BRANCH -m &quot;sync MASTER-clean-system-branch with SIT-system-branch&quot; || echo &quot;if errors, skip merge and continue to build...&quot;
+git checkout -b sync-master-to-sit
+git push origin :sync-master-to-sit || echo &quot;skip -- if branch does not exist&quot;
+git push origin sync-master-to-sit
+sleep 2
+
+echo &quot;----------------------------------------------------------------&quot;
+echo &quot;VIEW $SIT_GIT_BRANCH HISTORY LOG&quot;
+git log -15 --oneline
+git reset --hard
+sleep 2
+echo &quot;================================================================&quot;</command>
+      <configuredLocalRules/>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>set +x
+rm -rf $WORKSPACE/*
+</command>
+      <configuredLocalRules/>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers>
+    <hudson.plugins.parameterizedtrigger.BuildTrigger plugin="parameterized-trigger@2.43">
+      <configs>
+        <hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
+          <configs class="empty-list"/>
+          <projects>SIT-DBmigrate-DF,SIT-DBmigrate-CT,SIT-DBmigrate-MH</projects>
+          <condition>SUCCESS</condition>
+          <triggerWithNoParameters>true</triggerWithNoParameters>
+          <triggerFromChildProjects>false</triggerFromChildProjects>
+        </hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
+      </configs>
+    </hudson.plugins.parameterizedtrigger.BuildTrigger>
+    <hudson.tasks.Mailer plugin="mailer@435.v79ef3972b_5c7">
+      <recipients>sngachanja@co-opbank.co.ke</recipients>
+      <dontNotifyEveryUnstableBuild>false</dontNotifyEveryUnstableBuild>
+      <sendToIndividuals>true</sendToIndividuals>
+    </hudson.tasks.Mailer>
+    <org.jenkinsci.plugins.discardbuild.DiscardBuildPublisher plugin="discard-old-build@1.05">
+      <daysToKeep>10</daysToKeep>
+      <numToKeep>100</numToKeep>
+      <resultsToDiscard/>
+      <minLogFileSize>-1</minLogFileSize>
+      <maxLogFileSize>-1</maxLogFileSize>
+      <intervalDaysToKeep>-1</intervalDaysToKeep>
+      <intervalNumToKeep>-1</intervalNumToKeep>
+      <regexp></regexp>
+    </org.jenkinsci.plugins.discardbuild.DiscardBuildPublisher>
+  </publishers>
+  <buildWrappers>
+    <hudson.plugins.ws__cleanup.PreBuildCleanup plugin="ws-cleanup@0.40">
+      <deleteDirs>false</deleteDirs>
+      <cleanupParameter></cleanupParameter>
+      <externalDelete></externalDelete>
+      <disableDeferredWipeout>false</disableDeferredWipeout>
+    </hudson.plugins.ws__cleanup.PreBuildCleanup>
+    <hudson.plugins.jira.JiraCreateReleaseNotes plugin="jira@3.7">
+      <jiraEnvironmentVariable>RELEASE_NOTES</jiraEnvironmentVariable>
+      <jiraProjectKey></jiraProjectKey>
+      <jiraRelease></jiraRelease>
+      <jiraFilter>status in (Resolved, Closed)</jiraFilter>
+    </hudson.plugins.jira.JiraCreateReleaseNotes>
+    <EnvInjectBuildWrapper plugin="envinject@2.4.0">
+      <info>
+        <propertiesContent>ARCHIVE_WORKSPACE=/appData/jenkins/archive-workspace/OmniBuilds-CoreBankingIntegration
+BUILD_ARCHIVE_WORKSPACE=/appData/jenkins/archive-workspace/OmniBuilds-CoreBankingIntegration/digitalFaceApplication-SITBuild
+TARGET_REMOTE_WEBLOGIC=/app/appadmin/jenkins/workspace/OmniBuilds-CoreBankingIntegration/Deploy-SIT/OUTPUT
+SSH_ENVIRONMENT=appadmin@172.16.19.194</propertiesContent>
+        <secureGroovyScript plugin="script-security@1175.v4b_d517d6db_f0">
+          <script></script>
+          <sandbox>false</sandbox>
+        </secureGroovyScript>
+        <loadFilesFromMaster>false</loadFilesFromMaster>
+      </info>
+    </EnvInjectBuildWrapper>
+    <org.jenkinsci.plugins.preSCMbuildstep.PreSCMBuildStepsWrapper plugin="preSCMbuildstep@0.3">
+      <buildSteps>
+        <hudson.tasks.Shell>
+          <command>set +x
+echo &quot;======================================================================&quot;
+
+echo &quot;BUILD_USER :: $BUILD_USER&quot;
+echo &quot;BUILD_USER_ID :: $BUILD_USER_ID&quot;
+echo &quot;WORKSPACE :: $WORKSPACE&quot;
+echo &quot;BUILD_TIMESTAMP&quot;::$BUILD_TIMESTAMP
+
+#---------------------------------------------------------------------------------------------
+
+export TARGET=Omni.SIT
+MATRIXPATH=/var/lib/jenkins/workspace/ROLE_PERMISSIONS_MATRIX
+$MATRIXPATH/ROLE_PERMISSIONS_MATRIX.sh
+CAPABILITIES_FILE=$MATRIXPATH/$TARGET/$BUILD_USER_ID.CAPABILITIES
+
+FUNCTION=ENV_AUTHORIZATION_SIT
+cat $CAPABILITIES_FILE || echo &quot;ERROR :: CAPABILITIES file not available&quot;
+CAPABILITIES=`cat $CAPABILITIES_FILE | grep $FUNCTION` || echo &quot;WARNING :: FUNCTION $FUNCTION not available for $BUILD_USER_ID&quot;
+echo &quot;BUILD_USER CAPABILITIES&quot;::$CAPABILITIES
+
+PROPERTY_FILE=SIT_MODULE_01_variables.property
+echo &quot;CAPABILITIES_FILE=$CAPABILITIES_FILE&quot; &gt;&gt; $PROPERTY_FILE
+
+#---------------------------------------------------------------------------------------------
+
+if [ &quot;$BUILD_USER_ID&quot; = &quot;scmChange&quot; ] || [ &quot;$CAPABILITIES&quot; = &quot;$FUNCTION&quot; ] ;
+then
+
+echo &quot; &quot;
+echo &quot;=====================================================================&quot;
+echo &quot;Build user $BUILD_USER Authorized to Promote to SIT &quot;
+echo &quot;=====================================================================&quot;
+echo &quot; &quot;
+exit 0
+
+else
+echo &quot; &quot;
+echo &quot;=====================================================================&quot;
+echo &quot;ERROR :: Build user $BUILD_USER not Authorized to Promote to SIT &quot;
+echo &quot;=====================================================================&quot;
+echo &quot; &quot;
+exit 1
+
+fi
+
+echo &quot;-------------------------------------------------------------------&quot;
+pwd
+start=$(date +&apos;%s&apos;)
+timer_path=/var/lib/jenkins/workspace/OmniBuilds-CoreBankingIntegration/property_variables/timer.property
+echo &quot;start=$start&quot; &gt; $timer_path
+ls -lrt $timer_path &amp;&amp; cat $timer_path
+echo &quot;-------------------------------------------------------------------&quot;
+ARCHIVE_WORKSPACE=/appData/jenkins/archive-workspace/OmniBuilds-CoreBankingIntegration
+BUILD_ARCHIVE_WORKSPACE=/appData/jenkins/archive-workspace/OmniBuilds-CoreBankingIntegration/digitalFaceApplication-SITBuild
+
+[ ! -d &quot;$ARCHIVE_WORKSPACE/changelog-SIT&quot; ] &amp;&amp; mkdir -p $ARCHIVE_WORKSPACE/changelog-SIT
+[ ! -d &quot;$BUILD_ARCHIVE_WORKSPACE/OUTPUT&quot; ] &amp;&amp; mkdir -p $BUILD_ARCHIVE_WORKSPACE/OUTPUT
+
+[ ! -d &quot;$BUILD_ARCHIVE_WORKSPACE/SIT-DBmigrate-CT/RENAMED_SCRIPTS&quot; ] &amp;&amp; mkdir -p $BUILD_ARCHIVE_WORKSPACE/SIT-DBmigrate-CT/RENAMED_SCRIPTS
+[ ! -d &quot;$BUILD_ARCHIVE_WORKSPACE/SIT-DBmigrate-DF/RENAMED_SCRIPTS&quot; ] &amp;&amp; mkdir -p $BUILD_ARCHIVE_WORKSPACE/SIT-DBmigrate-DF/RENAMED_SCRIPTS
+[ ! -d &quot;$BUILD_ARCHIVE_WORKSPACE/SIT-DBmigrate-MH/RENAMED_SCRIPTS&quot; ] &amp;&amp; mkdir -p $BUILD_ARCHIVE_WORKSPACE/SIT-DBmigrate-MH/RENAMED_SCRIPTS
+[ ! -d &quot;$BUILD_ARCHIVE_WORKSPACE/Cummulative-Resource-bin-files&quot; ] &amp;&amp; mkdir -p $BUILD_ARCHIVE_WORKSPACE/Cummulative-Resource-bin-files</command>
+          <configuredLocalRules/>
+        </hudson.tasks.Shell>
+        <EnvInjectBuilder plugin="envinject@2.4.0">
+          <info>
+            <propertiesFilePath>/var/lib/jenkins/workspace/OmniBuilds-CoreBankingIntegration/property_variables/timer.property</propertiesFilePath>
+          </info>
+        </EnvInjectBuilder>
+      </buildSteps>
+      <failOnError>false</failOnError>
+    </org.jenkinsci.plugins.preSCMbuildstep.PreSCMBuildStepsWrapper>
+    <org.jenkinsci.plugins.builduser.BuildUser plugin="build-user-vars-plugin@1.8"/>
+  </buildWrappers>
+</project>

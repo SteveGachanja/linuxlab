@@ -1,0 +1,159 @@
+name: Build app image and alert CD process.
+on:
+  push:
+    branches:
+      - main
+
+env:
+  PROJECT_ID: ${{ secrets.IMAGES_PROJECT_ID }}
+  GITHUB_AUTH: ${{ secrets.AUTH_TOKEN }}
+
+  # Additional variables can be created using the format below.
+  # The info available to the push event can be found here: https://docs.github.com/en/developers/webhooks-and-events/webhooks/webhook-events-and-payloads#push
+  GITHUB_REPO: ${{ github.event.repository.name }}
+  GITHUB_PUSHER_NAME: ${{ github.event.pusher.name }}
+  GITHUB_PUSHER_EMAIL: ${{ github.event.pusher.email }}
+  GITHUB_HEAD_COMMIT: ${{ github.event.head_commit.url}}
+  GITHUB_MESG: ${{ github.event.head_commit.message }}
+  GITHUB_COMPARE: ${{ github.event.compare }}
+
+jobs:
+  build-tasks:
+    name: BuildOps
+    runs-on: ubuntu-latest
+
+    # Make SHORT SHA available to next bump job
+    outputs:
+      short_sha: ${{ steps.short_sha.outputs.SHORT_SHA }}
+
+    strategy:
+      matrix:
+        node-version: [14.x]
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@master
+        with:
+          ref: main
+
+      # Create image tag
+      - name: Add SHORT_SHA env property with HEAD
+        id: short_sha
+        run: echo "::set-output name=SHORT_SHA::$(echo ${GITHUB_SHA::8})"
+
+      # Install Ionic
+      - name: Setup Ionic
+        uses: coturiv/setup-ionic@v1.0.4
+
+      # Install Node
+      # Tried with.cache: 'node' but I did not see any significant reduction in build time as npm ci was not able to find the NPM cache because of our monoepo project structure.
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      # Get the correct caching directory as the default does not work for the next step
+      - name: Get npm cache directory
+        id: npm-cache
+        run: |
+          echo "::set-output name=dir::$(npm config get cache)"
+
+      # Cache node modules or retrieve available cache
+      # GitHub Actions will store cached items for 7 days.
+      # GitHub Caches are branch based.
+      - name: Cache node modules or retrieve available cache
+        id: cache-nodemodules
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-node-modules
+        with:
+          # caching node_modules
+          path: |
+            **/node_modules
+             ${{ steps.npm-cache.outputs.dir }}
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      # Install node ionic cli
+      - name: Install ionic-cli
+        run: npm install -g @ionic/cli
+
+      # Install node dependencies that were not found in the cache retrieved above
+      - name: Install Dependencies
+        if: steps.cache-nodemodules.outputs.cache-hit != 'true'
+        run: npm ci
+
+      # NPM Build application with the cached dependencies and additional ones that may have been installed above
+      - name: Build App
+        run: |
+          npm run build-staging
+
+      # Lint application unit test.
+      - name: Lint duka-bnpl UI
+        run: |
+          npm run lint
+
+      # Use an SA to authenticate Google Cloud Registry
+      - name: Authenticate GCR
+        uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.GCR_SERVICE_ACCOUNT_KEY }}
+          project_id: ${{ secrets.IMAGES_PROJECT_ID }}
+          export_environment_variables: true
+
+      # Build docker image
+      - name: Build Image
+        run: |-
+          docker build -t eu.gcr.io/"$PROJECT_ID"/"$GITHUB_REPO":${{ steps.short_sha.outputs.SHORT_SHA }} .
+
+      # Configure docker to use the gcloud command-line tool as a credential helper
+      - name: Configure Docker Auth
+        run: |
+          gcloud auth configure-docker -q
+
+      # Push image to Google Container Registry
+      - name: Push Docker image to Kyosk GCR
+        run: |-
+          docker push eu.gcr.io/"$PROJECT_ID"/"$GITHUB_REPO":${{ steps.short_sha.outputs.SHORT_SHA }}
+
+  trigger-deployment-to-vcluster:
+    name: Begin CD
+    runs-on: ubuntu-latest
+    needs: [build-tasks]
+
+    steps:
+      - name: Trigger vCluster Deployment
+        run: |-
+          curl --location --request POST '${{ secrets.CD_REPO_URL }}' \
+            --header 'Authorization: Bearer ${{ secrets.AUTH_TOKEN }}' \
+            --header 'Content-Type: text/plain' \
+              --data-raw '{
+                  "event_type" : "deploy-vcluster",
+                  "client_payload" : {
+                    "image_id" : "${{ needs.build-tasks.outputs.short_sha }}",
+                    "squad_id" : "duka-xp",
+                    "repo_name" : "${{ github.event.repository.name }}",
+                    "branch" : "${{ github.event.ref }}"
+                  }
+          }'
+
+  slack-notify:
+    name: Slack Notification
+    runs-on: ubuntu-latest
+    needs: [ build-tasks, trigger-deployment-to-vcluster ]
+
+    steps:
+      #Send Slack notification
+      - name: Notify slack
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          fields: repo,author,commit,action,eventName,ref,workflow
+          text: 'An image eu.gcr.io/${{ secrets.IMAGES_PROJECT_ID }}/${{ github.event.repository.name }}:${{ needs.build-tasks.outputs.short_sha }} has been built from the commit below with message "${{ github.event.head_commit.message }}":'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_BUILD_CHANNEL }}
+        if: always()
+    # To figure out different message when build fails

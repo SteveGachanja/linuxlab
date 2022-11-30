@@ -1,0 +1,310 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description>Deploy-Dev</description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.plugins.jira.JiraProjectProperty plugin="jira@3.7"/>
+    <com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty plugin="gitlab-plugin@1.5.35">
+      <gitLabConnection>Digital_Factory</gitLabConnection>
+      <jobCredentialId></jobCredentialId>
+      <useAlternativeCredential>false</useAlternativeCredential>
+    </com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.BooleanParameterDefinition>
+          <name>DISABLE_OTP</name>
+          <description>OTP is Disabled by default
+Unchecked Button and trigger BUILD to ENABLE_OTP.
+</description>
+          <defaultValue>true</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>RESTART_DF</name>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+  </properties>
+  <scm class="hudson.scm.NullSCM"/>
+  <assignedNode>WEBLOGIC-DEV-CBI</assignedNode>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <jdk>(System)</jdk>
+  <triggers>
+    <jenkins.triggers.ReverseBuildTrigger>
+      <spec></spec>
+      <upstreamProjects>Dev-DBmigrate-MH, </upstreamProjects>
+      <threshold>
+        <name>SUCCESS</name>
+        <ordinal>0</ordinal>
+        <color>BLUE</color>
+        <completeBuild>true</completeBuild>
+      </threshold>
+    </jenkins.triggers.ReverseBuildTrigger>
+  </triggers>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <org.jenkinsci.plugins.conditionalbuildstep.ConditionalBuilder plugin="conditional-buildstep@1.4.1">
+      <runner class="org.jenkins_ci.plugins.run_condition.BuildStepRunner$DontRun" plugin="run-condition@1.5"/>
+      <runCondition class="org.jenkins_ci.plugins.run_condition.core.AlwaysRun" plugin="run-condition@1.5"/>
+      <conditionalbuilders>
+        <hudson.tasks.Shell>
+          <command>set +x
+echo &quot;&quot;
+echo &quot;----- CHECK BUILD PARAMETERS --------------------&quot;
+echo &quot;BUILD_USER&quot;::$BUILD_USER
+echo &quot;WORKSPACE&quot;::$WORKSPACE
+echo &quot;DISABLE_OTP:: $DISABLE_OTP&quot;
+echo &quot;RESTART_DF::$RESTART_DF&quot;
+echo &quot;-------------------------------------------------&quot;</command>
+          <configuredLocalRules/>
+        </hudson.tasks.Shell>
+        <hudson.tasks.Shell>
+          <command>set +x
+echo &quot; ---------------------------------------------------------------&quot;
+echo &quot;[Copy EAR file into Staging Path..]&quot;
+echo &quot; ---------------------------------------------------------------&quot;
+
+rsync -avhz $REMOTE_JENKINS_PATH_OUTPUT/CBI.DF.*.ear $WEBLOGIC_STAGING_PATH || echo &quot;*** Warning *** No such file or directory&quot;
+DEPLOY=`ls -tr $WEBLOGIC_STAGING_PATH | awk -F &quot;.ear&quot; &apos;{print $1}&apos;| tail -n -1`
+UNDEPLOY=`ls -tr $WEBLOGIC_STAGING_PATH | awk -F &quot;.ear&quot; &apos;{print $1}&apos;| tail -n -2 | head -n 1`
+
+echo &quot; ---------------------------------------------------------------&quot;
+echo &quot;[Copy Resource bin files ..]&quot;
+echo &quot; ---------------------------------------------------------------&quot;
+
+echo &quot;[Last Build Property changes ... ]&quot;
+PROPERTY_ARTIFACTS=$(ls -rt $REMOTE_JENKINS_PATH_OUTPUT | grep logdir-DF-* | tail -n 1)
+cat $REMOTE_JENKINS_PATH_OUTPUT/${PROPERTY_ARTIFACTS}/changedfiles-*.log || echo &quot;No such file or directory&quot;
+
+echo &quot; ---------------------------------------------------------------&quot;
+
+echo &quot;[Cummulative Property changes ... ]&quot;
+cat $REMOTE_JENKINS_PATH_OUTPUT/Cummulative-Resource-bin-files/Resource-bin-files.log
+
+echo &quot; ---------------------------------------------------------------&quot;
+
+PROPERTY_FILE_CHANGES=$REMOTE_JENKINS_PATH_OUTPUT/Cummulative-Resource-bin-files/Source/Resources/bin
+ls -lRt $PROPERTY_FILE_CHANGES/ | awk -F &quot;Cummulative-Resource-bin-files&quot; &apos;{print $NF}&apos;
+cp -r $PROPERTY_FILE_CHANGES/* $WEBLOGIC_PROPERTY_FILES/ || echo &quot;No such file or directory&quot;
+
+echo &quot; ---------------------------------------------------------------&quot;
+echo &quot;&quot;
+echo &quot;EAR to UNDEPLOY&quot; :: $UNDEPLOY
+echo &quot;EAR to DEPLOY&quot; :: $DEPLOY
+echo &quot;DISABLE_OTP:: $DISABLE_OTP&quot;
+echo &quot;RESTART_DF:: $RESTART_DF&quot;
+echo &quot;&quot;
+echo &quot; ---------------------------------------------------------------&quot;
+cd $REMOTE_JENKINS_PATH/Server-deployment-scripts
+## ---------------------------------------------------------------
+
+
+if [[ $RESTART_DF = &quot;true&quot; ]];
+then
+echo &quot;====== ONLY Restart DF - Do not Redeploy :: $BUILD_TIMESTAMP ===================&quot;
+
+timeout 60000s ./restart_DF_script.sh
+cat $NOHUP_PATH/PROPERTY_FILE || echo &quot;No PROPERTY_FILE written .. &quot;
+
+else
+echo &quot;========   INITIATE WEBLOGIC SERVER DEPLOY ...$BUILD_TIMESTAMP  ================&quot;
+echo &quot;========   SET COUNTER       ....                               ================&quot;
+
+counter_record_exists=`ls ./count_DF_restarts | wc -l || echo &quot;No such file or directory&quot;`
+read_counter_record=`cat ./count_DF_restarts || echo &quot;No such file or directory&quot;`
+
+if [ $counter_record_exists = 1 ];
+then
+echo &quot;counter_record_exists&quot;
+elif [ $read_counter_record = &quot;&quot; ];
+then
+echo 0 &gt; ./count_DF_restarts
+else
+echo 0 &gt; ./count_DF_restarts
+fi
+
+counter=`cat ./count_DF_restarts`
+counter=$((counter+1))
+echo $counter &gt; ./count_DF_restarts
+check_to_restart_AdminServer=`cat ./count_DF_restarts`
+
+if [[ $check_to_restart_AdminServer = 5 ]];
+then
+
+echo &quot;[Restarting_AdminServer ..]&quot;
+echo &quot;count_DF_restarts&quot; &amp;&amp; cat ./count_DF_restarts
+echo 0 &gt; ./count_DF_restarts
+timeout 60000s ./restart_AdminServer.sh
+cat $NOHUP_PATH/PROPERTY_FILE
+
+else
+echo &quot;[Do not Restart_AdminServer ..]&quot;
+echo &quot;count_DF_restarts&quot; &amp;&amp; cat ./count_DF_restarts
+fi
+
+echo &quot;======================================================================&quot;
+
+
+echo &quot;[Configure deploy properties..]&quot;
+rm deploy.properties || echo &quot;No such file ...&quot;
+ant -file jenkins.deploy.properties.xml -Dserver.name=&quot;DF01&quot; -Dstaging.path=&quot;$WEBLOGIC_STAGING_PATH&quot; -Ddeploy.name=&quot;$DEPLOY&quot; -Dundeploy.name=&quot;$UNDEPLOY&quot; wldeploy
+ls deploy.properties &amp;&amp; sed -i &apos;s#~#:#g&apos; deploy.properties &amp;&amp; cat deploy.properties
+source $setWLSEnv_source
+sleep 2
+
+echo &quot;[Deployment started..]&quot;
+java weblogic.WLST ./Deploy_DF.py &gt; wlst.log 2&gt;&amp;1 || echo &quot;Error might have occurred ..&quot;
+cat wlst.log || echo &quot;Warning :: No wlst.log file ...&quot;
+ERROR=`cat wlst.log | grep &quot;Error occurred&quot; | wc -l` || echo &quot;Warning :: No wlst.log file ...&quot;
+echo &quot;ERROR OCCURRED :: $ERROR&quot;
+
+## ---------------------------------------------------------------
+echo &quot;[Check if ERROR OCCURED while Deploying DFServer ..]&quot;
+if [[ $ERROR -ge 1 ]];
+then
+
+echo &quot;[Weblogic Error occurred while deploying ..Invoke the RE-DEPLOY STRATEGY..]&quot;
+echo &quot;---------------------------------------------------------------------------&quot;
+
+echo &quot;Restart /Undeploy DF&quot;
+echo &quot;1. Restart DF&quot;
+echo &quot;2. Restart Adminserver&quot;
+echo &quot;3. Undeploy_DF - instead of retying to deploy again&quot;
+echo &quot;4. Attempt to DEPLOY_DF again&quot;
+echo &quot;---------------------------------------------------------------------------&quot;
+
+process_id_50000=$(/usr/sbin/lsof -i :50000 | grep -v COMMAND | awk &apos;{print $02}&apos; | uniq | tr -d &quot;[:blank:]&quot;)
+process_id_50002=$(/usr/sbin/lsof -i :50002 | grep -v COMMAND | awk &apos;{print $02}&apos; | uniq | tr -d &quot;[:blank:]&quot;)
+echo &quot;$process_id_50000 $process_id_50002&quot; | while read process; do echo $process &amp;&amp; kill -9 $process 2&gt;/dev/null; done
+
+sleep 2
+echo &quot;[Restarting_DFServer ..]&quot;
+process_id_50002=$(/usr/sbin/lsof -i :50002 | grep -v COMMAND | awk &apos;{print $02}&apos; | uniq | tr -d &quot;[:blank:]&quot;)
+timeout 60000s ./restart_DF_script.sh
+cat $NOHUP_PATH/PROPERTY_FILE || echo &quot;No PROPERTY_FILE written .. &quot;
+
+sleep 2
+echo &quot;[Restarting_AdminServer ..]&quot;
+timeout 60000s ./restart_AdminServer.sh
+cat $NOHUP_PATH/PROPERTY_FILE
+echo 0 &gt; count_DF_restarts
+
+sleep 2
+echo &quot;[UN-Deployment started..]&quot;
+java weblogic.WLST ./UnDeploy_DF.py || echo &quot;Error might have occurred ..&quot;
+
+echo &quot;---------------------------------------------------------------------------&quot;
+
+sleep 2
+echo &quot;[RE-Deployment started..]&quot;
+java weblogic.WLST ./Deploy_DF.py &gt; wlst.log 2&gt;&amp;1 || echo &quot;Error might have occurred ..&quot;
+cat wlst.log || echo &quot;Warning :: No wlst.log file ...&quot;
+ERROR=`cat wlst.log | grep &quot;Error occurred&quot; | wc -l` || echo &quot;Warning :: No wlst.log file ...&quot;
+echo &quot;ERROR OCCURRED :: $ERROR&quot;
+
+else
+echo &quot;[Deployment finished OK..]&quot;
+fi
+
+## ---------------------------------------------------------------
+
+echo &quot;&quot;
+echo &quot;[Restarting_DFServer ..]&quot;
+timeout 60000s ./restart_DF_script.sh
+cat $NOHUP_PATH/PROPERTY_FILE || echo &quot;No PROPERTY_FILE written .. &quot;
+echo &quot;[Restarting_DFServer finished OK..]&quot;
+fi
+
+echo &quot;==========================================================================================&quot;
+seconds=$(($(date +&apos;%s&apos;) - $start))
+minutes=$(echo `expr $seconds / 60`)
+echo &quot;It took approx. $minutes minute(s)/ exactly ($seconds seconds) to Deploy :: $BUILD_TAG&quot;
+echo &quot;==========================================================================================&quot;
+
+
+
+</command>
+          <configuredLocalRules/>
+        </hudson.tasks.Shell>
+      </conditionalbuilders>
+    </org.jenkinsci.plugins.conditionalbuildstep.ConditionalBuilder>
+    <hudson.tasks.Shell>
+      <command>set +x
+echo &quot;Clear Archives&quot;
+ls -rt $WEBLOGIC_STAGING_PATH/* | head -n -5 | while read files ; do rm -rf $files ; done
+ls -rt $REMOTE_JENKINS_PATH_OUTPUT | grep -v CBI | grep -v Cummulative | head -n -1 | while read files; do echo $REMOTE_JENKINS_PATH_OUTPUT/$files &amp;&amp; rm -rf $REMOTE_JENKINS_PATH_OUTPUT/$files ; done
+
+
+echo &quot;Clear Logs/&quot;
+
+pathtofile=/app/mservers/user_projects/domains/RBX_HOME/RBXStaging/Canvas/Temp/CTStudioLogs
+ls $pathtofile | grep ctserverLog- | while read files ; do rm -rf $pathtofile/$files; done
+ls $pathtofile | grep ctsecurityLog- | while read files ; do rm -rf $pathtofile/$files; done
+ls $pathtofile | grep ctdbLog- | while read files ; do rm -rf $pathtofile/$files; done
+ls $pathtofile | grep ctalertLog- | while read files ; do rm -rf $pathtofile/$files; done
+
+pathtofile=/app/mservers/user_projects/domains/MH_COOP/MH_HOME/Logs
+ls $pathtofile | grep MH17.4.1.2_ | while read files ; do rm -rf $pathtofile/$files; done</command>
+      <configuredLocalRules/>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers>
+    <org.jenkinsci.plugins.discardbuild.DiscardBuildPublisher plugin="discard-old-build@1.05">
+      <daysToKeep>30</daysToKeep>
+      <numToKeep>50</numToKeep>
+      <resultsToDiscard/>
+      <minLogFileSize>-1</minLogFileSize>
+      <maxLogFileSize>-1</maxLogFileSize>
+      <intervalDaysToKeep>-1</intervalDaysToKeep>
+      <intervalNumToKeep>-1</intervalNumToKeep>
+      <regexp></regexp>
+    </org.jenkinsci.plugins.discardbuild.DiscardBuildPublisher>
+    <hudson.tasks.Mailer plugin="mailer@435.v79ef3972b_5c7">
+      <recipients>sngachanja@co-opbank.co.ke</recipients>
+      <dontNotifyEveryUnstableBuild>false</dontNotifyEveryUnstableBuild>
+      <sendToIndividuals>true</sendToIndividuals>
+    </hudson.tasks.Mailer>
+  </publishers>
+  <buildWrappers>
+    <EnvInjectBuildWrapper plugin="envinject@2.4.0">
+      <info>
+        <propertiesContent>REMOTE_JENKINS_PATH=/app/appadmin/jenkins/workspace/OmniBuilds-CoreBankingIntegration
+REMOTE_JENKINS_PATH_OUTPUT=/app/appadmin/jenkins/workspace/OmniBuilds-CoreBankingIntegration/Deploy-Dev/OUTPUT
+WEBLOGIC_STAGING_PATH=/omni/omnipreprod/user_projects/domains/RBX_HOME/RBXStaging/Rbx-Ear
+WEBLOGIC_PROPERTY_FILES=/app/mservers/user_projects/domains/RBX_HOME/RBXStaging/serverclasses/Resources/bin
+NOHUP_PATH=/app/mservers/user_projects/domains/OmniDomain/bin
+setWLSEnv_source=/omni/appadmin/Oracle/Middleware/Oracle_Home/wlserver/server/bin/setWLSEnv.sh</propertiesContent>
+        <secureGroovyScript plugin="script-security@1175.v4b_d517d6db_f0">
+          <script></script>
+          <sandbox>false</sandbox>
+        </secureGroovyScript>
+        <loadFilesFromMaster>false</loadFilesFromMaster>
+      </info>
+    </EnvInjectBuildWrapper>
+    <org.jenkinsci.plugins.preSCMbuildstep.PreSCMBuildStepsWrapper plugin="preSCMbuildstep@0.3">
+      <buildSteps>
+        <hudson.tasks.Shell>
+          <command>set +x
+echo &quot;-------------------------------------------------------------------&quot;
+pwd
+start=$(date +&apos;%s&apos;)
+TIME_VARIABLE=/app/appadmin/jenkins/workspace/OmniBuilds-CoreBankingIntegration/Server-deployment-scripts/timer.property
+echo &quot;start=$start&quot; &gt; $TIME_VARIABLE
+echo &quot;-------------------------------------------------------------------&quot;</command>
+          <configuredLocalRules/>
+        </hudson.tasks.Shell>
+        <EnvInjectBuilder plugin="envinject@2.4.0">
+          <info>
+            <propertiesFilePath>/app/appadmin/jenkins/workspace/OmniBuilds-CoreBankingIntegration/Server-deployment-scripts/timer.property</propertiesFilePath>
+          </info>
+        </EnvInjectBuilder>
+      </buildSteps>
+      <failOnError>false</failOnError>
+    </org.jenkinsci.plugins.preSCMbuildstep.PreSCMBuildStepsWrapper>
+    <org.jenkinsci.plugins.builduser.BuildUser plugin="build-user-vars-plugin@1.8"/>
+  </buildWrappers>
+</project>

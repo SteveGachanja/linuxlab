@@ -1,0 +1,99 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description>Dev-DBmigrate-CT</description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.plugins.jira.JiraProjectProperty plugin="jira@3.7"/>
+  </properties>
+  <scm class="hudson.scm.NullSCM"/>
+  <assignedNode>master</assignedNode>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <jdk>(System)</jdk>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <org.jenkinsci.plugins.conditionalbuildstep.ConditionalBuilder plugin="conditional-buildstep@1.4.1">
+      <runner class="org.jenkins_ci.plugins.run_condition.BuildStepRunner$Fail" plugin="run-condition@1.5"/>
+      <runCondition class="org.jenkins_ci.plugins.run_condition.core.AlwaysRun" plugin="run-condition@1.5"/>
+      <conditionalbuilders>
+        <hudson.tasks.Shell>
+          <command>set +x
+echo &quot;-------------------------------------------------------------&quot;
+echo &quot;BUILD_ID&quot;::$BUILD_ID 
+echo &quot;BUILD_USER&quot;::$BUILD_USER
+echo &quot;BUILD_TIMESTAMP&quot;::$BUILD_TIMESTAMP
+echo &quot;-------------------------------------------------------------&quot;
+echo &quot;------------ Running CT DataBase Migrations -----------------&quot;
+echo &quot;-------------------------------------------------------------&quot;
+echo &quot; &quot;</command>
+          <configuredLocalRules/>
+        </hudson.tasks.Shell>
+      </conditionalbuilders>
+    </org.jenkinsci.plugins.conditionalbuildstep.ConditionalBuilder>
+    <sp.sd.flywayrunner.builder.FlywayBuilder plugin="flyway-runner@1.9">
+      <flywayCommand>repair</flywayCommand>
+      <installationName>ORA-Flyway</installationName>
+      <url>jdbc:oracle:thin:@//copkdrexomnitst-scan:1568/DFRPRCBS</url>
+      <commandLineArgs></commandLineArgs>
+      <locations>filesystem:$DB_ARCHIVE_WORKSPACE/RENAMED_SCRIPTS</locations>
+      <credentialsId>CBI-RETAIL-DEV-CT-DB</credentialsId>
+    </sp.sd.flywayrunner.builder.FlywayBuilder>
+    <sp.sd.flywayrunner.builder.FlywayBuilder plugin="flyway-runner@1.9">
+      <flywayCommand>migrate</flywayCommand>
+      <installationName>ORA-Flyway</installationName>
+      <url>jdbc:oracle:thin:@//copkdrexomnitst-scan:1568/DFRPRCBS</url>
+      <commandLineArgs></commandLineArgs>
+      <locations>filesystem:$DB_ARCHIVE_WORKSPACE/RENAMED_SCRIPTS</locations>
+      <credentialsId>CBI-RETAIL-DEV-CT-DB</credentialsId>
+    </sp.sd.flywayrunner.builder.FlywayBuilder>
+    <sp.sd.flywayrunner.builder.FlywayBuilder plugin="flyway-runner@1.9">
+      <flywayCommand>info</flywayCommand>
+      <installationName>ORA-Flyway</installationName>
+      <url>jdbc:oracle:thin:@//copkdrexomnitst-scan:1568/DFRPRCBS</url>
+      <commandLineArgs></commandLineArgs>
+      <locations>filesystem:$DB_ARCHIVE_WORKSPACE/RENAMED_SCRIPTS</locations>
+      <credentialsId>CBI-RETAIL-DEV-CT-DB</credentialsId>
+    </sp.sd.flywayrunner.builder.FlywayBuilder>
+  </builders>
+  <publishers>
+    <org.jenkinsci.plugins.discardbuild.DiscardBuildPublisher plugin="discard-old-build@1.05">
+      <daysToKeep>100</daysToKeep>
+      <numToKeep>100</numToKeep>
+      <resultsToDiscard/>
+      <minLogFileSize>-1</minLogFileSize>
+      <maxLogFileSize>-1</maxLogFileSize>
+      <intervalDaysToKeep>-1</intervalDaysToKeep>
+      <intervalNumToKeep>-1</intervalNumToKeep>
+      <regexp></regexp>
+    </org.jenkinsci.plugins.discardbuild.DiscardBuildPublisher>
+    <hudson.tasks.Mailer plugin="mailer@408.vd726a_1130320">
+      <recipients>sngachanja@co-opbank.co.ke</recipients>
+      <dontNotifyEveryUnstableBuild>false</dontNotifyEveryUnstableBuild>
+      <sendToIndividuals>true</sendToIndividuals>
+    </hudson.tasks.Mailer>
+  </publishers>
+  <buildWrappers>
+    <hudson.plugins.build__timeout.BuildTimeoutWrapper plugin="build-timeout@1.20">
+      <strategy class="hudson.plugins.build_timeout.impl.AbsoluteTimeOutStrategy">
+        <timeoutMinutes>10</timeoutMinutes>
+      </strategy>
+      <operationList/>
+    </hudson.plugins.build__timeout.BuildTimeoutWrapper>
+    <EnvInjectBuildWrapper plugin="envinject@2.4.0">
+      <info>
+        <propertiesContent>DB_ARCHIVE_WORKSPACE=/appData/jenkins/archive-workspace/OmniBuilds-CoreBankingIntegration/digitalFaceApplication-DevBuild/Dev-DBmigrate-CT
+</propertiesContent>
+        <secureGroovyScript plugin="script-security@1175.v4b_d517d6db_f0">
+          <script></script>
+          <sandbox>false</sandbox>
+        </secureGroovyScript>
+        <loadFilesFromMaster>false</loadFilesFromMaster>
+      </info>
+    </EnvInjectBuildWrapper>
+    <org.jenkinsci.plugins.builduser.BuildUser plugin="build-user-vars-plugin@1.8"/>
+  </buildWrappers>
+</project>

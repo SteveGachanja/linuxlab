@@ -4,8 +4,8 @@
 #https://docs.cloudbees.com/docs/cloudbees-ci-kb/latest/client-and-managed-masters/how-to-create-a-job-using-the-rest-api-and-curl
 #https://birolemekli.medium.com/how-to-trigger-jenkins-job-with-bash-script-8f3457d11efc
 
-JENKINS_USER="sngachanja"
-JENKINS_TOKEN="1109dd5770ade8db4a55e735433f7f95e3"
+JENKINS_USER="jenkinsadmin"
+JENKINS_TOKEN="11163d880759048622cf1746552720a29d"
 
 JENKINS_AUTH="$JENKINS_USER:$JENKINS_TOKEN"
 JENKINS_URL="http://172.16.209.71:9090"
