@@ -1,0 +1,13 @@
+Flask
+Flask-RESTful
+Flask-JWT
+Werkzeug
+Flask-SQLAlchemy
+mysql-connector-python
+
+#notebook
+#numpy
+#matplotlib
+#pandas
+#scikit-learn
+#seaborn

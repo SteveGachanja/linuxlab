@@ -1,0 +1,34 @@
+server:
+  port: 5005
+  
+spring:
+    datasource:
+      url: jdbc:oracle:thin:@172.30.26.41:1522/XEPDB1
+      username: AGENCY
+      password: password
+      driver-class-name: oracle.jdbc.OracleDriver
+
+    jpa:
+        database-platform:
+        show-sql: true
+        hibernate.ddl-auto: update
+
+jwt:
+  token:
+    secret: 8w7w4njeEKwY5jZSJhdU4CcEsNturPIK
+    expirationInMs: 600000
+    refreshExpirationInMs: 900000
+    
+soa:
+  credentials:
+    username: omni
+    password: omni123 
+    
+  getaccountdetails:
+    url: http://192.168.0.180/Account/GetAccountDetails/3.0
+
+  fundstransfersyncpost:
+    url: http://192.168.0.180/Account/FundsTransfer/SyncPost/4.1
+    
+  accountbalanceget:
+    url: http://192.168.0.180/Account/AccountBalance/get/4.1
