@@ -21,10 +21,10 @@ from resources.store import Store, StoreList
 from db import db
 
 app = Flask(__name__)
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://api:api@172.30.26.38/flask_apidb'
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://api:api@172.30.26.38/flask_apidb'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'oracle+cx_oracle://OMNIANALYTICS:L_d_2iFOZ6k##E6Xrde6TBE5xy@172.16.17.39:1561/OATS'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'oracle+cx_oracle://OMNIANALYTICS:L_d_2iFOZ6k##E6Xrde6TBE5xy@172.16.17.39:1561/OATS'
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = 'docker'
