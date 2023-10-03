@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: testing-nginx-app
+spec:
+  selector:
+    matchLabels:
+      app: testing-nginx-app
+  replicas: 1
+  revisionHistoryLimit: 2
+  template:
+    metadata:
+      labels:
+        app: testing-nginx-app
+    spec:
+      imagePullSecrets:
+        - name: regcred
+      containers:
+        - name: testing-nginx-container
+          image: DOCKERIMAGE
+          resources:
+            requests:
+              cpu: 100m
+              memory: 300Mi
+          imagePullPolicy: Always
+     
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: testing-nginx-service
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 5757
+      targetPort: 443
+  externalIPs:
+    - 172.16.20.49
+  selector:
+    app: testing-nginx-app
