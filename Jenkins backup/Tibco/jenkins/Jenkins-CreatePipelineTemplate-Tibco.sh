@@ -55,7 +55,7 @@ if [[ $APPLICATION_NAME == *APP.TS.* ]]; then TIBCO_DOMAIN="Technical-Domain" ; 
 #Confirm ALL conditions
 echo "---------------------------------------------------"
 if [[ $APPLICATION_NAME == "" || $TIBCO_APPSPACE == "" || $JENKINS_WORKSPACE == "" ]]; then echo "Enter All the required parameters"  && exit 1; fi
-echo CONFIRM THAT TIBCO_APPSPACE $TIBCO_APPSPACE is within the $TIBCO_DOMAIN
+echo CONFIRM TIBCO_APPSPACE $TIBCO_APPSPACE is within the $TIBCO_DOMAIN
 echo "---------------------------------------------------"
 
 echo "Confirm to continue with given Parameters ..."

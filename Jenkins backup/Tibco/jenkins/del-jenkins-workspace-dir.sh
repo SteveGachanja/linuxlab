@@ -32,3 +32,12 @@ done
 echo "----------------------------------------------------------------------------------"
 echo -n "timestamp :: " && date
 echo "----------------------------------------------------------------------------------"
+
+echo "Keep only latest Jenkins backup"
+ls -1tr /var/lib/jenkins/backup/ | head -n -1 | grep -v DIFF | while read files; do rm -rf "/var/lib/jenkins/backup/$files"; done
+ls -lrt /var/lib/jenkins/backup/
+
+echo "----------------------------------------------------------------------------------"
+echo "Verify disk space savings on Jenkins workspace"
+df -h | grep Filesystem && df -h | grep /dev/mapper/rhel-root
+
