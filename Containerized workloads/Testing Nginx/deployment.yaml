@@ -23,6 +23,27 @@ spec:
               cpu: 100m
               memory: 300Mi
           imagePullPolicy: Always
+          volumeMounts:
+            - name: storage
+              mountPath: /var/log/nginx/
+            - name: tz-config
+              mountPath: /etc/localtime
+          livenessProbe:
+            exec:
+              command:
+              - sh
+              - /usr/share/nginx/printhostname.sh
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            failureThreshold: 5
+      volumes:
+        - name: storage
+          persistentVolumeClaim:
+            claimName: nginx-logs-volumeclaim
+        - name: tz-config
+          hostPath:
+                  path: /usr/share/zoneinfo/Africa/Nairobi
+                  type: File
      
 ---
 apiVersion: v1
@@ -30,11 +51,11 @@ kind: Service
 metadata:
   name: testing-nginx-service
 spec:
+  selector:
+    app: testing-nginx-app
   type: LoadBalancer
   ports:
     - port: 5757
       targetPort: 443
   externalIPs:
     - 172.16.20.49
-  selector:
-    app: testing-nginx-app
