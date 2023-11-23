@@ -1,3 +1,12 @@
 CLONE WEBLOGIC ENVIRONMENTS
 grep -rl '172.16.19.194' /<path> | xargs sed -i 's#172.16.19.194#172.16.19.211#g'		---> without backup
 grep -rl '172.16.19.194' /<path> | xargs sed -i.bak 's#172.16.19.194#172.16.19.211#g'	---> with backup option
+
+
+
+SSH login without password
+ssh-copy-id appadmin@172.16.19.185 
+Next change permissions
+•	chmod 750 ~
+•	chmod 700 ~/.ssh
+•	chmod 600 ~/.ssh/authorized_keys
