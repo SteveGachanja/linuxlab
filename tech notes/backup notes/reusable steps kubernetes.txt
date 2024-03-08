@@ -1,0 +1,123 @@
+A@p94min_epbadm
+
+docker containerd install
+sudo dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
+
+sudo mkdir -p /etc/containerd/
+containerd config default | sudo tee /etc/containerd/config.toml
+sudo systemctl restart containerd
+
+Configure /etc/containerd/config.toml
+
+[WARNING Hostname]: hostname "svominadm01sit.co-opbank.co.ke" could not be reached
+
+
+Create a containerd configuration file
+sudo containerd config default | sudo tee /etc/containerd/config.toml
+
+systemctl set-environment HTTPS_PROXY=192.168.4.11:8080
+systemctl set-environment HTTP_PROXY=192.168.4.11:8080
+
+
+to specify a specific kubernetes version 
+sudo kubeadm init --kubernetes-version v1.26.0
+
+
+kubeadm config images list
+kubeadm config images pull
+kubeadm init --v=5
+ 
+ sudo kubeadm init --kubernetes-version v1.26.0
+ 
+---------------------------------------------------
+get specific version of docker
+sudo yum list docker-ce --showduplicates | sort -r
+sudo yum install docker-ce-3:20.10.15-3.el9
+sudo yum install docker-ce-VERSION_STRING docker-ce-cli-VERSION_STRING
+
+---------------------------------------------------
+
+sudo journalctl -f -u kubelet
+sudo journalctl -xe | kubelet
+sudo journalctl -xeu kubelet
+
+#kubeadm init --kubernetes-version=1.22.1 --cri-socket=/run/containerd/containerd.sock
+
+sudo kubeadm init --config kubeadm-config.yaml --v=5
+---------------------------------------------------
+
+
+"exec-opts": ["native.cgroupdriver=cgroupfs"]
+
+ "exec-opts": ["native.cgroupdriver=systemd"]
+ 
+ 
+ nohlsearch 
+ 
+---------------------------------------------------
+ 
+# hostnamectl set-hostname master-node-new
+# hostname
+master-node-new
+# vi /etc/cloud/cloud.cfg
+>preserve_hostname: true
+
+-----------------------------------------
+
+for i in $(sudo kubeadm config images list 2>/dev/null); do sudo ctr image pull $i ; done
+
+ctr image ls
+sudo ctr images ls -q
+
+sudo crictl rmi --prune
+
+ctr version
+
+https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
+
+https://serverfault.com/questions/1079369/kubeadm-with-containerd-cannot-use-locally-loaded-images
+
+https://blog.scottlowe.org/2020/01/25/manually-loading-container-images-with-containerd/
+
+*************************
+
+ The kubelet is unhealthy due to a misconfiguration of the node in some way (required cgroups disabled)
+ misconfiguration of the node in some way (required cgroups disabled)
+Unable to update cni config: no networks found in /etc/cni/net.d
+
+
+
+pulling: registry.k8s.io/etcd:3.5.9-0
+ detected that the sandbox image "registry.k8s.io/pause:3.6" of the container runtime is inconsistent with that used by kubeadm. It is recommended that using "registry.k8s.io/pause:3.9" as the CRI sandbox image.
+ 
+ pulling: registry.k8s.io/etcd:3.5.9-0
+ pulling: registry.k8s.io/coredns/coredns:v1.10.1
+ failed to pull image registry.k8s.io/etcd:3.5.9-0
+ failed to pull image registry.k8s.io/coredns/coredns:v1.10.1
+ 
+ 
+ 
+ [appadmin@svominadm01sit ~]$ cat vi /etc/environment
+cat: vi: No such file or directory
+export http_proxy=http://192.168.4.11:8080
+export https_proxy=http://192.168.4.11:8080
+KUBECONFIG=/home/appadmin/.kube/config
+no_proxy=127.0.0.1,172.16.20.52,172.16.20.53,172.16.20.
+
+
+crictl rmi --prune
+yum install --downloadonly --downloaddir=/tmp/RPMs PACKAGE
+
+
+
+# This overwrites any existing configuration in /etc/yum.repos.d/kubernetes.repo
+cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg
+       https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+EOF

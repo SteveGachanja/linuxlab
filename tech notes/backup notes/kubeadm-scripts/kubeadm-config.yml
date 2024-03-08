@@ -1,0 +1,7 @@
+# kubeadm-config.yml
+apiVersion: kubeadm.k8s.io/v1beta3
+kind: ClusterConfiguration
+dns:
+  imageRepository: SVSACCODOCKER.CO-OPBANK.CO.KE:5000/kubernetesimages/coredns
+imageRepository: SVSACCODOCKER.CO-OPBANK.CO.KE:5000/kubernetesimages
+cgroupDriver: systemd
