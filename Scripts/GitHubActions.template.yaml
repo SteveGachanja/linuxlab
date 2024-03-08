@@ -1,0 +1,137 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - "main"
+
+  workflow_dispatch:
+
+env:
+  # Additional variables can be created using the format below.
+  # The info available to the push event can be found here: https://docs.github.com/en/developers/webhooks-and-events/webhooks/webhook-events-and-payloads#push
+  GITHUB_REPO: ${{ github.event.repository.name }}
+  GITHUB_PUSHER_NAME: ${{ github.event.pusher.name }}
+  GITHUB_PUSHER_EMAIL: ${{ github.event.pusher.email }}
+  GITHUB_HEAD_COMMIT: ${{ github.event.head_commit.url}}
+  GITHUB_MESG: ${{ github.event.head_commit.message }}
+  GITHUB_COMPARE: ${{ github.event.compare }}
+  GITHUB_VERSION: ${{ github.event.compare }}
+
+jobs:
+  docker:
+    name: Build
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+    # Make SHORT SHA available to next bump job
+    outputs:
+      short_sha: ${{ steps.getversion.outputs.version }}
+
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v3
+      -
+       name: NodeVersion
+       uses: actions/setup-node@v3
+       with:
+          node-version: ${{ matrix.node-version }}
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      # Create image tag
+      - name: Add SHORT_SHA env property with HEAD
+        id: getversion
+        run: echo "::set-output name=version::$(echo api-${GITHUB_SHA::8})"
+      -
+        name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      -
+        name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/app-gateway:${{ steps.getversion.outputs.version }}
+          cache-from: ${{ secrets.DOCKERHUB_USERNAME }}/app-gateway
+          cache-to: ${{ secrets.DOCKERHUB_USERNAME }}/app-gateway
+
+  deploy-sit:
+    name: Deploy-SIT
+    runs-on: ubuntu-latest
+    environment: 'sit'
+    needs: docker
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          repository: kmuiruricoop/deployments
+          ref: master
+          fetch-depth: 0
+          token: ${{ secrets.MY_GIT_TOKEN }}
+      - name: Version deployment Image
+        run: |-
+          pwd && ls -lrt
+          cd sit/app-gateway
+          pwd && ls -lrt
+          value=$(cat api.yaml | grep image: | awk -F ':' '{print $NF}')
+          sed -i s#$value#${{ needs.docker.outputs.short_sha }}#g api.yaml
+          cat api.yaml | grep image:
+      - name: Commit files
+        run: |
+          git config --local user.email ${{github.event.pusher.email}}
+          git config --local user.name ${{ github.event.pusher.name }}
+          git add .
+          git commit -a -m "updated image version to : ${{ needs.docker.outputs.short_sha }}: Message: ${{ github.event.head_commit.message }}:Repo:${{ github.event.head_commit.url}}"
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          repository: kmuiruricoop/deployments
+          branch: master
+          github_token: ${{ secrets.MY_GIT_TOKEN }}
+
+  deploy-pre-prod:
+    name: Deploy-PREPROD
+    runs-on: 'ubuntu-latest'
+    environment: 'preprod'
+    needs: [ docker, deploy-sit ]
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          repository: kmuiruricoop/deployments
+          ref: master
+          fetch-depth: 0
+          token: ${{ secrets.MY_GIT_TOKEN }}
+      - name: Version deployment Image
+        run: |-
+          pwd && ls -lrt
+          cd preprod/app-gateway
+          pwd && ls -lrt
+          value=$(cat api.yaml | grep image: | awk -F ':' '{print $NF}')
+          sed -i s#$value#${{ needs.docker.outputs.short_sha }}#g api.yaml
+          cat api.yaml | grep image:
+      - name: Commit files
+        run: |
+          git config --local user.email ${{github.event.pusher.email}}
+          git config --local user.name ${{ github.event.pusher.name }}
+          git add .
+          git commit -a -m "updated preprod version to : ${{ needs.docker.outputs.short_sha }}"
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          repository: kmuiruricoop/deployments
+          branch: master
+          github_token: ${{ secrets.MY_GIT_TOKEN }}
