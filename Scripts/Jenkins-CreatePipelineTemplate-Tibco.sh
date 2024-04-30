@@ -1,7 +1,7 @@
 #!/bin/sh
 #*************************************************************************************
 # APPLICATION VERSION 1.0
-# CREATED by NEO TECH dated Wed 9th November 2022
+# CREATED by STEVE GACHANJA dated Wed 9th November 2022
 # REFERENCES
 #https://myopswork.com/when-shell-scripts-meets-jenkins-61594f576e96
 #https://docs.cloudbees.com/docs/cloudbees-ci-kb/latest/client-and-managed-masters/how-to-create-a-job-using-the-rest-api-and-curl
